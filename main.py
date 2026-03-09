@@ -1,23 +1,21 @@
 from fastapi import FastAPI
-from datetime import datetime
+from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
-# Protocolo de Identidad del Nodo
-@app.get("/")
-def read_root():
-    return {
-        "Nodo": "Vertex Axioma®",
-        "Estado": "Activo",
-        "Protocolo": "Auditoría 4.0",
-        "Fecha_Sincronizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    }
-
-# Endpoint de Verificación de Integridad
-@app.get("/verificar-prueba")
-def verificar_prueba():
-    return {
-        "Certificación": "Prueba Petrificada Validada",
-        "Sello": "Conformidad Fiscal 4.0",
-        "Integridad": "100% Inmutable"
-    }
+@app.get("/", response_class=HTMLResponse)
+async def read_root():
+    return """
+    <html>
+        <head>
+            <title>Vertex Axioma - Auditoría 4.0</title>
+            <style>
+                body { margin: 0; padding: 0; overflow: hidden; }
+                iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+            </style>
+        </head>
+        <body>
+            <iframe src="https://gamma.app/docs/VERTEX-AXIOMA-samkfi5i67siphz?embed=1"></iframe>
+        </body>
+    </html>
+    """
