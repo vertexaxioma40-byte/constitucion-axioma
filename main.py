@@ -25,7 +25,8 @@ async def home():
     </head>
     <body>
         <div class="bunker">
-            <h1>VERTEX AXIOMA®</h1>
+           <img src="https://img.icons8.com/fluency/96/shield-with-blockchain.png" alt="Logo" style="width:80px; margin-bottom:20px;">
+<h1>VERTEX AXIOMA®</h1>
             <p>Protocolo de Auditoría Forense 4.0</p>
             <div id="search-box">
                 <input type="text" id="cert-id" placeholder="Ingrese ID de Certificado (SHA-256)">
