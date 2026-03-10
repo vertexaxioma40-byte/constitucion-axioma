@@ -30,7 +30,8 @@ async def home():
     <body>
         <div class="bunker">
             <div class="logo-container">
-                <img src="https://img.icons8.com/fluency/96/shield-with-blockchain.png" alt="Logo Vertex Axioma" style="width:70px;">
+                <img src="https://img.icons8.com/fluency/96/shield-with-blockchain.png" alt="Logo" style="width:80px; margin-bottom:20px;">
+<h1>VERTEX AXIOMA®</h1>
             </div>
             <h1>VERTEX AXIOMA®</h1>
             <div class="subtitle">Infraestructura de Auditoría Forense 4.0</div>
