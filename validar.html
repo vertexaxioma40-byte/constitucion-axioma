@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertex Axioma - Nodo de Innovación</title>
+</head>
+<body style="background-color: #0d1117; color: #39ff14; font-family: 'Courier New', Courier, monospace; padding: 30px; line-height: 1.6;">
+    <div style="max-width: 600px; margin: auto; border: 1px solid #30363d; padding: 20px; border-radius: 8px; background: #161b22; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+        <h2 style="color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 10px;">🛡️ VERTEX AXIOMA®</h2>
+        <p style="font-size: 0.9em; color: #8b949e;">[NODO MORÓN - TRIBUNAL TECNOLÓGICO]</p>
+        
+        <div id="status" style="margin-top: 20px;">
+            <p><strong>ESTADO:</strong> <span style="color: #39ff14;">CERTIFICANDO...</span></p>
+        </div>
+
+        <div id="resultado" style="margin-top: 20px; font-size: 0.85em; background: #0d1117; padding: 15px; border-radius: 4px; border-left: 4px solid #39ff14;">
+            Generando DNA Digital...
+        </div>
+
+        <p style="margin-top: 30px; font-size: 0.7em; color: #8b949e; text-align: center;">
+            Sello de Inmutabilidad Transfronteriza - Protocolo AXIOMA®
+        </p>
+    </div>
+
+    <script>
+        async function generarHash(mensaje) {
+            const msgBuffer = new TextEncoder().encode(mensaje + Date.now());
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function procesar() {
+            const dna = await generarHash("Sello Vertex Axioma");
+            const ticket = {
+                "ticket_id": "VAX-" + Math.floor(Math.random() * 1000000),
+                "status": "VALIDADO E INMUTABLE",
+                "dna_digital": dna,
+                "timestamp": new Date().toLocaleString(),
+                "punto_constitucion": "10. Sello de Inmutabilidad Transfronteriza"
+            };
+            
+            setTimeout(() => {
+                document.getElementById('resultado').innerHTML = '<pre>' + JSON.stringify(ticket, null, 4) + '</pre>';
+                document.getElementById('status').innerHTML = '<p><strong>ESTADO:</strong> <span style="color: #39ff14;">✅ PRUEBA PETRIFICADA</span></p>';
+            }, 1000);
+        }
+        procesar();
+    </script>
+</body>
+</html>
