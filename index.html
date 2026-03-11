@@ -7,10 +7,11 @@
         body { background-color: #0d1117; color: #39ff14; font-family: 'Courier New', monospace; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
         .nodo-container { border: 2px solid #30363d; padding: 40px; border-radius: 15px; max-width: 750px; background: #161b22; box-shadow: 0 0 30px rgba(0,0,0,0.5); text-align: center; }
         .highlight { color: #0d1117; background: #39ff14; padding: 10px 15px; font-weight: bold; border-radius: 3px; display: inline-block; margin: 10px 0; font-size: 1.2em; }
-        input { background: #0d1117; border: 1px solid #39ff14; color: #39ff14; padding: 12px; width: 300px; text-align: center; font-size: 1em; margin-bottom: 10px; }
-        button { background: #58a6ff; border: none; padding: 12px 25px; font-weight: bold; cursor: pointer; color: white; border-radius: 5px; }
+        input { background: #0d1117; border: 1px solid #39ff14; color: #39ff14; padding: 12px; width: 300px; text-align: center; font-size: 1em; margin-bottom: 10px; border-radius: 5px; }
+        button { background: #58a6ff; border: none; padding: 12px 25px; font-weight: bold; cursor: pointer; color: white; border-radius: 5px; margin-top: 10px; }
         .puntos-constitucion { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 0.65em; text-align: left; margin-top: 30px; color: #8b949e; border-top: 1px solid #30363d; padding-top: 20px; }
         .active-point { color: #39ff14; font-weight: bold; text-decoration: underline; }
+        .step-msg { font-size: 0.9em; margin: 10px 0; color: #8b949e; }
     </style>
 </head>
 <body>
@@ -19,13 +20,14 @@
         <p style="font-size: 0.85em; color: #8b949e; margin-bottom: 25px;">NODO DE INNOVACIÓN & CAPACITACIÓN</p>
         
         <div id="validador-ui">
-            <input type="text" id="hashInput" placeholder="INGRESE HASH DE ORIGEN">
+            <div id="step-label" class="step-msg">PASO 1: VALIDACIÓN DE HASH DE ORIGEN</div>
+            <input type="text" id="hashInput" placeholder="INGRESE HASH VADELL">
             <br>
-            <button onclick="ejecutarAuditoria()">EJECUTAR AUDITORÍA 4.0</button>
+            <button id="btn-action" onclick="iniciarTubo()">INICIAR AUDITORÍA 4.0</button>
         </div>
 
         <div id="resultado" style="display:none;">
-            <div id="titulo-sello" class="highlight"></div>
+            <div class="highlight" id="status-final">PUNTO 16: CONFORMIDAD FISCAL</div>
             <p id="desc-sello" style="color: white; margin: 15px 0; font-size: 0.9em;"></p>
             <div style="color: #58a6ff; font-weight: bold; margin-bottom: 20px;">✅ PRUEBA PETRIFICADA (Punto 6)</div>
             <a href="VÉRTICE-AXIOMAr (1).pdf" target="_blank" style="background: #238636; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">
@@ -45,20 +47,36 @@
     </div>
 
     <script>
-        function ejecutarAuditoria() {
-            const hash = document.getElementById('hashInput').value.trim();
-            if(hash === "SHA-256-VADELL-01") {
-                document.getElementById('validador-ui').style.display = "none";
-                document.getElementById('resultado').style.display = "block";
-                document.getElementById('titulo-sello').innerText = "SELLO DE CONFORMIDAD FISCAL 4.0";
-                document.getElementById('desc-sello').innerText = "Validación estratégica para AFIP detectada. Se activa el Sello de Inmutabilidad Transfronteriza (Punto 10) para blindaje de activos reales.";
-                
-                document.getElementById('p6').className = "active-point";
+        let step = 1;
+        function iniciarTubo() {
+            const input = document.getElementById('hashInput');
+            const label = document.getElementById('step-label');
+            
+            if(step === 1) {
+                if(input.value.trim() === "SHA-256-VADELL-01") {
+                    step = 2;
+                    input.value = "";
+                    input.placeholder = "INGRESE TOKEN DE INTEGRIDAD";
+                    label.innerText = "PASO 2: TRIPLE VERIFICACIÓN (PUNTO 5)";
+                    document.getElementById('p5').className = "active-point";
+                } else { alert("Hash no reconocido."); }
+            } 
+            else if(step === 2) {
+                // Simulamos la validación del segundo factor (Token)
+                step = 3;
+                input.style.display = "none";
+                label.innerText = "PASO 3: SELLO DE INMUTABILIDAD TRANSFRONTERIZA";
                 document.getElementById('p10').className = "active-point";
-                document.getElementById('p16').className = "active-point";
-            } else {
-                alert("Hash no reconocido por el Protocolo AXIOMA®.");
+                setTimeout(finalizar, 1500);
             }
+        }
+
+        function finalizar() {
+            document.getElementById('validador-ui').style.display = "none";
+            document.getElementById('resultado').style.display = "block";
+            document.getElementById('desc-sello').innerText = "Tubo de datos procesado con éxito. El Sello de Conformidad Fiscal 4.0 ha blindado el certificado para Gabriel Alejandro Vadell.";
+            document.getElementById('p16').className = "active-point";
+            document.getElementById('p6').className = "active-point";
         }
     </script>
 </body>
