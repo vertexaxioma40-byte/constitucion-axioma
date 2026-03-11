@@ -18,7 +18,7 @@
             Esperando datos de activos reales...
         </div>
 
-        <div style="margin-top: 30px; border-top: 1px solid #30363d; pt: 15px;">
+        <div style="margin-top: 30px; border-top: 1px solid #30363d; padding-top: 15px;">
             <p style="font-size: 0.75em; color: #8b949e; text-align: center; margin-bottom: 5px;">
                 <strong>Sello de Inmutabilidad Transfronteriza</strong>
             </p>
@@ -29,7 +29,6 @@
     </div>
 
     <script>
-        // Función para simular el Hash de Origen (DNA Digital)
         async function generarHash(mensaje) {
             const msgBuffer = new TextEncoder().encode(mensaje + Date.now());
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -41,13 +40,11 @@
             const statusText = document.getElementById('status-text');
             const resBox = document.getElementById('resultado');
 
-            // Paso 1: Simulación de recepción
             setTimeout(() => {
                 statusText.innerText = "GENERANDO DNA DIGITAL...";
                 statusText.style.color = "#f1e05a";
             }, 1000);
 
-            // Paso 2: Generación de ticket inmutable
             const dna = await generarHash("Certificación Vertex Axioma Real Assets");
             
             const ticket = {
