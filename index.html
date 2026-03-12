@@ -5,79 +5,39 @@
     <title>Vertex Axioma - Nodo de Integridad</title>
     <style>
         body { background-color: #0d1117; color: #39ff14; font-family: 'Courier New', monospace; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .nodo-container { border: 2px solid #30363d; padding: 40px; border-radius: 15px; max-width: 750px; background: #161b22; box-shadow: 0 0 30px rgba(0,0,0,0.5); text-align: center; }
-        .highlight { color: #0d1117; background: #39ff14; padding: 10px 15px; font-weight: bold; border-radius: 3px; display: inline-block; margin: 10px 0; font-size: 1.2em; }
-        input { background: #0d1117; border: 1px solid #39ff14; color: #39ff14; padding: 12px; width: 300px; text-align: center; font-size: 1em; margin-bottom: 10px; border-radius: 5px; }
-        button { background: #58a6ff; border: none; padding: 12px 25px; font-weight: bold; cursor: pointer; color: white; border-radius: 5px; margin-top: 10px; }
-        .puntos-constitucion { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 0.65em; text-align: left; margin-top: 30px; color: #8b949e; border-top: 1px solid #30363d; padding-top: 20px; }
-        .active-point { color: #39ff14; font-weight: bold; text-decoration: underline; }
-        .step-msg { font-size: 0.9em; margin: 10px 0; color: #8b949e; }
+        .nodo-container { border: 2px solid #30363d; padding: 40px; border-radius: 15px; max-width: 600px; background: #161b22; box-shadow: 0 0 30px rgba(0,0,0,0.5); text-align: center; }
+        input, select { background: #0d1117; border: 1px solid #39ff14; color: #39ff14; padding: 12px; width: 90%; margin-bottom: 15px; border-radius: 5px; font-size: 1em; }
+        button { background: #58a6ff; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; color: white; border-radius: 5px; width: 100%; font-size: 1.1em; transition: 0.3s; }
+        button:hover { background: #39ff14; color: #0d1117; }
+        .footer-points { font-size: 0.7em; color: #8b949e; margin-top: 25px; border-top: 1px solid #30363d; padding-top: 15px; }
+        .legal { color: #39ff14; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="nodo-container">
         <h2 style="color: #58a6ff; margin-bottom: 5px;">🛡️ VERTEX AXIOMA®</h2>
-        <p style="font-size: 0.85em; color: #8b949e; margin-bottom: 25px;">NODO DE INNOVACIÓN & CAPACITACIÓN</p>
+        <p style="font-size: 0.9em; margin-bottom: 25px;">NODO DE INNOVACIÓN & CAPACITACIÓN</p>
         
-        <div id="validador-ui">
-            <div id="step-label" class="step-msg">PASO 1: VALIDACIÓN DE HASH DE ORIGEN</div>
-            <input type="text" id="hashInput" placeholder="INGRESE HASH VADELL">
-            <br>
-            <button id="btn-action" onclick="iniciarTubo()">INICIAR AUDITORÍA 4.0</button>
-        </div>
+        <form action="https://formspree.io/f/mojkwqzg" method="POST">
+            <input type="text" name="entidad" placeholder="Entidad (Ej: AFIP / Empresa)" required>
+            <input type="text" name="responsable" placeholder="Nombre del Responsable" required>
+            <input type="email" name="email" placeholder="Correo Electrónico para el Sello" required>
+            
+            <select name="protocolo_solicitado">
+                <option value="Sello Conformidad Fiscal 4.0">Punto 16: Sello de Conformidad Fiscal 4.0</option>
+                <option value="Inmutabilidad Transfronteriza">Punto 10: Sello de Inmutabilidad Transfronteriza</option>
+                <option value="Certificado Existencia">Punto 8: Certificado de Existencia de Activos</option>
+            </select>
 
-        <div id="resultado" style="display:none;">
-            <div class="highlight" id="status-final">PUNTO 16: CONFORMIDAD FISCAL</div>
-            <p id="desc-sello" style="color: white; margin: 15px 0; font-size: 0.9em;"></p>
-            <div style="color: #58a6ff; font-weight: bold; margin-bottom: 20px;">✅ PRUEBA PETRIFICADA (Punto 6)</div>
-            <a href="VÉRTICE-AXIOMAr (1).pdf" target="_blank" style="background: #238636; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">
-                📄 DESCARGAR CERTIFICADO FORENSE
-            </a>
-        </div>
+            <input type="hidden" name="_subject" value="URGENTE: Solicitud de Validación - Nodo Vertex Axioma">
+            <input type="hidden" name="_next" value="https://constitucion-axioma.onrender.com/">
 
-        <div class="puntos-constitucion" id="puntos">
-            <div id="p1">1. Auditoría 4.0</div><div id="p2">2. Protocolo AXIOMA®</div><div id="p3">3. Contabilidad Forense</div>
-            <div id="p4">4. Certificación Activos</div><div id="p5">5. Triple Verificación</div><div id="p6">6. Prueba Petrificada</div>
-            <div id="p7">7. Vertex (Nodo)</div><div id="p8">8. Certificado Existencia</div><div id="p9">9. Custodia Geoespacial</div>
-            <div id="p10">10. Sello Inmutabilidad</div><div id="p11">11. Transparencia Ejec.</div><div id="p12">12. Soberanía de Datos</div>
-            <div id="p13">13. Integridad de Datos</div><div id="p14">14. Evidencia Forense</div><div id="p15">15. Guía Tránsito Digital</div>
-            <div id="p16">16. Sello Conformidad</div><div id="p17">17. Gemelo Digital</div><div id="p18">18. Hash (DNA)</div>
-            <div id="p19">19. Smart-Settle</div>
+            <button type="submit">PETRIFICAR PRUEBA (AUDITORÍA 4.0)</button>
+        </form>
+
+        <div class="footer-points">
+            PROTOCOLOS ACTIVOS: <span class="legal">AUDITORÍA 4.0 | PRUEBA PETRIFICADA | SOBERANÍA DE DATOS</span>
         </div>
     </div>
-
-    <script>
-        let step = 1;
-        function iniciarTubo() {
-            const input = document.getElementById('hashInput');
-            const label = document.getElementById('step-label');
-            
-            if(step === 1) {
-                if(input.value.trim() === "SHA-256-VADELL-01") {
-                    step = 2;
-                    input.value = "";
-                    input.placeholder = "INGRESE TOKEN DE INTEGRIDAD";
-                    label.innerText = "PASO 2: TRIPLE VERIFICACIÓN (PUNTO 5)";
-                    document.getElementById('p5').className = "active-point";
-                } else { alert("Hash no reconocido."); }
-            } 
-            else if(step === 2) {
-                // Simulamos la validación del segundo factor (Token)
-                step = 3;
-                input.style.display = "none";
-                label.innerText = "PASO 3: SELLO DE INMUTABILIDAD TRANSFRONTERIZA";
-                document.getElementById('p10').className = "active-point";
-                setTimeout(finalizar, 1500);
-            }
-        }
-
-        function finalizar() {
-            document.getElementById('validador-ui').style.display = "none";
-            document.getElementById('resultado').style.display = "block";
-            document.getElementById('desc-sello').innerText = "Tubo de datos procesado con éxito. El Sello de Conformidad Fiscal 4.0 ha blindado el certificado para Gabriel Alejandro Vadell.";
-            document.getElementById('p16').className = "active-point";
-            document.getElementById('p6').className = "active-point";
-        }
-    </script>
 </body>
 </html>
