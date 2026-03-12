@@ -11,7 +11,6 @@
         button:hover { background: #39ff14; color: #0d1117; }
         .footer-points { font-size: 0.7em; color: #8b949e; margin-top: 25px; border-top: 1px solid #30363d; padding-top: 15px; }
         .legal { color: #39ff14; font-weight: bold; }
-        .msg-alert { color: #58a6ff; font-size: 0.8em; margin-bottom: 15px; border: 1px solid #58a6ff; padding: 5px; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -19,21 +18,15 @@
         <h2 style="color: #58a6ff; margin-bottom: 5px;">🛡️ VERTEX AXIOMA®</h2>
         <p style="font-size: 0.9em; margin-bottom: 25px;">NODO DE INNOVACIÓN & CAPACITACIÓN</p>
         
-        <div class="msg-alert">SISTEMA DE PETRIFICACIÓN DE PRUEBA ACTIVO</div>
-
         <form action="https://formspree.io/f/mojkwqzg" method="POST">
             <input type="text" name="entidad" placeholder="Entidad (Ej: AFIP / Empresa)" required>
             <input type="text" name="responsable" placeholder="Nombre del Responsable" required>
             <input type="email" name="email" placeholder="Correo Electrónico para el Sello" required>
-            
-            <select name="protocolo_solicitado">
+            <select name="protocolo">
                 <option value="Sello Conformidad Fiscal 4.0">Punto 16: Sello de Conformidad Fiscal 4.0</option>
                 <option value="Inmutabilidad Transfronteriza">Punto 10: Sello de Inmutabilidad Transfronteriza</option>
             </select>
-
             <input type="hidden" name="_next" value="https://constitucion-axioma.onrender.com/VÉRTICE-AXIOMAr (1).pdf">
-            <input type="hidden" name="_subject" value="NUEVA VALIDACIÓN: Nodo Vertex Axioma">
-
             <button type="submit">VALIDAR Y DESCARGAR CERTIFICADO</button>
         </form>
 
