@@ -40,7 +40,34 @@
 
 <script>
 document.getElementById('vertex-form').addEventListener('submit', function(e) {
-    e.preventDefault(); // Detiene la recarga de página inmediata
+    e.preventDefault();
     
     const btn = document.getElementById('submit-btn');
-    const url = '
+    // SUSTITUYE ESTA URL POR TU NUEVA URL DE GOOGLE
+    const url = 'https://script.google.com/macros/s/AKfycbzdobJKGAwY54J821v3I6S6L4BrZK2SPSQp3SZAwn-22Ebvuff4QxCSLqiR-PxlMldqEg/exec';
+    
+    btn.innerText = "REGISTRANDO EN NODO...";
+    btn.disabled = true;
+
+    // Convertimos datos a un objeto para enviarlo como JSON
+    const formData = new FormData(this);
+    const data = {};
+    formData.forEach((value, key) => { data[key] = value; });
+
+    // Envío silencioso
+    fetch(url, {
+        method: 'POST',
+        mode: 'no-cors', // Evita carteles de advertencia
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'text/plain' }
+    });
+
+    // Salto forzado a la página de gracias tras 2 segundos
+    setTimeout(function() {
+        window.location.href = 'gracias.html';
+    }, 2000);
+});
+</script>
+
+</body>
+</html>
