@@ -3,95 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vertex Axioma - Nodo de Integridad</title>
+    <title>Vertex Axioma | Terminal de Integridad</title>
     <style>
-        body { background-color: #0d1117; color: #39ff14; font-family: 'Courier New', monospace; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .nodo-container { border: 2px solid #30363d; padding: 40px; border-radius: 15px; max-width: 500px; background: #161b22; box-shadow: 0 0 30px rgba(0,0,0,0.5); text-align: center; }
-        h2 { color: #58a6ff; margin-bottom: 5px; letter-spacing: 2px; text-transform: uppercase; }
-        .subtitle { font-size: 0.8em; color: #8b949e; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
-        
-        input, select { background: #0d1117; border: 1px solid #39ff14; color: #39ff14; padding: 12px; width: 90%; margin-bottom: 15px; border-radius: 5px; font-size: 1em; outline: none; transition: 0.3s; }
-        input:focus { border-color: #58a6ff; box-shadow: 0 0 10px rgba(88, 166, 255, 0.3); }
-        
-        button { background: #58a6ff; border: none; padding: 15px; font-weight: bold; cursor: pointer; color: white; border-radius: 5px; width: 96%; font-size: 1.1em; transition: 0.3s; margin-top: 10px; text-transform: uppercase; }
-        button:hover { background: #39ff14; color: #0d1117; box-shadow: 0 0 20px rgba(57, 255, 20, 0.4); }
-        
-        #mensaje-exito { display: none; margin-top: 20px; color: #58a6ff; border: 1px solid #58a6ff; padding: 20px; border-radius: 5px; background: rgba(88, 166, 255, 0.1); line-height: 1.6; }
-        .footer-points { font-size: 0.7em; color: #8b949e; margin-top: 25px; border-top: 1px solid #30363d; padding-top: 15px; line-height: 1.5; }
-        .legal { color: #39ff14; font-weight: bold; }
-        
-        /* Estilo para el estado de carga */
-        .loading { opacity: 0.5; pointer-events: none; }
+        body { font-family: 'Courier New', Courier, monospace; background-color: #0a0a0a; color: #00ff41; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: #1a1a1a; padding: 2rem; border: 1px solid #00ff41; border-radius: 8px; box-shadow: 0 0 20px rgba(0, 255, 65, 0.2); width: 100%; max-width: 400px; text-align: center; }
+        h1 { font-size: 1.5rem; margin-bottom: 1rem; border-bottom: 1px solid #00ff41; padding-bottom: 0.5rem; }
+        p { font-size: 0.9rem; color: #888; margin-bottom: 1.5rem; }
+        form { display: flex; flex-direction: column; gap: 1rem; }
+        input { background: #000; border: 1px solid #00ff41; color: #00ff41; padding: 0.8rem; border-radius: 4px; outline: none; }
+        button { background: #00ff41; color: #000; border: none; padding: 1rem; cursor: pointer; font-weight: bold; border-radius: 4px; transition: 0.3s; }
+        button:hover { background: #00cc33; transform: scale(1.02); }
+        .footer-note { font-size: 0.7rem; margin-top: 1.5rem; color: #444; }
     </style>
 </head>
 <body>
 
-    <div class="nodo-container">
-        <h2>🛡️ VERTEX AXIOMA®</h2>
-        <div class="subtitle">Nodo de Innovación & Capacitación</div>
+<div class="container">
+    <h1>NODO VERTEX</h1>
+    <p>Protocolo de Integridad Forense 4.0</p>
+    
+    <form action="https://script.google.com/macros/s/AKfycbwuL0B68SPeErOIJO3122ZY62qAe6pw1MdFHw-aSprRctsQgea1Zt_9o3an_LqwTslETw/exec" method="POST">
         
-        <form action="https://formspree.io/f/mojkwqzg" method="POST" id="form-nodo">
-            <input type="text" name="entidad" placeholder="Entidad (Ej: AFIP / UBA)" required>
-            <input type="text" name="responsable" placeholder="Nombre del Responsable" required>
-            <input type="email" name="email" placeholder="Email para Sello de Conformidad" required>
-            
-            <select name="protocolo">
-                <option value="Sello Conformidad Fiscal 4.0">Punto 16: Sello de Conformidad Fiscal 4.0</option>
-                <option value="Inmutabilidad Transfronteriza">Punto 10: Sello de Inmutabilidad Transfronteriza</option>
-            </select>
+        <input type="text" name="nombre" placeholder="Nombre Completo / Cargo" required>
+        <input type="text" name="entidad" placeholder="Organismo o Empresa" required>
+        <input type="email" name="email" placeholder="Email Institucional" required>
+        
+        <button type="submit">SOLICITAR ACCESO AL SELLO</button>
+    </form>
 
-            <button type="submit" id="btn-submit">Solicitar Validación de Activo</button>
-        </form>
-
-        <div id="mensaje-exito">
-            <strong style="font-size: 1.2em;">✓ SOLICITUD REGISTRADA</strong><br><br>
-            El Nodo Vertex está procesando su rastro bajo el protocolo de <span class="legal">Petrificación de Prueba</span>.<br><br>
-            Su <strong>Sello de Conformidad</strong> será enviado a la dirección de correo proporcionada tras completar la verificación de integridad forense.
-        </div>
-
-        <div class="footer-points">
-            SISTEMA DE INTEGRIDAD FORENSE ACTIVADO<br>
-            <span class="legal">AUDITORÍA 4.0 | PUNTO 10 | VERTEX AXIOMA®</span>
-        </div>
+    <div class="footer-note">
+        PETRIFICACIÓN DE PRUEBA ACTIVA | SOBERANÍA DE DATOS <br>
+        Sello de Inmutabilidad Transfronteriza
     </div>
-
-    <script>
-        const form = document.getElementById('form-nodo');
-        const mensaje = document.getElementById('mensaje-exito');
-        const btn = document.getElementById('btn-submit');
-
-        form.onsubmit = async function(e) {
-            e.preventDefault();
-            
-            // Cambiamos el estado del botón para dar feedback
-            btn.innerText = "PROCESANDO INTEGRIDAD...";
-            btn.classList.add('loading');
-            
-            const formData = new FormData(form);
-            
-            try {
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'Accept': 'application/json' }
-                });
-
-                if (response.ok) {
-                    // Ocultamos formulario y mostramos mensaje de éxito
-                    form.style.display = 'none';
-                    mensaje.style.display = 'block';
-                } else {
-                    alert('Error en el Nodo. Por favor, verifique su conexión.');
-                    btn.innerText = "SOLICITAR VALIDACIÓN DE ACTIVO";
-                    btn.classList.remove('loading');
-                }
-            } catch (error) {
-                alert('Error de red en el Nodo Vertex.');
-                btn.innerText = "SOLICITAR VALIDACIÓN DE ACTIVO";
-                btn.classList.remove('loading');
-            }
-        };
-    </script>
+</div>
 
 </body>
 </html>
