@@ -30,10 +30,13 @@
         h1 { font-size: 1.8rem; border-bottom: 2px solid #002060; padding-bottom: 0.5rem; letter-spacing: 3px; color: #ffffff; }
         
         form { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 20px; }
-        input { 
+        input, select { 
             background: #000; border: 1px solid #002060; color: #ffffff; 
             padding: 0.9rem; border-radius: 4px; outline: none; font-family: 'Courier New', monospace; 
         }
+        select { color: #4da6ff; cursor: pointer; }
+        option { background: #0a1122; color: #ffffff; }
+
         button { 
             background: #002060; color: #ffffff; border: 1px solid #4da6ff; 
             padding: 1.1rem; cursor: pointer; font-weight: bold; border-radius: 4px; 
@@ -46,6 +49,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
+            margin-top: 30px;
         }
         .punto-card {
             background: rgba(0, 32, 96, 0.1);
@@ -61,68 +65,52 @@
 
 <div class="container">
     <h1>NODO VERTEX</h1>
-    <p style="font-size: 0.8rem; font-weight: bold;">ACCESO AL PROTOCOLO DE INTEGRIDAD</p>
+    <p style="font-size: 0.8rem; font-weight: bold;">DESPACHO DE PROTOCOLOS DE INTEGRIDAD</p>
+    
     <form id="vertex-form">
         <input type="text" name="nombre" placeholder="NOMBRE / CARGO ESTRATÉGICO" required>
-        <input type="text" name="entidad" placeholder="ORGANISMO O EMPRESA" required>
         <input type="email" name="email" placeholder="EMAIL INSTITUCIONAL" required>
-        <button type="submit" id="submit-btn">SINCRONIZAR CON EL SELLO</button>
+        
+        <select name="documento" required>
+            <option value="" disabled selected>SELECCIONAR ACTIVO DIGITAL</option>
+            <option value="reglamento">REGLAMENTO DE INTEGRIDAD FORENSE</option>
+            <option value="sello">MODELO SELLO INMUTABILIDAD (Nueces)</option>
+        </select>
+
+        <button type="submit" id="submit-btn">SINCRONIZAR SOLICITUD</button>
     </form>
 </div>
 
 <div class="constitucion-section">
-    <h2 style="color:white; letter-spacing:3px;">CONSTITUCIÓN AXIOMA®</h2>
+    <h2 style="color:white; letter-spacing:3px; border-bottom: 1px solid #002060; display: inline-block; padding-bottom: 10px;">CONSTITUCIÓN AXIOMA®</h2>
     <div class="puntos-grid">
         <div class="punto-card"><span class="punto-number">01.</span> Auditoría 4.0</div>
-        <div class="punto-card"><span class="punto-number">02.</span> Protocolo AXIOMA®</div>
-        <div class="punto-card"><span class="punto-number">03.</span> Contabilidad Forense</div>
-        <div class="punto-card"><span class="punto-number">04.</span> Certificación de Activos 4.0</div>
-        <div class="punto-card"><span class="punto-number">05.</span> Triple Verificación</div>
-        <div class="punto-card"><span class="punto-number">06.</span> Prueba Petrificada</div>
-        <div class="punto-card"><span class="punto-number">07.</span> Vertex (Nodo Innovación)</div>
-        <div class="punto-card"><span class="punto-number">08.</span> Certificado de Existencia</div>
-        <div class="punto-card"><span class="punto-number">09.</span> Custodia Forense Geoespacial</div>
-        <div class="punto-card"><span class="punto-number">10.</span> Sello Inmutabilidad Transfronteriza</div>
-        <div class="punto-card"><span class="punto-number">11.</span> Transparencia Presupuestaria</div>
-        <div class="punto-card"><span class="punto-number">12.</span> Soberanía de Datos</div>
-        <div class="punto-card"><span class="punto-number">13.</span> Integridad de Datos</div>
-        <div class="punto-card"><span class="punto-number">14.</span> Evidencia Forense 4.0</div>
-        <div class="punto-card"><span class="punto-number">15.</span> Guía de Tránsito Inmutable</div>
-        <div class="punto-card"><span class="punto-number">16.</span> Sello Conformidad Fiscal 4.0</div>
-        <div class="punto-card"><span class="punto-number">17.</span> Gemelo Digital</div>
-        <div class="punto-card"><span class="punto-number">18.</span> Hash de Origen (DNA)</div>
-        <div class="punto-card"><span class="punto-number">19.</span> Smart-Settle</div>
-        <div class="punto-card"><span class="punto-number">20.</span> Lab. Integridad 4.0</div>
-        <div class="punto-card"><span class="punto-number">21.</span> Formación Técnica</div>
-        <div class="punto-card"><span class="punto-number">22.</span> Aduana Digital 4.0</div>
-    </div>
+        <div class="punto-card"><span class="punto-number">10.</span> Sello de Inmutabilidad Transfronteriza</div>
+        <div class="punto-card"><span class="punto-number">16.</span> Sello de Conformidad Fiscal 4.0</div>
+        </div>
 </div>
 
 <script>
     const form = document.getElementById('vertex-form');
     const btn = document.getElementById('submit-btn');
+    // IMPORTANTE: Pegá acá tu URL de Google Script actualizada después de implementar
     const scriptURL = 'https://script.google.com/macros/s/AKfycbz-94YEEcGXOXH2x0MQOerlS5PqR-kfk4uhs5OD4ZOl6wrKs1yaYUp_J4zrsZ_CFM2GjA/exec';
 
     form.addEventListener('submit', e => {
         e.preventDefault();
-        btn.innerText = "SINCRONIZANDO...";
+        btn.innerText = "PROCESANDO DESPACHO...";
         btn.disabled = true;
 
-        // Preparamos los datos de forma simple para el Script
-        const formData = new FormData(form);
-        
-        // Enviamos los datos
         fetch(scriptURL, { 
             method: 'POST', 
             mode: 'no-cors', 
-            body: formData
+            body: new FormData(form)
         });
 
-        // REDIRECCIÓN DE SEGURIDAD (Petrificación del flujo)
-        // No esperamos respuesta de Google, saltamos a gracias en 2 segundos
+        // Redirección de seguridad a gracias.html
         setTimeout(() => {
             window.location.href = 'gracias.html';
-        }, 2000);
+        }, 2500);
     });
 </script>
 
