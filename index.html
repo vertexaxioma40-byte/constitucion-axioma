@@ -43,18 +43,16 @@ document.getElementById('vertex-form').addEventListener('submit', function(e) {
     e.preventDefault();
     
     const btn = document.getElementById('submit-btn');
-    // URL DE TU NUEVA API ACTUALIZADA 13/03/2026
-    const url = 'https://script.google.com/macros/s/AKfycbxDtpriiKv9wl8LZT70bknCDtIxqQ-fO0EYt9yDHwhC9AS24xJNqX-eoW59Rn1uD69IwQ/exec';
+    // URL ACTUALIZADA AL 13/03/2026 - IMPLEMENTACIÓN SZYvg
+    const url = 'https://script.google.com/macros/s/AKfycbwmd7XZ4KxGGcdEWU_AdQFyFfEKD-iviEIsPrD3MVVK2UIyxd87h068eQtrmbXKQSZYvg/exec';
     
     btn.innerText = "SINCRONIZANDO NODO...";
     btn.disabled = true;
 
-    // Captura de datos para envío JSON
     const formData = new FormData(this);
     const data = {};
     formData.forEach((value, key) => { data[key] = value; });
 
-    // Ejecución del protocolo de envío silencioso
     fetch(url, {
         method: 'POST',
         mode: 'no-cors', 
@@ -62,10 +60,9 @@ document.getElementById('vertex-form').addEventListener('submit', function(e) {
         headers: { 'Content-Type': 'text/plain' }
     });
 
-    // Salto forzado a la terminal de agradecimiento
     setTimeout(function() {
         window.location.href = 'gracias.html';
-    }, 2000);
+    }, 2500); // Subimos a 2.5 seg para asegurar que el mail se dispare
 });
 </script>
 
