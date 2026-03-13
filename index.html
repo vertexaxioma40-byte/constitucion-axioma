@@ -32,7 +32,7 @@
         form { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 20px; }
         input, select { 
             background: #000; border: 1px solid #002060; color: #ffffff; 
-            padding: 0.9rem; border-radius: 4px; outline: none; font-family: 'Courier New', monospace; 
+            padding: 0.9rem; border-radius: 4px; outline: none; font-family: 'Courier New', monospace; font-size: 0.85rem;
         }
         select { color: #4da6ff; cursor: pointer; }
         option { background: #0a1122; color: #ffffff; }
@@ -45,78 +45,6 @@
         button:hover { background: #003399; box-shadow: 0 0 15px #4da6ff; }
 
         .constitucion-section { width: 100%; max-width: 900px; text-align: center; }
-        .puntos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 30px;
-        }
-        .punto-card {
-            background: rgba(0, 32, 96, 0.1);
-            border: 1px solid #002060;
-            padding: 15px;
-            font-size: 0.75rem;
-            text-align: left;
-        }
-        .punto-number { color: #ffffff; font-weight: bold; margin-right: 5px; }
-        .footer-note { font-size: 0.7rem; margin-top: 50px; color: #002060; letter-spacing: 1px; text-align: center; }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h1>NODO VERTEX</h1>
-    <p style="font-size: 0.8rem; font-weight: bold;">DESPACHO DE ACTIVOS DIGITALES</p>
-    
-    <form id="vertex-form">
-        <input type="text" name="nombre" placeholder="NOMBRE COMPLETO" required>
-        <input type="email" name="email" placeholder="EMAIL INSTITUCIONAL" required>
-        
-        <select name="documento" required>
-            <option value="" disabled selected>SELECCIONAR ARCHIVO</option>
-            <option value="integridad">REGLAMENTO DE INTEGRIDAD FORENSE</option>
-            <option value="sello">MODELO SELLO TRANSFRONTERIZO</option>
-            <option value="constitucion">CONSTITUCIÓN AXIOMA®</option>
-            <option value="integracion">GUÍA DE INTEGRACIÓN TÉCNICA</option>
-        </select>
-
-        <button type="submit" id="submit-btn">SINCRONIZAR Y ENVIAR</button>
-    </form>
-</div>
-
-<div class="constitucion-section">
-    <h2 style="color:white; letter-spacing:3px;">CONSTITUCIÓN AXIOMA®</h2>
-    <div class="puntos-grid">
-        <div class="punto-card"><span class="punto-number">01.</span> Auditoría 4.0</div>
-        <div class="punto-card"><span class="punto-number">06.</span> Prueba Petrificada</div>
-        <div class="punto-card"><span class="punto-number">10.</span> Sello de Inmutabilidad Transfronteriza</div>
-        <div class="punto-card"><span class="punto-number">16.</span> Sello de Conformidad Fiscal 4.0</div>
-        <div class="punto-card"><span class="punto-number">12.</span> Soberanía de Datos</div>
-        <div class="punto-card"><span class="punto-number">13.</span> Integridad de Datos</div>
-    </div>
-    <div class="footer-note">Sello de Inmutabilidad Transfronteriza | Vertex Axioma</div>
-</div>
-
-<script>
-    const form = document.getElementById('vertex-form');
-    const btn = document.getElementById('submit-btn');
-    const scriptURL = 'TU_NUEVA_URL_DE_GOOGLE_SCRIPT_AQUI'; 
-
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        btn.innerText = "PETRIFICANDO...";
-        btn.disabled = true;
-
-        fetch(scriptURL, { 
-            method: 'POST', 
-            mode: 'no-cors', 
-            body: new FormData(form)
-        });
-
-        setTimeout(() => {
-            window.location.href = 'gracias.html';
-        }, 2500);
-    });
-</script>
-</body>
-</html>
+        .constitucion-section h2 { 
+            font-size: 1.1rem; color: #ffffff; letter-spacing: 4px; 
+            margin-bottom: 30px; border-bottom: 1px solid #002060; display:
