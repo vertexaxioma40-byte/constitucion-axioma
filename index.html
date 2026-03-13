@@ -101,31 +101,28 @@
 <script>
     const form = document.getElementById('vertex-form');
     const btn = document.getElementById('submit-btn');
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbw1XD_VHtX-HzX7qY4f9qiKlUyGu8ZX8VgyuXNUxcc--ak7dGxopz0f4GXpOv2-iFpGIw/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbz-94YEEcGXOXH2x0MQOerlS5PqR-kfk4uhs5OD4ZOl6wrKs1yaYUp_J4zrsZ_CFM2GjA/exec';
 
     form.addEventListener('submit', e => {
         e.preventDefault();
         btn.innerText = "SINCRONIZANDO...";
         btn.disabled = true;
 
+        // Preparamos los datos de forma simple para el Script
+        const formData = new FormData(form);
+        
+        // Enviamos los datos
         fetch(scriptURL, { 
             method: 'POST', 
             mode: 'no-cors', 
-            body: new FormData(form)
-        })
-        .then(() => {
-            window.location.href = 'gracias.html';
-        })
-        .catch(error => {
-            console.error('Error!', error.message);
-            // Si falla el fetch igual forzamos la ida a gracias por las dudas
-            window.location.href = 'gracias.html';
+            body: formData
         });
-        
-        // Redirección de seguridad (por si Google tarda en responder)
+
+        // REDIRECCIÓN DE SEGURIDAD (Petrificación del flujo)
+        // No esperamos respuesta de Google, saltamos a gracias en 2 segundos
         setTimeout(() => {
             window.location.href = 'gracias.html';
-        }, 3000);
+        }, 2000);
     });
 </script>
 
