@@ -34,13 +34,14 @@
             background: #000; border: 1px solid #002060; color: #ffffff; 
             padding: 0.9rem; border-radius: 4px; outline: none; font-family: 'Courier New', monospace; 
         }
+        input::placeholder { color: #003366; }
         button { 
             background: #002060; color: #ffffff; border: 1px solid #4da6ff; 
             padding: 1.1rem; cursor: pointer; font-weight: bold; border-radius: 4px; 
-            text-transform: uppercase; letter-spacing: 1px;
+            text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
         }
+        button:hover { background: #003399; box-shadow: 0 0 15px #4da6ff; }
 
-        /* DISEÑO DE LA CONSTITUCIÓN */
         .constitucion-section { width: 100%; max-width: 900px; text-align: center; }
         .constitucion-section h2 { 
             font-size: 1.2rem; color: #ffffff; letter-spacing: 4px; 
@@ -62,7 +63,7 @@
         .punto-card:hover { background: rgba(77, 166, 255, 0.1); border-color: #4da6ff; }
         .punto-number { color: #ffffff; font-weight: bold; margin-right: 5px; }
 
-        .footer-note { font-size: 0.7rem; margin-top: 50px; color: #002060; letter-spacing: 1px; }
+        .footer-note { font-size: 0.7rem; margin-top: 50px; color: #002060; letter-spacing: 1px; text-align: center; }
     </style>
 </head>
 <body>
@@ -90,7 +91,7 @@
         <div class="punto-card"><span class="punto-number">07.</span> Vertex (Nodo Innovación)</div>
         <div class="punto-card"><span class="punto-number">08.</span> Certificado de Existencia</div>
         <div class="punto-card"><span class="punto-number">09.</span> Custodia Forense Geoespacial</div>
-        <div class="punto-card"><span class="punto-number">10.</span> Sello Inmutabilidad</div>
+        <div class="punto-card"><span class="punto-number">10.</span> Sello Inmutabilidad Transfronteriza</div>
         <div class="punto-card"><span class="punto-number">11.</span> Transparencia Presupuestaria</div>
         <div class="punto-card"><span class="punto-number">12.</span> Soberanía de Datos</div>
         <div class="punto-card"><span class="punto-number">13.</span> Integridad de Datos</div>
@@ -101,15 +102,44 @@
         <div class="punto-card"><span class="punto-number">18.</span> Hash de Origen (DNA)</div>
         <div class="punto-card"><span class="punto-number">19.</span> Smart-Settle</div>
         <div class="punto-card"><span class="punto-number">20.</span> Lab. Integridad 4.0</div>
-        <div class="pun
-fetch(url, {
+        <div class="punto-card"><span class="punto-number">21.</span> Formación Técnica</div>
+        <div class="punto-card"><span class="punto-number">22.</span> Aduana Digital 4.0</div>
+    </div>
+    
+    <div class="footer-note">
+        PETRIFICACIÓN DE PRUEBA ACTIVA | SOBERANÍA DE DATOS <br>
+        Sello de Inmutabilidad Transfronteriza | Vertex Axioma
+    </div>
+</div>
+
+<script>
+document.getElementById('vertex-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const btn = document.getElementById('submit-btn');
+    // USA TU URL DE GOOGLE SCRIPT AQUÍ
+    const url = 'https://script.google.com/macros/s/AKfycbz-94YEEcGXOXH2x0MQOerlS5PqR-kfk4uhs5OD4ZOl6wrKs1yaYUp_J4zrsZ_CFM2GjA/exec';
+    
+    btn.innerText = "SINCRONIZANDO NODO...";
+    btn.disabled = true;
+
+    const formData = new FormData(this);
+    const data = {};
+    formData.forEach((value, key) => { data[key] = value; });
+
+    fetch(url, {
         method: 'POST',
         mode: 'no-cors', 
         body: JSON.stringify(data),
         headers: { 'Content-Type': 'text/plain' }
     });
 
-    // Esta parte es la que te saca de ahí y te lleva al éxito
+    // Redirección forzada para asegurar el cartel de gracias
     setTimeout(function() {
         window.location.href = 'gracias.html';
-    }, 2000);
+    }, 2500);
+});
+</script>
+
+</body>
+</html>
