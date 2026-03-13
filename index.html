@@ -5,129 +5,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vertex Axioma | Terminal de Integridad</title>
     <style>
-        /* CAMBIO A AZUL COBALTO FORENSE */
         body { 
             font-family: 'Courier New', Courier, monospace; 
-            background-color: #050a15; /* Fondo azul noche muy oscuro */
-            color: #4da6ff; /* Azul brillante forense */
+            background-color: #050a15; 
+            color: #4da6ff; 
             display: flex; 
-            justify-content: center; 
+            flex-direction: column;
             align-items: center; 
             min-height: 100vh; 
             margin: 0; 
-            padding: 20px;
+            padding: 40px 20px;
+            overflow-y: auto; /* Permitimos el scroll natural de la página, no de la caja */
         }
         .container { 
             background: #0a1122; 
-            padding: 2rem; 
+            padding: 2.5rem; 
             border: 2px solid #002060; 
             border-radius: 8px; 
             box-shadow: 0 0 30px rgba(0, 32, 96, 0.5); 
             width: 100%; 
-            max-width: 500px; 
+            max-width: 450px; 
             text-align: center; 
+            margin-bottom: 40px;
         }
-        h1 { 
-            font-size: 1.8rem; 
-            margin-bottom: 0.5rem; 
-            border-bottom: 2px solid #002060; 
-            padding-bottom: 0.5rem; 
-            letter-spacing: 3px; 
-            color: #ffffff;
-        }
-        .constitucion-box {
-            text-align: left;
-            background: #000;
-            padding: 15px;
-            border: 1px solid #002060;
-            height: 200px;
-            overflow-y: scroll;
-            margin-bottom: 1.5rem;
-            font-size: 0.75rem;
-            line-height: 1.4;
-            color: #8bbfff;
-        }
-        .constitucion-box h3 { font-size: 0.8rem; color: #fff; margin-top: 0; border-bottom: 1px solid #002060; }
+        h1 { font-size: 1.8rem; border-bottom: 2px solid #002060; padding-bottom: 0.5rem; letter-spacing: 3px; color: #ffffff; margin-bottom: 2rem; }
         
-        p { font-size: 0.85rem; color: #4da6ff; margin-bottom: 1.5rem; text-transform: uppercase; font-weight: bold; }
-        
-        form { display: flex; flex-direction: column; gap: 1rem; }
+        form { display: flex; flex-direction: column; gap: 1.2rem; }
         input { 
-            background: #000; 
-            border: 1px solid #002060; 
-            color: #ffffff; 
-            padding: 0.8rem; 
-            border-radius: 4px; 
-            outline: none; 
-            font-family: 'Courier New', monospace; 
+            background: #000; border: 1px solid #002060; color: #ffffff; 
+            padding: 0.9rem; border-radius: 4px; outline: none; font-family: 'Courier New', monospace; 
         }
         input::placeholder { color: #003366; }
         
         button { 
-            background: #002060; 
-            color: #ffffff; 
-            border: 1px solid #4da6ff; 
-            padding: 1rem; 
-            cursor: pointer; 
-            font-weight: bold; 
-            border-radius: 4px; 
-            transition: 0.3s; 
-            letter-spacing: 1px; 
-            text-transform: uppercase;
+            background: #002060; color: #ffffff; border: 1px solid #4da6ff; 
+            padding: 1.1rem; cursor: pointer; font-weight: bold; border-radius: 4px; 
+            transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
         }
         button:hover { background: #003399; box-shadow: 0 0 15px #4da6ff; }
-        button:disabled { background: #050a15; color: #333; cursor: not-allowed; }
+
+        /* SECCIÓN DE LOS 22 PUNTOS - EXTENDIDA */
+        .constitucion-footer {
+            max-width: 700px;
+            text-align: left;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-top: 1px solid #002060;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #8bbfff;
+        }
+        .constitucion-footer h2 { 
+            font-size: 1rem; color: #ffffff; text-align: center; 
+            letter-spacing: 2px; border-bottom: 1px solid #002060; padding-bottom: 10px;
+        }
+        .puntos-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Dividimos en 2 columnas para que no sea eterno el largo */
+            gap: 10px 30px;
+            margin-top: 20px;
+        }
+        .footer-note { font-size: 0.65rem; margin-top: 40px; color: #4da6ff; text-align: center; opacity: 0.6; }
         
-        .footer-note { font-size: 0.65rem; margin-top: 1.5rem; color: #4da6ff; line-height: 1.4; opacity: 0.8; }
-        
-        /* Personalización del Scroll */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #002060; }
+        @media (max-width: 600px) { .puntos-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>NODO VERTEX</h1>
-    <p>Constitución AXIOMA® v.4.0</p>
+    <p style="font-size: 0.8rem; margin-bottom: 2rem; font-weight: bold;">SOLICITAR ACCESO AL PROTOCOLO</p>
     
-    <div class="constitucion-box">
-        <h3>CONTENIDO BLINDADO:</h3>
-        1. Auditoría 4.0 (El Tribunal Tecnológico)<br>
-        2. Protocolo AXIOMA® (El lenguaje de la verdad)<br>
-        3. Contabilidad Forense Digital de Activos Reales<br>
-        4. Certificación de Activos 4.0<br>
-        5. Triple Verificación<br>
-        6. Petrificación de Prueba (Prueba Petrificada)<br>
-        7. Vertex (Nodo de Innovación & Capacitación)<br>
-        8. Certificado de Existencia de Activos<br>
-        9. Cadena de Custodia Forense de Datos Geoespaciales<br>
-        10. Sello de Inmutabilidad Transfronteriza<br>
-        11. Transparencia de Ejecución Presupuestaria<br>
-        12. Soberanía de Datos<br>
-        13. Integridad de Datos<br>
-        14. Evidencia Forense 4.0<br>
-        15. Guía de Tránsito Digital Inmutable<br>
-        16. Sello de Conformidad Fiscal 4.0<br>
-        17. Gemelo Digital de Activos Reales<br>
-        18. Hash de Origen (DNA Digital)<br>
-        19. Smart-Settle (Liquidación Inteligente)<br>
-        20. Laboratorio de Integridad de Activos 4.0<br>
-        21. Formación Técnica en Integridad Forense<br>
-        22. Aduana Digital 4.0
-    </div>
-
     <form id="vertex-form">
         <input type="text" name="nombre" placeholder="NOMBRE / CARGO ESTRATÉGICO" required>
         <input type="text" name="entidad" placeholder="ORGANISMO O EMPRESA" required>
         <input type="email" name="email" placeholder="EMAIL INSTITUCIONAL" required>
-        
-        <button type="submit" id="submit-btn">SOLICITAR ACCESO AL SELLO</button>
+        <button type="submit" id="submit-btn">SINCRONIZAR CON EL SELLO</button>
     </form>
+</div>
 
+<div class="constitucion-footer">
+    <h2>CONSTITUCIÓN AXIOMA® - Versión Final Blindada</h2>
+    <div class="puntos-grid">
+        <div>1. Auditoría 4.0</div>
+        <div>2. Protocolo AXIOMA®</div>
+        <div>3. Contabilidad Forense</div>
+        <div>4. Certificación de Activos 4.0</div>
+        <div>5. Triple Verificación</div>
+        <div>6. Prueba Petrificada</div>
+        <div>7. Vertex (Nodo Innovación)</div>
+        <div>8. Certificado de Existencia</div>
+        <div>9. Custodia Forense Geoespacial</div>
+        <div>10. Sello Inmutabilidad</div>
+        <div>11. Transparencia Presupuestaria</div>
+        <div>12. Soberanía de Datos</div>
+        <div>13. Integridad de Datos</div>
+        <div>14. Evidencia Forense 4.0</div>
+        <div>15. Guía de Tránsito Inmutable</div>
+        <div>16. Sello Conformidad Fiscal 4.0</div>
+        <div>17. Gemelo Digital</div>
+        <div>18. Hash de Origen (DNA)</div>
+        <div>19. Smart-Settle</div>
+        <div>20. Lab. Integridad 4.0</div>
+        <div>21. Formación Técnica</div>
+        <div>22. Aduana Digital 4.0</div>
+    </div>
+    
     <div class="footer-note">
-        SISTEMA DE PETRIFICACIÓN DE PRUEBA ACTIVA<br>
+        PETRIFICACIÓN DE PRUEBA ACTIVA | SOBERANÍA DE DATOS <br>
         Sello de Inmutabilidad Transfronteriza | Vertex Axioma
     </div>
 </div>
@@ -135,28 +120,19 @@
 <script>
 document.getElementById('vertex-form').addEventListener('submit', function(e) {
     e.preventDefault();
-    
     const btn = document.getElementById('submit-btn');
-    // MANTENEMOS TU URL QUE YA FUNCIONA PERFECTO
     const url = 'https://script.google.com/macros/s/AKfycbz-94YEEcGXOXH2x0MQOerlS5PqR-kfk4uhs5OD4ZOl6wrKs1yaYUp_J4zrsZ_CFM2GjA/exec';
     
-    btn.innerText = "SINCRONIZANDO NODO...";
+    btn.innerText = "ESTABLECIENDO CONEXIÓN...";
     btn.disabled = true;
 
     const formData = new FormData(this);
     const data = {};
     formData.forEach((value, key) => { data[key] = value; });
 
-    fetch(url, {
-        method: 'POST',
-        mode: 'no-cors', 
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'text/plain' }
-    });
+    fetch(url, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data), headers: { 'Content-Type': 'text/plain' } });
 
-    setTimeout(function() {
-        window.location.href = 'gracias.html';
-    }, 2500);
+    setTimeout(function() { window.location.href = 'gracias.html'; }, 2500);
 });
 </script>
 
