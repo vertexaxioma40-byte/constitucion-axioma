@@ -15,7 +15,6 @@
             min-height: 100vh; 
             margin: 0; 
             padding: 40px 20px;
-            overflow-y: auto; /* Permitimos el scroll natural de la página, no de la caja */
         }
         .container { 
             background: #0a1122; 
@@ -26,56 +25,51 @@
             width: 100%; 
             max-width: 450px; 
             text-align: center; 
-            margin-bottom: 40px;
+            margin-bottom: 50px;
         }
-        h1 { font-size: 1.8rem; border-bottom: 2px solid #002060; padding-bottom: 0.5rem; letter-spacing: 3px; color: #ffffff; margin-bottom: 2rem; }
+        h1 { font-size: 1.8rem; border-bottom: 2px solid #002060; padding-bottom: 0.5rem; letter-spacing: 3px; color: #ffffff; }
         
-        form { display: flex; flex-direction: column; gap: 1.2rem; }
+        form { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 20px; }
         input { 
             background: #000; border: 1px solid #002060; color: #ffffff; 
             padding: 0.9rem; border-radius: 4px; outline: none; font-family: 'Courier New', monospace; 
         }
-        input::placeholder { color: #003366; }
-        
         button { 
             background: #002060; color: #ffffff; border: 1px solid #4da6ff; 
             padding: 1.1rem; cursor: pointer; font-weight: bold; border-radius: 4px; 
-            transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+            text-transform: uppercase; letter-spacing: 1px;
         }
-        button:hover { background: #003399; box-shadow: 0 0 15px #4da6ff; }
 
-        /* SECCIÓN DE LOS 22 PUNTOS - EXTENDIDA */
-        .constitucion-footer {
-            max-width: 700px;
-            text-align: left;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 30px;
-            border-top: 1px solid #002060;
-            font-size: 0.85rem;
-            line-height: 1.6;
-            color: #8bbfff;
-        }
-        .constitucion-footer h2 { 
-            font-size: 1rem; color: #ffffff; text-align: center; 
-            letter-spacing: 2px; border-bottom: 1px solid #002060; padding-bottom: 10px;
+        /* DISEÑO DE LA CONSTITUCIÓN */
+        .constitucion-section { width: 100%; max-width: 900px; text-align: center; }
+        .constitucion-section h2 { 
+            font-size: 1.2rem; color: #ffffff; letter-spacing: 4px; 
+            margin-bottom: 30px; border-bottom: 1px solid #002060; display: inline-block; padding: 0 20px 10px;
         }
         .puntos-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* Dividimos en 2 columnas para que no sea eterno el largo */
-            gap: 10px 30px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
         }
-        .footer-note { font-size: 0.65rem; margin-top: 40px; color: #4da6ff; text-align: center; opacity: 0.6; }
-        
-        @media (max-width: 600px) { .puntos-grid { grid-template-columns: 1fr; } }
+        .punto-card {
+            background: rgba(0, 32, 96, 0.1);
+            border: 1px solid #002060;
+            padding: 15px;
+            font-size: 0.75rem;
+            text-align: left;
+            transition: 0.3s;
+        }
+        .punto-card:hover { background: rgba(77, 166, 255, 0.1); border-color: #4da6ff; }
+        .punto-number { color: #ffffff; font-weight: bold; margin-right: 5px; }
+
+        .footer-note { font-size: 0.7rem; margin-top: 50px; color: #002060; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>NODO VERTEX</h1>
-    <p style="font-size: 0.8rem; margin-bottom: 2rem; font-weight: bold;">SOLICITAR ACCESO AL PROTOCOLO</p>
-    
+    <p style="font-size: 0.8rem; font-weight: bold;">ACCESO AL PROTOCOLO DE INTEGRIDAD</p>
     <form id="vertex-form">
         <input type="text" name="nombre" placeholder="NOMBRE / CARGO ESTRATÉGICO" required>
         <input type="text" name="entidad" placeholder="ORGANISMO O EMPRESA" required>
@@ -84,57 +78,27 @@
     </form>
 </div>
 
-<div class="constitucion-footer">
-    <h2>CONSTITUCIÓN AXIOMA® - Versión Final Blindada</h2>
+<div class="constitucion-section">
+    <h2>CONSTITUCIÓN AXIOMA®</h2>
     <div class="puntos-grid">
-        <div>1. Auditoría 4.0</div>
-        <div>2. Protocolo AXIOMA®</div>
-        <div>3. Contabilidad Forense</div>
-        <div>4. Certificación de Activos 4.0</div>
-        <div>5. Triple Verificación</div>
-        <div>6. Prueba Petrificada</div>
-        <div>7. Vertex (Nodo Innovación)</div>
-        <div>8. Certificado de Existencia</div>
-        <div>9. Custodia Forense Geoespacial</div>
-        <div>10. Sello Inmutabilidad</div>
-        <div>11. Transparencia Presupuestaria</div>
-        <div>12. Soberanía de Datos</div>
-        <div>13. Integridad de Datos</div>
-        <div>14. Evidencia Forense 4.0</div>
-        <div>15. Guía de Tránsito Inmutable</div>
-        <div>16. Sello Conformidad Fiscal 4.0</div>
-        <div>17. Gemelo Digital</div>
-        <div>18. Hash de Origen (DNA)</div>
-        <div>19. Smart-Settle</div>
-        <div>20. Lab. Integridad 4.0</div>
-        <div>21. Formación Técnica</div>
-        <div>22. Aduana Digital 4.0</div>
-    </div>
-    
-    <div class="footer-note">
-        PETRIFICACIÓN DE PRUEBA ACTIVA | SOBERANÍA DE DATOS <br>
-        Sello de Inmutabilidad Transfronteriza | Vertex Axioma
-    </div>
-</div>
-
-<script>
-document.getElementById('vertex-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const btn = document.getElementById('submit-btn');
-    const url = 'https://script.google.com/macros/s/AKfycbz-94YEEcGXOXH2x0MQOerlS5PqR-kfk4uhs5OD4ZOl6wrKs1yaYUp_J4zrsZ_CFM2GjA/exec';
-    
-    btn.innerText = "ESTABLECIENDO CONEXIÓN...";
-    btn.disabled = true;
-
-    const formData = new FormData(this);
-    const data = {};
-    formData.forEach((value, key) => { data[key] = value; });
-
-    fetch(url, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data), headers: { 'Content-Type': 'text/plain' } });
-
-    setTimeout(function() { window.location.href = 'gracias.html'; }, 2500);
-});
-</script>
-
-</body>
-</html>
+        <div class="punto-card"><span class="punto-number">01.</span> Auditoría 4.0</div>
+        <div class="punto-card"><span class="punto-number">02.</span> Protocolo AXIOMA®</div>
+        <div class="punto-card"><span class="punto-number">03.</span> Contabilidad Forense</div>
+        <div class="punto-card"><span class="punto-number">04.</span> Certificación de Activos 4.0</div>
+        <div class="punto-card"><span class="punto-number">05.</span> Triple Verificación</div>
+        <div class="punto-card"><span class="punto-number">06.</span> Prueba Petrificada</div>
+        <div class="punto-card"><span class="punto-number">07.</span> Vertex (Nodo Innovación)</div>
+        <div class="punto-card"><span class="punto-number">08.</span> Certificado de Existencia</div>
+        <div class="punto-card"><span class="punto-number">09.</span> Custodia Forense Geoespacial</div>
+        <div class="punto-card"><span class="punto-number">10.</span> Sello Inmutabilidad</div>
+        <div class="punto-card"><span class="punto-number">11.</span> Transparencia Presupuestaria</div>
+        <div class="punto-card"><span class="punto-number">12.</span> Soberanía de Datos</div>
+        <div class="punto-card"><span class="punto-number">13.</span> Integridad de Datos</div>
+        <div class="punto-card"><span class="punto-number">14.</span> Evidencia Forense 4.0</div>
+        <div class="punto-card"><span class="punto-number">15.</span> Guía de Tránsito Inmutable</div>
+        <div class="punto-card"><span class="punto-number">16.</span> Sello Conformidad Fiscal 4.0</div>
+        <div class="punto-card"><span class="punto-number">17.</span> Gemelo Digital</div>
+        <div class="punto-card"><span class="punto-number">18.</span> Hash de Origen (DNA)</div>
+        <div class="punto-card"><span class="punto-number">19.</span> Smart-Settle</div>
+        <div class="punto-card"><span class="punto-number">20.</span> Lab. Integridad 4.0</div>
+        <div class="pun
