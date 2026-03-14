@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vertex Axioma | Terminal</title>
     <style>
-        /* Forzamos el fondo oscuro y el color de texto para que nada se vea negro sobre negro */
         html, body { 
             background-color: #050a15 !important; 
             color: #ffffff !important; 
@@ -52,6 +51,7 @@
             text-transform: uppercase;
         }
         button:hover { background: #003399; }
+        button:disabled { background: #333; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -66,64 +66,51 @@
     <form id="vertex-form">
         <input type="text" name="nombre" placeholder="NOMBRE COMPLETO" required>
         <input type="email" name="email" placeholder="EMAIL INSTITUCIONAL" required>
-        <select name="documento" required>
-            <option value="" disabled selected>SELECCIONE ACTIVO</option>
-            <option value="integridad">Reglamento de Integridad Forense</option>
-            <option value="sello">Modelo Sello Transfronterizo</option>
-            <option value="constitucion">Constitución AXIOMA®</option>
-            <option value="integracion">Guía de Integración Técnica</option>
-        </select>
-        <button type="submit" id="submit-btn">SINCRONIZAR Y ENVIAR</button>
+        
+        <div class="divider"></div>
+        <input type="text" name="pureza" placeholder="PUREZA (Ej: 99.2%)" required>
+        <input type="text" name="peso" placeholder="PESO/HUMEDAD (Ej: 12450kg)" required>
+        <input type="text" name="coords" placeholder="GPS (Lat, Long)" required>
+
+        <button type="submit" id="submit-btn">SINCRONIZAR Y GENERAR SELLO</button>
     </form>
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwVnmZKUU5DUY_x_SUozhPrzDzASpndN1I5KfSeYsOkZ08hIQj2ELDUD-BS4nYJDpg9mg/exec';
+    // URL de tu nueva API de Google Docs (la que genera el Sello Dinámico)
+    const URL_API_CERTIFICACION = "https://script.google.com/macros/s/AKfycbz3vOxH5Qa-FDVurboBbhAOFAT4FF9djohbf33hEjp1rskrV540bdNBdjHoiSSnn3c6FQ/exec";
+    
     const form = document.getElementById('vertex-form');
     const btn = document.getElementById('submit-btn');
 
     form.addEventListener('submit', e => {
         e.preventDefault();
-        btn.innerText = "PROCESANDO...";
+        
+        btn.innerText = "PETRIFICANDO DATOS...";
         btn.disabled = true;
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: new FormData(form)})
-        .then(() => { setTimeout(() => { window.location.href = 'gracias.html'; }, 2000); })
-        .catch(() => { alert("Error de conexión"); btn.disabled = false; btn.innerText = "REINTENTAR"; });
+
+        // Capturamos los datos
+        const formData = new FormData(form);
+        
+        // Enviamos a la API
+        fetch(URL_API_CERTIFICACION, { 
+            method: 'POST', 
+            mode: 'no-cors', 
+            body: new URLSearchParams(formData)
+        })
+        .then(() => { 
+            alert("🛡️ Sello de Inmutabilidad Generado. Revise su correo para descargar el PDF Petrificado.");
+            btn.innerText = "SINCRONIZADO EXITOSAMENTE";
+            form.reset();
+        })
+        .catch(err => { 
+            console.error(err);
+            alert("Error en la terminal forense."); 
+            btn.disabled = false; 
+            btn.innerText = "REINTENTAR"; 
+        });
     });
 </script>
-const URL_API_CERTIFICACION = "https://script.google.com/macros/s/AKfycbz3vOxH5Qa-FDVurboBbhAOFAT4FF9djohbf33hEjp1rskrV540bdNBdjHoiSSnn3c6FQ/exec";
 
-function enviarMetadatosVertex(evento) {
-    evento.preventDefault();
-    
-    // Capturamos los datos del formulario de GitHub
-    const formData = new FormData(evento.target);
-    const data = {};
-    formData.forEach((value, key) => { data[key] = value; });
-
-    // Mostramos un mensaje de "Procesando en Nodo..."
-    console.log("Sincronizando con Protocolo AXIOMA...");
-
-    // Enviamos los datos a la nueva API de Google Docs
-    fetch(URL_API_CERTIFICACION, {
-        method: 'POST',
-        mode: 'no-cors', // Importante para Google Scripts
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(data)
-    })
-    .then(() => {
-        alert("🛡️ Sello de Inmutabilidad Generado. Revise su correo para descargar el PDF Petrificado.");
-    })
-    .catch(error => {
-        console.error("Error en la terminal:", error);
-        alert("Error en la sincronización forense.");
-    });
-}
-
-// Vinculamos el formulario
-document.getElementById('formulario-vertex').addEventListener('submit', enviarMetadatosVertex);
 </body>
 </html>
-<input type="text" name="pureza" placeholder="Pureza (ej: 99.2)" required>
-<input type="text" name="peso" placeholder="Peso/Humedad (ej: 12450kg / 4.5%)" required>
-<input type="text" name="coords" id="coords" placeholder="GPS (Lat, Long)" required>
