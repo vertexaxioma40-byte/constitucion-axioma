@@ -91,7 +91,37 @@
         .catch(() => { alert("Error de conexión"); btn.disabled = false; btn.innerText = "REINTENTAR"; });
     });
 </script>
+const URL_API_CERTIFICACION = "https://script.google.com/macros/s/AKfycbz3vOxH5Qa-FDVurboBbhAOFAT4FF9djohbf33hEjp1rskrV540bdNBdjHoiSSnn3c6FQ/exec";
 
+function enviarMetadatosVertex(evento) {
+    evento.preventDefault();
+    
+    // Capturamos los datos del formulario de GitHub
+    const formData = new FormData(evento.target);
+    const data = {};
+    formData.forEach((value, key) => { data[key] = value; });
+
+    // Mostramos un mensaje de "Procesando en Nodo..."
+    console.log("Sincronizando con Protocolo AXIOMA...");
+
+    // Enviamos los datos a la nueva API de Google Docs
+    fetch(URL_API_CERTIFICACION, {
+        method: 'POST',
+        mode: 'no-cors', // Importante para Google Scripts
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(data)
+    })
+    .then(() => {
+        alert("🛡️ Sello de Inmutabilidad Generado. Revise su correo para descargar el PDF Petrificado.");
+    })
+    .catch(error => {
+        console.error("Error en la terminal:", error);
+        alert("Error en la sincronización forense.");
+    });
+}
+
+// Vinculamos el formulario
+document.getElementById('formulario-vertex').addEventListener('submit', enviarMetadatosVertex);
 </body>
 </html>
 <input type="text" name="pureza" placeholder="Pureza (ej: 99.2)" required>
