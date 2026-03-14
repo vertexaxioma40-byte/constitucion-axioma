@@ -1,94 +1,27 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vertex Axioma | Terminal de Carga</title>
-    <style>
-        html, body { 
-            background-color: #050a15 !important; 
-            color: #ffffff !important; 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'Courier New', Courier, monospace;
-        }
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px;
-        }
-        .container { 
-            background: #0a1122; 
-            padding: 30px; 
-            border: 2px solid #002060; 
-            border-radius: 8px; 
-            box-shadow: 0 0 20px rgba(0, 32, 96, 0.8); 
-            width: 100%; 
-            max-width: 450px; 
-            text-align: center;
-        }
-        h1 { font-size: 1.4rem; color: #ffffff !important; margin: 0; }
-        .nodo-sub { color: #4da6ff !important; font-size: 0.8rem; display: block; margin: 10px 0; }
-        .divider { height: 1px; background: #002060; margin: 15px 0; }
-        
-        form { display: flex; flex-direction: column; gap: 15px; margin-top: 25px; }
-        label { font-size: 0.7rem; color: #4da6ff; text-align: left; text-transform: uppercase; }
-        input { 
-            background: #000 !important; 
-            border: 1px solid #4da6ff !important; 
-            color: #ffffff !important; 
-            padding: 12px; 
-            font-family: 'Courier New', monospace;
-        }
-        button { 
-            background: #002060; 
-            color: #ffffff; 
-            border: 1px solid #4da6ff; 
-            padding: 15px; 
-            cursor: pointer; 
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-top: 10px;
-        }
-        button:hover { background: #003399; }
-        button:disabled { background: #333; cursor: not-allowed; }
-        
-        .status-msg { font-size: 0.8rem; margin-top: 15px; color: #4da6ff; display: none; }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h1>TERMINAL DE CARGA 4.0</h1>
-    <span class="nodo-sub">Contrato de Adhesión & Metadatos</span>
-    <div class="divider"></div>
-    <p style="font-size: 0.8rem;">Firme su compromiso y registre los metadatos para petrificar su Sello de Inmutabilidad.</p>
-    
-    <form id="terminal-form">
-        <input type="hidden" name="tipo_documento" value="CONTRATO">
-
-        <label>Identificación del Responsable</label>
-        <input type="text" name="nombre" placeholder="NOMBRE COMPLETO DEL TÉCNICO" required>
-        <input type="email" name="email" placeholder="EMAIL INSTITUCIONAL" required>
-        
-        <div class="divider"></div>
-        <label>Metadatos del Activo (Prueba Técnica)</label>
-        <input type="text" name="pureza" placeholder="PUREZA (Ej: 99.5%)" required>
-        <input type="text" name="peso" placeholder="PESO / HUMEDAD (Ej: 4500 kg)" required>
-        <input type="text" name="coords" id="coords-input" placeholder="GPS (Lat, Long)" required>
-        
-        <button type="submit" id="submit-btn">ACEPTAR TÉRMINOS Y PETRIFICAR</button>
-        <div id="status" class="status-msg">PROCESANDO PROTOCOLO AXIOMA®...</div>
-    </form>
-</div>
-
 <script>
     const URL_API_CERTIFICACION = "https://script.google.com/macros/s/AKfycby2-GFVDJSI14EKRtO1lygO5h5SSaesIk_xbbzjnL0PkjQwovkUxcT23xraR5Mv_cxVAg/exec";
     
     const form = document.getElementById('terminal-form');
     const btn = document.getElementById('submit-btn');
     const status = document.getElementById('status');
+
+    // PROTOCOLO DE RECUPERACIÓN DE DATOS (AUTO-COMPLETADO)
+    window.onload = () => {
+        // 1. Intentar obtener GPS automáticamente
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const coordsInput = document.getElementById('coords-input');
+                if(coordsInput) coordsInput.value = `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
+            });
+        }
+
+        // 2. Recuperar Identidad desde la Memoria Axioma (LocalStorage)
+        const nombreGuardado = localStorage.getItem('vertex_nombre');
+        const emailGuardado = localStorage.getItem('vertex_email');
+
+        if (nombreGuardado) form.querySelector('input[name="nombre"]').value = nombreGuardado;
+        if (emailGuardado) form.querySelector('input[name="email"]').value = emailGuardado;
+    };
 
     form.addEventListener('submit', e => {
         e.preventDefault();
@@ -107,6 +40,10 @@
         .then(() => { 
             status.innerText = "¡CONTRATO Y SELLO EMITIDOS!";
             alert("🛡️ Protocolo Vertex Axioma® Finalizado.\n\nEl Contrato de Adhesión y su Sello de Inmutabilidad han sido petrificados y enviados a su casilla de correo.");
+            
+            // Opcional: Limpiar memoria después de finalizar el proceso
+            // localStorage.clear(); 
+            
             setTimeout(() => { window.location.href = 'index.html'; }, 3000);
         })
         .catch(err => { 
@@ -117,15 +54,4 @@
             status.style.display = "none";
         });
     });
-
-    window.onload = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((pos) => {
-                document.getElementById('coords-input').value = `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
-            });
-        }
-    };
 </script>
-
-</body>
-</html>
