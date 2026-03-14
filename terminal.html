@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vertex Axioma | Terminal de Carga</title>
+    <title>Vertex Axioma | Terminal de Carga 5.0</title>
     <style>
         html, body { 
             background-color: #050a15 !important; 
@@ -20,32 +20,32 @@
             box-shadow: 0 0 20px rgba(0, 32, 96, 0.8); 
             width: 100%; max-width: 450px; text-align: center;
         }
-        h1 { font-size: 1.4rem; color: #ffffff !important; margin: 0; }
+        h1 { font-size: 1.4rem; color: #ffffff !important; margin: 0; letter-spacing: 2px; }
         .nodo-sub { color: #4da6ff !important; font-size: 0.8rem; display: block; margin: 10px 0; }
         .divider { height: 1px; background: #002060; margin: 15px 0; }
         form { display: flex; flex-direction: column; gap: 15px; margin-top: 25px; }
-        label { font-size: 0.7rem; color: #4da6ff; text-align: left; text-transform: uppercase; }
+        label { font-size: 0.7rem; color: #4da6ff; text-align: left; text-transform: uppercase; font-weight: bold; }
         input { 
             background: #000 !important; border: 1px solid #4da6ff !important; 
             color: #ffffff !important; padding: 12px; 
-            font-family: 'Courier New', monospace;
+            font-family: 'Courier New', monospace; font-size: 0.9rem;
         }
         button { 
             background: #002060; color: #ffffff; border: 1px solid #4da6ff; 
-            padding: 15px; cursor: pointer; font-weight: bold;
-            text-transform: uppercase; margin-top: 10px;
+            padding: 18px; cursor: pointer; font-weight: bold;
+            text-transform: uppercase; margin-top: 10px; font-size: 0.9rem;
         }
-        button:hover { background: #003399; }
+        button:hover { background: #003399; box-shadow: 0 0 10px #4da6ff; }
         .status-msg { font-size: 0.8rem; margin-top: 15px; color: #4da6ff; display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>TERMINAL DE CARGA 4.0</h1>
-    <span class="nodo-sub">Contrato de Adhesión & Metadatos Forenses</span>
+    <h1>TERMINAL DE CARGA 5.0</h1>
+    <span class="nodo-sub">Validación Descentralizada & Metadatos Forenses</span>
     <div class="divider"></div>
-    <p style="font-size: 0.8rem;">Protocolo AXIOMA®: Registre los datos para la emisión del Sello de Inmutabilidad.</p>
+    <p style="font-size: 0.8rem; color: #888;">Protocolo AXIOMA®: Registre los metadatos para la emisión del Sello de Inmutabilidad.</p>
     
     <form id="terminal-form">
         <label>Identificación del Responsable</label>
@@ -54,7 +54,67 @@
         
         <div class="divider"></div>
         
-        <label>Metadatos del Activo (Auditoría 4.0)</label>
-        <input type="text" name="titular" placeholder="TITULAR (EJ: GABRIEL VADELL)" required>
-        <input type="text" name="activo" placeholder="ACTIVO (EJ: LITIO / ORO)" required>
-        <input type="text" name="pureza" placeholder="PUREZA (EJ: 99
+        <label>Auditoría Forense de Activos Reales</label>
+        <input type="text" name="titular" id="term_titular" placeholder="TITULAR (EJ: GABRIEL ALEJANDRO VADELL)" required>
+        <input type="text" name="activo" id="term_activo" placeholder="ACTIVO (EJ: LITIO / ORO / COBRE)" required>
+        <input type="text" name="pureza" placeholder="PUREZA (EJ: 99.5%)" required>
+        <input type="text" name="peso" placeholder="PESO NETO (EJ: 1500 KG)" required>
+        <input type="text" name="coords" id="coords-input" placeholder="LOCALIZACIÓN GPS" required>
+        
+        <button type="submit" id="submit-btn">AUTORIZAR Y PETRIFICAR REGISTRO</button>
+        <div id="status" class="status-msg">CONEXIÓN ESTABLE CON NODO PRIMARIO. ESPERANDO DATOS...</div>
+    </form>
+</div>
+
+<script>
+    // URL DE TU SCRIPT DE GOOGLE (Mantené la que ya tenías que funcionaba)
+    const URL_API = "https://script.google.com/macros/s/AKfycbwWlstlmBA-FqS4ru4DpotXR3XaytAUUXrtDfLZUuGMdOmd_OnfN7G-iDbBgrIiZFud/exec";
+    
+    const form = document.getElementById('terminal-form');
+    const btn = document.getElementById('submit-btn');
+    const status = document.getElementById('status');
+
+    window.onload = () => {
+        // GPS automático
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                document.getElementById('coords-input').value = `${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`;
+            });
+        }
+
+        // RECUPERAR DATOS DEL ÍNDICE (Si se guardaron)
+        const nombreIndex = localStorage.getItem('vertex_nombre');
+        const emailIndex = localStorage.getItem('vertex_email');
+        
+        if (nombreIndex) document.getElementById('term_nombre').value = nombreIndex;
+        if (emailIndex) document.getElementById('term_email').value = emailIndex;
+    };
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        btn.style.display = "none";
+        status.style.display = "block";
+        status.innerText = "BLOQUEANDO CADENA DE CUSTODIA...";
+
+        const params = new URLSearchParams(new FormData(form));
+
+        fetch(URL_API + "?" + params.toString(), { 
+            method: 'GET',
+            mode: 'no-cors' 
+        })
+        .then(() => { 
+            status.innerText = "¡REGISTRO PETRIFICADO EXITOSAMENTE!";
+            alert("🛡️ Sello de Inmutabilidad Transfronteriza Emitido.");
+            setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+        })
+        .catch(err => { 
+            alert("Error de sincronización con el Nodo Vertex."); 
+            btn.style.display = "block";
+            status.style.display = "none";
+        });
+    });
+</script>
+
+</body>
+</html>
