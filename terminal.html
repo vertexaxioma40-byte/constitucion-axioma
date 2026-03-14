@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertex Axioma | Terminal de Carga</title>
+    <style>
+        html, body { 
+            background-color: #050a15 !important; 
+            color: #ffffff !important; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Courier New', Courier, monospace;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        .container { 
+            background: #0a1122; 
+            padding: 30px; 
+            border: 2px solid #002060; 
+            border-radius: 8px; 
+            box-shadow: 0 0 20px rgba(0, 32, 96, 0.8); 
+            width: 100%; 
+            max-width: 450px; 
+            text-align: center;
+        }
+        h1 { font-size: 1.4rem; color: #ffffff !important; margin: 0; }
+        .nodo-sub { color: #4da6ff !important; font-size: 0.8rem; display: block; margin: 10px 0; }
+        .divider { height: 1px; background: #002060; margin: 15px 0; }
+        
+        form { display: flex; flex-direction: column; gap: 15px; margin-top: 25px; }
+        label { font-size: 0.7rem; color: #4da6ff; text-align: left; text-transform: uppercase; }
+        input { 
+            background: #000 !important; 
+            border: 1px solid #4da6ff !important; 
+            color: #ffffff !important; 
+            padding: 12px; 
+            font-family: 'Courier New', monospace;
+        }
+        button { 
+            background: #002060; 
+            color: #ffffff; 
+            border: 1px solid #4da6ff; 
+            padding: 15px; 
+            cursor: pointer; 
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+        button:hover { background: #003399; }
+        button:disabled { background: #333; cursor: not-allowed; }
+        
+        .status-msg { font-size: 0.8rem; margin-top: 15px; color: #4da6ff; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>TERMINAL DE CARGA 4.0</h1>
+    <span class="nodo-sub">Simulación de Activos Reales</span>
+    <div class="divider"></div>
+    <p style="font-size: 0.8rem;">Ingrese los metadatos para generar el Hash de Origen y emitir su Sello de Inmutabilidad.</p>
+    
+    <form id="terminal-form">
+        <label>Identificación</label>
+        <input type="text" name="nombre" placeholder="NOMBRE DEL TÉCNICO / EMPRESA" required>
+        <input type="email" name="email" placeholder="EMAIL PARA RECIBIR EL SELLO" required>
+        
+        <div class="divider"></div>
+        <label>Metadatos del Activo</label>
+        <input type="text" name="pureza" placeholder="PUREZA (Ej: 99.5%)" required>
+        <input type="text" name="peso" placeholder="PESO / VOLUMEN (Ej: 4500 kg)" required>
+        <input type="text" name="coords" id="coords-input" placeholder="GPS (Lat, Long)" required>
+        
+        <button type="submit" id="submit-btn">GENERAR SELLO Y PETRIFICAR</button>
+        <div id="status" class="status-msg">PROCESANDO PROTOCOLO AXIOMA®...</div>
+    </form>
+</div>
+
+<script>
+    const URL_API_CERTIFICACION = "https://script.google.com/macros/s/AKfycbz3vOxH5Qa-FDVurboBbhAOFAT4FF9djohbf33hEjp1rskrV540bdNBdjHoiSSnn3c6FQ/exec";
+    
+    const form = document.getElementById('terminal-form');
+    const btn = document.getElementById('submit-btn');
+    const status = document.getElementById('status');
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        btn.disabled = true;
+        btn.style.display = "none";
+        status.style.display = "block";
+
+        const formData = new FormData(form);
+        
+        fetch(URL_API_CERTIFICACION, { 
+            method: 'POST', 
+            mode: 'no-cors', 
+            body: new URLSearchParams(formData)
+        })
+        .then(() => { 
+            status.innerText = "¡SELLO EMITIDO CON ÉXITO!";
+            alert("🛡️ Sello de Inmutabilidad Generado. El Hash de Origen ha sido enviado a su correo institucional.");
+            setTimeout(() => { window.location.href = 'index.html'; }, 3000);
+        })
+        .catch(err => { 
+            console.error(err);
+            alert("Error en la sincronización del Nodo."); 
+            btn.disabled = false; 
+            btn.style.display = "block";
+            status.style.display = "none";
+        });
+    });
+
+    // Pequeño truco: intentar obtener GPS automáticamente
+    window.onload = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                document.getElementById('coords-input').value = `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
+            });
+        }
+    };
+</script>
+
+</body>
+</html>
