@@ -43,79 +43,18 @@
 
 <div class="container">
     <h1>TERMINAL DE CARGA 4.0</h1>
-    <span class="nodo-sub">Contrato de Adhesión & Metadatos</span>
+    <span class="nodo-sub">Contrato de Adhesión & Metadatos Forenses</span>
     <div class="divider"></div>
-    <p style="font-size: 0.8rem;">Firme su compromiso y registre los metadatos para petrificar su Sello de Inmutabilidad.</p>
+    <p style="font-size: 0.8rem;">Protocolo AXIOMA®: Registre los datos para la emisión del Sello de Inmutabilidad.</p>
     
     <form id="terminal-form">
-        <input type="hidden" name="tipo_documento" value="CONTRATO">
-
         <label>Identificación del Responsable</label>
         <input type="text" name="nombre" id="term_nombre" placeholder="NOMBRE COMPLETO" required>
         <input type="email" name="email" id="term_email" placeholder="EMAIL INSTITUCIONAL" required>
         
         <div class="divider"></div>
-        <label>Metadatos del Activo (Prueba Técnica)</label>
-        <input type="text" name="pureza" placeholder="PUREZA (Ej: 99.5%)" required>
-        <input type="text" name="peso" placeholder="PESO / HUMEDAD (Ej: 4500 kg)" required>
-        <input type="text" name="coords" id="coords-input" placeholder="GPS (Lat, Long)" required>
-        <input type="text" name="titular" placeholder="Nombre del Titular del Activo" required>
-<input type="text" name="activo" placeholder="Tipo de Activo (ej. Soja, Oro, Litio)" required>
         
-        <button type="submit" id="submit-btn">ACEPTAR TÉRMINOS Y PETRIFICAR</button>
-        <div id="status" class="status-msg">PROCESANDO PROTOCOLO AXIOMA®...</div>
-    </form>
-</div>
-
-<script>
-    const URL_API_CERTIFICACION = "https://script.google.com/macros/s/AKfycbyu1Mmia3TgmpizQI0shFd7fph-rPJx9o_ezLwlzWjwmt_Nnnvprkp08qQ03hX55QG6/exec";
-    
-    const form = document.getElementById('terminal-form');
-    const btn = document.getElementById('submit-btn');
-    const status = document.getElementById('status');
-
-    // FUNCIÓN DE AUTO-COMPLETADO AL CARGAR
-    window.onload = () => {
-        // GPS automático
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((pos) => {
-                document.getElementById('coords-input').value = `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
-            });
-        }
-
-        // Recuperar memoria Axioma
-        const nombreGuardado = localStorage.getItem('vertex_nombre');
-        const emailGuardado = localStorage.getItem('vertex_email');
-
-        if (nombreGuardado) document.getElementById('term_nombre').value = nombreGuardado;
-        if (emailGuardado) document.getElementById('term_email').value = emailGuardado;
-    };
-
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        btn.style.display = "none";
-        status.style.display = "block";
-
-        const formData = new FormData(form);
-        
-        fetch(URL_API_CERTIFICACION, { 
-            method: 'POST', 
-            mode: 'no-cors', 
-            body: new URLSearchParams(formData)
-        })
-        .then(() => { 
-            status.innerText = "¡CONTRATO Y SELLO EMITIDOS!";
-            alert("🛡️ Protocolo Vertex Axioma® Finalizado.");
-            setTimeout(() => { window.location.href = 'index.html'; }, 3000);
-        })
-        .catch(err => { 
-            console.error(err);
-            alert("Error en la sincronización."); 
-            btn.style.display = "block";
-            status.style.display = "none";
-        });
-    });
-</script>
-
-</body>
-</html>
+        <label>Metadatos del Activo (Auditoría 4.0)</label>
+        <input type="text" name="titular" placeholder="TITULAR (EJ: GABRIEL VADELL)" required>
+        <input type="text" name="activo" placeholder="ACTIVO (EJ: LITIO / ORO)" required>
+        <input type="text" name="pureza" placeholder="PUREZA (EJ: 99
