@@ -35,37 +35,42 @@
     </div>
 
     <script>
+        // ASEGÚRATE QUE ESTA URL SEA LA DE TU ÚLTIMA "NUEVA IMPLEMENTACIÓN"
         const API = "https://script.google.com/macros/s/AKfycbxVdc7lNuPre3K7-NBLnliPxHdI_yFaOx-M_UTxJjNFsSprKu7ggc86MkWSgowwMRf7/exec"; 
 
         window.onload = () => {
-            // Carga de memoria
+            // 1. CARGA MEMORIA DEL ÍNDICE
             document.getElementById('n').value = localStorage.getItem('vertex_nombre') || "";
             document.getElementById('e').value = localStorage.getItem('vertex_email') || "";
 
-            // Intento de GPS (Si falla, no bloquea)
+            // 2. INTENTO GPS
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(p => {
                     document.getElementById('c').value = p.coords.latitude.toFixed(5) + ", " + p.coords.longitude.toFixed(5);
-                }, () => { console.log("GPS Denegado por usuario."); });
+                }, () => { console.log("GPS no disponible"); });
             }
         };
 
         document.getElementById('v-form').onsubmit = (e) => {
             e.preventDefault();
             const btn = document.getElementById('b');
-            btn.innerText = "BLOQUEANDO...";
+            btn.innerText = "PETRIFICANDO...";
             btn.disabled = true;
 
             const params = new URLSearchParams(new FormData(e.target)).toString();
             
-            // Usamos una técnica de envío más simple (imagen) para evitar bloqueos de red
-            const img = new Image();
-            img.src = API + "?" + params;
-            
-            setTimeout(() => {
+            // ENVÍO REAL POR FETCH (Modo no-cors para Google Apps Script)
+            fetch(API + "?" + params, { mode: 'no-cors' })
+            .then(() => {
                 alert("🛡️ Sello de Inmutabilidad Transfronteriza Enviado.");
                 window.location.href = 'index.html';
-            }, 2000);
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Error de conexión con el Nodo Vertex.");
+                btn.disabled = false;
+                btn.innerText = "PETRIFICAR REGISTRO";
+            });
         };
     </script>
 </body>
