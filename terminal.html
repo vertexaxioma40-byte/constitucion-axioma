@@ -1,52 +1,59 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Vertex Axioma | Terminal</title>
-    <style>
-        body { background: #050a15; color: white; font-family: monospace; display: flex; flex-direction: column; align-items: center; padding-top: 50px; }
-        .box { background: #0a1122; padding: 20px; border: 1px solid #002060; border-radius: 10px; width: 350px; }
-        input { width: 90%; margin: 10px 0; padding: 10px; background: #000; border: 1px solid #4da6ff; color: white; }
-        button { width: 100%; padding: 15px; background: #002060; color: white; border: none; cursor: pointer; font-weight: bold; }
-    </style>
 </head>
 <body>
     <div class="box">
         <h3>TERMINAL VERTEX</h3>
         <form id="v-form">
+            <label style="font-size: 0.7rem; color: #4da6ff;">RESPONSABLE</label>
             <input type="text" name="nombre" id="n" placeholder="Nombre" required>
             <input type="email" name="email" id="e" placeholder="Email" required>
             <hr>
+            <label style="font-size: 0.7rem; color: #4da6ff;">METADATOS DEL ACTIVO</label>
             <input type="text" name="titular" placeholder="Titular (Ej: Vadell)" required>
             <input type="text" name="activo" placeholder="Activo (Ej: Litio)" required>
             <input type="text" name="pureza" placeholder="Pureza" required>
             <input type="text" name="peso" placeholder="Peso" required>
-            <input type="hidden" name="coords" id="c">
+            
+            <label style="font-size: 0.7rem; color: #4da6ff;">UBICACIÓN SATELITAL (GPS)</label>
+            <input type="text" name="coords" id="c" placeholder="Sincronizando GPS..." readonly style="color: #4da6ff; font-weight: bold; background: #000;">
+            
             <button type="submit" id="b">PETRIFICAR</button>
         </form>
     </div>
 
     <script>
-        const API = "https://script.google.com/macros/s/AKfycbyYpqgLUSyhk0LKZEOmDVN5m_OFdCuD9SQDGhXno78fe1KuxhgjNMgCDhJ_7iHam29y/exec"; // <--- ACTUALIZA ESTO
+        // ESTA URL ES TU NODO PRIMARIO
+        const API = "https://script.google.com/macros/s/AKfycbyYpqgLUSyhk0LKZEOmDVN5m_OFdCuD9SQDGhXno78fe1KuxhgjNMgCDhJ_7iHam29y/exec"; 
 
-        // RECUPERAR MEMORIA DEL ÍNDICE
         window.onload = () => {
+            // RECUPERAR MEMORIA DEL ÍNDICE
             document.getElementById('n').value = localStorage.getItem('vertex_nombre') || "";
             document.getElementById('e').value = localStorage.getItem('vertex_email') || "";
+            
+            // CAPTURA DE COORDENADAS PARA EL SELLO DE INMUTABILIDAD TRANSFRONTERIZA
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(p => {
                     document.getElementById('c').value = p.coords.latitude.toFixed(5) + ", " + p.coords.longitude.toFixed(5);
+                }, (err) => {
+                    document.getElementById('c').value = "GPS No Autorizado";
                 });
             }
         };
 
         document.getElementById('v-form').onsubmit = (e) => {
             e.preventDefault();
-            document.getElementById('b').innerText = "ENVIANDO...";
+            document.getElementById('b').innerText = "BLOQUEANDO CADENA...";
+            document.getElementById('b').disabled = true;
+
             const params = new URLSearchParams(new FormData(e.target)).toString();
+            
+            // ENVÍO AL NODO PARA AUDITORÍA 4.0
             fetch(API + "?" + params, { mode: 'no-cors' }).then(() => {
-                alert("🛡️ Sello Emitido.");
+                alert("🛡️ Sello de Inmutabilidad Transfronteriza Emitido.");
                 window.location.href = 'index.html';
+            }).catch(err => {
+                alert("Error de conexión con el Nodo.");
+                document.getElementById('b').innerText = "REINTENTAR";
+                document.getElementById('b').disabled = false;
             });
         };
     </script>
