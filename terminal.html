@@ -57,8 +57,8 @@
         <label>Auditoría Forense de Activos Reales</label>
         <input type="text" name="titular" id="term_titular" placeholder="TITULAR (EJ: GABRIEL ALEJANDRO VADELL)" required>
         <input type="text" name="activo" id="term_activo" placeholder="ACTIVO (EJ: LITIO / ORO / COBRE)" required>
-        <input type="text" name="pureza" placeholder="PUREZA (EJ: 99.5%)" required>
-        <input type="text" name="peso" placeholder="PESO NETO (EJ: 1500 KG)" required>
+        <input type="text" name="pureza" id="term_pureza" placeholder="PUREZA (EJ: 99.5%)" required>
+        <input type="text" name="peso" id="term_peso" placeholder="PESO NETO (EJ: 1500 KG)" required>
         <input type="text" name="coords" id="coords-input" placeholder="LOCALIZACIÓN GPS" required>
         
         <button type="submit" id="submit-btn">AUTORIZAR Y PETRIFICAR REGISTRO</button>
@@ -67,55 +67,7 @@
 </div>
 
 <script>
-    // URL DE TU SCRIPT DE GOOGLE (Mantené la que ya tenías que funcionaba)
-    const URL_API = "https://script.google.com/macros/s/AKfycbyUY_jc_gXQQPo3ialGzdnizl2R_r246kXH3_adMjiuVMwpi7194JLQWSYBO4OZ0wI5/exec";
-    
-    const form = document.getElementById('terminal-form');
-    const btn = document.getElementById('submit-btn');
-    const status = document.getElementById('status');
-
-    window.onload = () => {
-        // GPS automático
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((pos) => {
-                document.getElementById('coords-input').value = `${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`;
-            });
-        }
-
-        // RECUPERAR DATOS DEL ÍNDICE (Si se guardaron)
-        const nombreIndex = localStorage.getItem('vertex_nombre');
-        const emailIndex = localStorage.getItem('vertex_email');
-        
-        if (nombreIndex) document.getElementById('term_nombre').value = nombreIndex;
-        if (emailIndex) document.getElementById('term_email').value = emailIndex;
-    };
-
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        
-        btn.style.display = "none";
-        status.style.display = "block";
-        status.innerText = "BLOQUEANDO CADENA DE CUSTODIA...";
-
-        const params = new URLSearchParams(new FormData(form));
-
-        fetch(URL_API + "?" + params.toString(), { 
-            method: 'GET',
-            mode: 'no-cors' 
-        })
-        .then(() => { 
-            status.innerText = "¡REGISTRO PETRIFICADO EXITOSAMENTE!";
-            alert("🛡️ Sello de Inmutabilidad Transfronteriza Emitido.");
-            setTimeout(() => { window.location.href = 'index.html'; }, 2000);
-        })
-        .catch(err => { 
-            alert("Error de sincronización con el Nodo Vertex."); 
-            btn.style.display = "block";
-            status.style.display = "none";
-        });
-    });
-<script>
-    // URL DE TU SCRIPT DE GOOGLE
+    // URL ÚNICA DE TU SCRIPT DE GOOGLE
     const URL_API = "https://script.google.com/macros/s/AKfycbyUY_jc_gXQQPo3ialGzdnizl2R_r246kXH3_adMjiuVMwpi7194JLQWSYBO4OZ0wI5/exec";
     
     const form = document.getElementById('terminal-form');
@@ -142,25 +94,30 @@
         status.style.display = "block";
         status.innerText = "BLOQUEANDO CADENA DE CUSTODIA...";
 
-        // Capturamos los datos del formulario
+        // Capturamos los datos del formulario de forma limpia
         const formData = new FormData(form);
-        const queryString = new URLSearchParams(formData).toString();
-        const finalURL = `${URL_API}?${queryString}`;
-
-        // Usamos una técnica de "Imagen" o "Redirección silenciosa" para evitar bloqueos de CORS
-        // Esta es la forma más vieja y confiable de enviar datos a Google Sheets
-        const script = document.createElement('script');
-        script.src = finalURL;
+        const params = new URLSearchParams();
         
-        // Como Google responde un texto y no un script, dará un pequeño error interno, 
-        // pero el envío ya habrá llegado al servidor de Google.
+        for (const [key, value] of formData.entries()) {
+            params.append(key, value);
+        }
+
+        const finalURL = `${URL_API}?${params.toString()}`;
+
+        // Técnica de inyección de script para envío forzado (bypass CORS)
+        const scriptElement = document.createElement('script');
+        scriptElement.src = finalURL;
+        
+        // Manejador de éxito visual
         setTimeout(() => {
             status.innerText = "¡REGISTRO PETRIFICADO EXITOSAMENTE!";
-            alert("🛡️ Sello de Inmutabilidad Transfronteriza Emitido.");
+            alert("🛡️ Sello de Inmutabilidad Transfronteriza Emitido para Vertex Axioma.");
             window.location.href = 'index.html';
         }, 2500);
 
-        // Agregamos el script al cuerpo para disparar la petición
-        document.body.appendChild(script);
+        document.body.appendChild(scriptElement);
     });
 </script>
+
+</body>
+</html>
