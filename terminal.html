@@ -2,75 +2,53 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vertex Axioma | Terminal de Carga 5.0</title>
+    <title>Vertex Axioma | Terminal</title>
     <style>
-        html, body { background-color: #050a15 !important; color: #ffffff !important; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; }
-        body { display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
-        .container { background: #0a1122; padding: 30px; border: 2px solid #002060; border-radius: 8px; box-shadow: 0 0 20px rgba(0, 32, 96, 0.8); width: 100%; max-width: 450px; text-align: center; }
-        h1 { font-size: 1.4rem; color: #ffffff !important; margin: 0; letter-spacing: 2px; }
-        .nodo-sub { color: #4da6ff !important; font-size: 0.8rem; display: block; margin: 10px 0; }
-        .divider { height: 1px; background: #002060; margin: 15px 0; }
-        form { display: flex; flex-direction: column; gap: 15px; margin-top: 25px; }
-        label { font-size: 0.7rem; color: #4da6ff; text-align: left; text-transform: uppercase; font-weight: bold; }
-        input { background: #000 !important; border: 1px solid #4da6ff !important; color: #ffffff !important; padding: 12px; font-family: 'Courier New', monospace; font-size: 0.9rem; }
-        button { background: #002060; color: #ffffff; border: 1px solid #4da6ff; padding: 18px; cursor: pointer; font-weight: bold; text-transform: uppercase; margin-top: 10px; font-size: 0.9rem; }
-        .status-msg { font-size: 0.8rem; margin-top: 15px; color: #4da6ff; display: none; }
+        body { background: #050a15; color: white; font-family: monospace; display: flex; flex-direction: column; align-items: center; padding-top: 50px; }
+        .box { background: #0a1122; padding: 20px; border: 1px solid #002060; border-radius: 10px; width: 350px; }
+        input { width: 90%; margin: 10px 0; padding: 10px; background: #000; border: 1px solid #4da6ff; color: white; }
+        button { width: 100%; padding: 15px; background: #002060; color: white; border: none; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
+    <div class="box">
+        <h3>TERMINAL VERTEX</h3>
+        <form id="v-form">
+            <input type="text" name="nombre" id="n" placeholder="Nombre" required>
+            <input type="email" name="email" id="e" placeholder="Email" required>
+            <hr>
+            <input type="text" name="titular" placeholder="Titular (Ej: Vadell)" required>
+            <input type="text" name="activo" placeholder="Activo (Ej: Litio)" required>
+            <input type="text" name="pureza" placeholder="Pureza" required>
+            <input type="text" name="peso" placeholder="Peso" required>
+            <input type="hidden" name="coords" id="c">
+            <button type="submit" id="b">PETRIFICAR</button>
+        </form>
+    </div>
 
-<div class="container">
-    <h1>TERMINAL DE CARGA 5.0</h1>
-    <span class="nodo-sub">Vertex Axioma | Integridad Forense</span>
-    <div class="divider"></div>
-    
-    <form id="terminal-form">
-        <label>Identificación Responsable</label>
-        <input type="text" name="nombre" id="f_nombre" placeholder="TU NOMBRE" required>
-        <input type="email" name="email" id="f_email" placeholder="TU EMAIL" required>
-        
-        <div class="divider"></div>
-        
-        <label>Metadatos del Activo</label>
-        <input type="text" name="titular" placeholder="TITULAR (VADELL)" required>
-        <input type="text" name="activo" placeholder="ACTIVO (LITIO)" required>
-        <input type="text" name="pureza" placeholder="PUREZA (99%)" required>
-        <input type="text" name="peso" placeholder="PESO (1500 KG)" required>
-        <input type="text" name="coords" id="f_coords" placeholder="GPS">
-        
-        <button type="submit" id="btn-envio">PETRIFICAR REGISTRO</button>
-        <div id="status" class="status-msg">ENVIANDO AL NODO...</div>
-    </form>
-</div>
+    <script>
+        const API = "TU_URL_DE_APPS_SCRIPT_ACA"; // <--- ACTUALIZA ESTO
 
-<script>
-    const URL_API = "https://script.google.com/macros/s/AKfycbyUY_jc_gXQQPo3ialGzdnizl2R_r246kXH3_adMjiuVMwpi7194JLQWSYBO4OZ0wI5/exec";
+        // RECUPERAR MEMORIA DEL ÍNDICE
+        window.onload = () => {
+            document.getElementById('n').value = localStorage.getItem('vertex_nombre') || "";
+            document.getElementById('e').value = localStorage.getItem('vertex_email') || "";
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(p => {
+                    document.getElementById('c').value = p.coords.latitude.toFixed(5) + ", " + p.coords.longitude.toFixed(5);
+                });
+            }
+        };
 
-    window.onload = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(p => {
-                document.getElementById('f_coords').value = p.coords.latitude.toFixed(5) + ", " + p.coords.longitude.toFixed(5);
+        document.getElementById('v-form').onsubmit = (e) => {
+            e.preventDefault();
+            document.getElementById('b').innerText = "ENVIANDO...";
+            const params = new URLSearchParams(new FormData(e.target)).toString();
+            fetch(API + "?" + params, { mode: 'no-cors' }).then(() => {
+                alert("🛡️ Sello Emitido.");
+                window.location.href = 'index.html';
             });
-        }
-    };
-
-    document.getElementById('terminal-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        document.getElementById('btn-envio').style.display = 'none';
-        document.getElementById('status').style.display = 'block';
-
-        const formData = new FormData(this);
-        const params = new URLSearchParams(formData).toString();
-        
-        // ENVÍO ASEGURADO
-        fetch(URL_API + "?" + params, { method: 'GET', mode: 'no-cors' })
-        .then(() => {
-            alert("🛡️ Registro enviado con éxito al Protocolo AXIOMA®.");
-            window.location.href = 'index.html';
-        })
-        .catch(() => alert("Error de conexión."));
-    });
-</script>
+        };
+    </script>
 </body>
 </html>
