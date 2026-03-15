@@ -61,4 +61,63 @@
         <input type="text" name="peso" id="term_peso" placeholder="PESO NETO (EJ: 1500 KG)" required>
         <input type="text" name="coords" id="coords-input" placeholder="LOCALIZACIÓN GPS" required>
         
-        <button type="submit" id="submit-btn
+        <button type="submit" id="submit-btn">AUTORIZAR Y PETRIFICAR REGISTRO</button>
+        <div id="status" class="status-msg">CONEXIÓN ESTABLE CON NODO PRIMARIO. ESPERANDO DATOS...</div>
+    </form>
+</div>
+
+<script>
+    // URL DE TU SCRIPT DE GOOGLE (VERTEX AXIOMA NODO)
+    const URL_API = "https://script.google.com/macros/s/AKfycbyUY_jc_gXQQPo3ialGzdnizl2R_r246kXH3_adMjiuVMwpi7194JLQWSYBO4OZ0wI5/exec";
+    
+    const form = document.getElementById('terminal-form');
+    const btn = document.getElementById('submit-btn');
+    const status = document.getElementById('status');
+
+    window.onload = () => {
+        // GPS automático para Metadatos Forenses
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                document.getElementById('coords-input').value = `${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`;
+            }, (err) => console.log("GPS no disponible"));
+        }
+
+        // Recuperar persistencia de usuario
+        document.getElementById('term_nombre').value = localStorage.getItem('vertex_nombre') || "";
+        document.getElementById('term_email').value = localStorage.getItem('vertex_email') || "";
+    };
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        btn.style.display = "none";
+        status.style.display = "block";
+        status.innerText = "BLOQUEANDO CADENA DE CUSTODIA...";
+
+        // Captura completa de parámetros para el Protocolo AXIOMA®
+        const formData = new FormData(form);
+        const params = new URLSearchParams();
+        
+        for (const [key, value] of formData.entries()) {
+            params.append(key, value);
+        }
+
+        const finalURL = `${URL_API}?${params.toString()}`;
+
+        // Técnica de inyección de script (Bypass de seguridad y envío asegurado)
+        const scriptElement = document.createElement('script');
+        scriptElement.src = finalURL;
+        
+        // Manejo de respuesta visual y redirección
+        setTimeout(() => {
+            status.innerText = "¡REGISTRO PETRIFICADO EXITOSAMENTE!";
+            alert("🛡️ Sello de Inmutabilidad Transfronteriza Emitido para Vertex Axioma.");
+            window.location.href = 'index.html';
+        }, 3500);
+
+        document.body.appendChild(scriptElement);
+    });
+</script>
+
+</body>
+</html>
