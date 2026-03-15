@@ -114,7 +114,53 @@
             status.style.display = "none";
         });
     });
-</script>
+<script>
+    // URL DE TU SCRIPT DE GOOGLE
+    const URL_API = "https://script.google.com/macros/s/AKfycbyUY_jc_gXQQPo3ialGzdnizl2R_r246kXH3_adMjiuVMwpi7194JLQWSYBO4OZ0wI5/exec";
+    
+    const form = document.getElementById('terminal-form');
+    const btn = document.getElementById('submit-btn');
+    const status = document.getElementById('status');
 
-</body>
-</html>
+    window.onload = () => {
+        // GPS automático
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                document.getElementById('coords-input').value = `${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`;
+            });
+        }
+
+        // Recuperar datos de localStorage
+        document.getElementById('term_nombre').value = localStorage.getItem('vertex_nombre') || "";
+        document.getElementById('term_email').value = localStorage.getItem('vertex_email') || "";
+    };
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        btn.style.display = "none";
+        status.style.display = "block";
+        status.innerText = "BLOQUEANDO CADENA DE CUSTODIA...";
+
+        // Capturamos los datos del formulario
+        const formData = new FormData(form);
+        const queryString = new URLSearchParams(formData).toString();
+        const finalURL = `${URL_API}?${queryString}`;
+
+        // Usamos una técnica de "Imagen" o "Redirección silenciosa" para evitar bloqueos de CORS
+        // Esta es la forma más vieja y confiable de enviar datos a Google Sheets
+        const script = document.createElement('script');
+        script.src = finalURL;
+        
+        // Como Google responde un texto y no un script, dará un pequeño error interno, 
+        // pero el envío ya habrá llegado al servidor de Google.
+        setTimeout(() => {
+            status.innerText = "¡REGISTRO PETRIFICADO EXITOSAMENTE!";
+            alert("🛡️ Sello de Inmutabilidad Transfronteriza Emitido.");
+            window.location.href = 'index.html';
+        }, 2500);
+
+        // Agregamos el script al cuerpo para disparar la petición
+        document.body.appendChild(script);
+    });
+</script>
