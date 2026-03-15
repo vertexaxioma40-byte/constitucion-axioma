@@ -1,61 +1,74 @@
-</head>
+<style>
+    /* Reset de Vertex */
+    html, body { 
+        background-color: #050a15 !important; 
+        color: #ffffff !important; 
+        margin: 0; padding: 0; 
+        font-family: 'Courier New', Courier, monospace; 
+    }
+    body { display: flex; flex-direction: column; align-items: center; padding: 20px; }
+    
+    /* Contenedor Vertical */
+    .box { 
+        background: #0a1122; 
+        padding: 30px; 
+        border: 2px solid #002060; 
+        border-radius: 10px; 
+        width: 100%; 
+        max-width: 450px; /* Ancho fijo para que no se estire */
+        box-shadow: 0 0 20px rgba(0, 32, 96, 0.8);
+    }
+    
+    h3 { text-align: center; letter-spacing: 2px; color: #ffffff; }
+    
+    form { display: flex; flex-direction: column; gap: 10px; } /* Esto los pone uno abajo del otro */
+    
+    label { font-size: 0.7rem; color: #4da6ff; margin-top: 10px; font-weight: bold; text-transform: uppercase; }
+    
+    input { 
+        background: #000 !important; 
+        border: 1px solid #4da6ff !important; 
+        color: #ffffff !important; 
+        padding: 12px; 
+        font-size: 0.9rem;
+        width: 100%; /* Ocupa todo el ancho del contenedor */
+        box-sizing: border-box; /* Evita que el padding ensanche el input */
+    }
+    
+    hr { border: 0; border-top: 1px solid #002060; margin: 15px 0; }
+    
+    button { 
+        background: #002060; 
+        color: #ffffff; 
+        border: 1px solid #4da6ff; 
+        padding: 18px; 
+        cursor: pointer; 
+        font-weight: bold; 
+        text-transform: uppercase; 
+        margin-top: 20px; 
+    }
+    button:hover { background: #003399; box-shadow: 0 0 10px #4da6ff; }
+</style>
+
 <body>
     <div class="box">
         <h3>TERMINAL VERTEX</h3>
         <form id="v-form">
-            <label style="font-size: 0.7rem; color: #4da6ff;">RESPONSABLE</label>
+            <label>Responsable</label>
             <input type="text" name="nombre" id="n" placeholder="Nombre" required>
             <input type="email" name="email" id="e" placeholder="Email" required>
+            
             <hr>
-            <label style="font-size: 0.7rem; color: #4da6ff;">METADATOS DEL ACTIVO</label>
+            
+            <label>Metadatos del Activo</label>
             <input type="text" name="titular" placeholder="Titular (Ej: Vadell)" required>
-            <input type="text" name="activo" placeholder="Activo (Ej: Litio)" required>
-            <input type="text" name="pureza" placeholder="Pureza" required>
-            <input type="text" name="peso" placeholder="Peso" required>
+            <input type="text" name="activo" placeholder="Activo (Ej: Litio / Oro)" required>
+            <input type="text" name="pureza" placeholder="Pureza (Ej: 99.5%)" required>
+            <input type="text" name="peso" placeholder="Peso (Ej: 1500 KG)" required>
             
-            <label style="font-size: 0.7rem; color: #4da6ff;">UBICACIÓN SATELITAL (GPS)</label>
-            <input type="text" name="coords" id="c" placeholder="Sincronizando GPS..." readonly style="color: #4da6ff; font-weight: bold; background: #000;">
+            <label>Ubicación Satelital (GPS)</label>
+            <input type="text" name="coords" id="c" placeholder="Sincronizando..." readonly style="color: #4da6ff; font-weight: bold;">
             
-            <button type="submit" id="b">PETRIFICAR</button>
+            <button type="submit" id="b">AUTORIZAR Y PETRIFICAR</button>
         </form>
     </div>
-
-    <script>
-        // ESTA URL ES TU NODO PRIMARIO
-        const API = "https://script.google.com/macros/s/AKfycbyYpqgLUSyhk0LKZEOmDVN5m_OFdCuD9SQDGhXno78fe1KuxhgjNMgCDhJ_7iHam29y/exec"; 
-
-        window.onload = () => {
-            // RECUPERAR MEMORIA DEL ÍNDICE
-            document.getElementById('n').value = localStorage.getItem('vertex_nombre') || "";
-            document.getElementById('e').value = localStorage.getItem('vertex_email') || "";
-            
-            // CAPTURA DE COORDENADAS PARA EL SELLO DE INMUTABILIDAD TRANSFRONTERIZA
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(p => {
-                    document.getElementById('c').value = p.coords.latitude.toFixed(5) + ", " + p.coords.longitude.toFixed(5);
-                }, (err) => {
-                    document.getElementById('c').value = "GPS No Autorizado";
-                });
-            }
-        };
-
-        document.getElementById('v-form').onsubmit = (e) => {
-            e.preventDefault();
-            document.getElementById('b').innerText = "BLOQUEANDO CADENA...";
-            document.getElementById('b').disabled = true;
-
-            const params = new URLSearchParams(new FormData(e.target)).toString();
-            
-            // ENVÍO AL NODO PARA AUDITORÍA 4.0
-            fetch(API + "?" + params, { mode: 'no-cors' }).then(() => {
-                alert("🛡️ Sello de Inmutabilidad Transfronteriza Emitido.");
-                window.location.href = 'index.html';
-            }).catch(err => {
-                alert("Error de conexión con el Nodo.");
-                document.getElementById('b').innerText = "REINTENTAR";
-                document.getElementById('b').disabled = false;
-            });
-        };
-    </script>
-</body>
-</html>
