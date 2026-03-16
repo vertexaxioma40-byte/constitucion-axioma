@@ -12,7 +12,7 @@
         .subtitle { color: #4da6ff; font-size: 0.9rem; margin-bottom: 30px; display: block; }
         form { display: flex; flex-direction: column; gap: 15px; }
         label { font-size: 0.75rem; color: #4da6ff; text-align: left; text-transform: uppercase; font-weight: bold; margin-top: 10px; }
-        input, select { background: #000; border: 1px solid #4da6ff; color: #fff; padding: 12px; font-family: 'Courier New', monospace; font-size: 0.9rem; }
+        input, select { background: #000; border: 1px solid #4da6ff; color: #fff; padding: 12px; font-family: 'Courier New', monospace; }
         button { background: #002060; color: #fff; border: 1px solid #4da6ff; padding: 18px; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.3s; margin-top: 10px; }
         button:hover { background: #003399; box-shadow: 0 0 15px #4da6ff; }
         .footer-text { font-size: 0.7rem; color: #4da6ff; margin-top: 20px; opacity: 0.7; }
@@ -25,64 +25,56 @@
     <span class="subtitle">Auditoría 4.0 & Integridad Forense</span>
     
     <form id="main-form">
-        <label>Operador Técnico</label>
-        <input type="text" name="nombre" id="nombre" placeholder="NOMBRE COMPLETO" required>
-        <input type="email" name="email" id="email" placeholder="CORREO TÉCNICO" required>
+        <label>Identificación Operador</label>
+        <input type="text" name="nombre" id="nombre" placeholder="TU NOMBRE COMPLETO" required>
+        <input type="email" name="email" id="email" placeholder="TU CORREO" required>
         
-        <label>Titular del Activo (Empresa/Cliente)</label>
-        <input type="text" name="titular" id="titular" placeholder="EJ: VANTAC S.A. / GABRIEL VADELL" required>
-        <input type="email" name="mailEmpresa" id="mailEmpresa" placeholder="CORREO DE LA ORGANIZACIÓN" required>
+        <label>Identificación Titular del Activo</label>
+        <input type="text" name="titular" id="titular" placeholder="NOMBRE DEL TITULAR / EMPRESA" required>
+        <input type="email" name="mailEmpresa" id="mailEmpresa" placeholder="CORREO DEL TITULAR" required>
 
-        <label>Documentación Requerida</label>
+        <label>Documentación</label>
         <select name="documento" required>
             <option value="sello" selected>SELLO DE INMUTABILIDAD TRANSFRONTERIZA</option>
-            <option value="constitucion">CONSTITUCIÓN AXIOMA®</option>
-            <option value="integridad">PROTOCOLO DE INTEGRIDAD FORENSE</option>
         </select>
         
-        <button type="submit" id="submit-btn">SINCRONIZAR CON NODO VERTEX</button>
+        <button type="submit" id="submit-btn">INGRESAR AL NODO</button>
     </form>
     
-    <p class="footer-text">Vertex Axioma | Sistema Petrificado</p>
+    <p class="footer-text">Sincronizado con Nodo Vertex Axioma</p>
 </div>
 
 <script>
-    // URL de tu Google Script (El Nodo Central v7.1)
-    const URL_EXCEL = "https://script.google.com/macros/s/AKfycbwY48JPKoc6vSGMJNuVMqK4Yw_8biZcIFimfd_JuR5Q8P7ZMDn0w49vb568TEGi9djn/exec";
-
     const form = document.getElementById('main-form');
     const btn = document.getElementById('submit-btn');
 
     form.addEventListener('submit', e => {
         e.preventDefault();
-        btn.innerText = "PETRIFICANDO IDENTIDAD...";
+        btn.innerText = "ACCEDIENDO...";
         btn.disabled = true;
 
-        const formData = new URLSearchParams(new FormData(form));
-        
-        // Impacto en MONITOR (Excel) vía POST
-        fetch(URL_EXCEL, { 
-            method: 'POST', 
-            mode: 'no-cors', 
-            body: formData 
-        })
-        .then(() => {
-            // Guardamos todo en memoria para que la terminal lo chupe
-            localStorage.setItem('v_nombre', document.getElementById('nombre').value);
-            localStorage.setItem('v_email', document.getElementById('email').value);
-            localStorage.setItem('v_titular', document.getElementById('titular').value);
-            localStorage.setItem('v_mailEmpresa', document.getElementById('mailEmpresa').value);
+        // Capturamos los datos
+        const nombreVal = document.getElementById('nombre').value;
+        const emailVal = document.getElementById('email').value;
+        const titularVal = document.getElementById('titular').value;
+        const mailEmpresaVal = document.getElementById('mailEmpresa').value;
 
-            // Redirigir a la Terminal pasando los datos por URL para asegurar el impacto
-            const finalParams = formData.toString();
-            window.location.href = 'terminal.html?' + finalParams;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("Fallo en la sincronización del Nodo.");
-            btn.innerText = "REINTENTAR";
-            btn.disabled = false;
+        // Guardamos en localStorage para respaldo de la terminal
+        localStorage.setItem('v_nombre', nombreVal);
+        localStorage.setItem('v_email', emailVal);
+        localStorage.setItem('v_titular', titularVal);
+        localStorage.setItem('v_mailEmpresa', mailEmpresaVal);
+
+        // Construimos la URL para pasar los datos a la terminal.html
+        const params = new URLSearchParams({
+            nombre: nombreVal,
+            email: emailVal,
+            titular: titularVal,
+            mailEmpresa: mailEmpresaVal
         });
+
+        // Redirigimos a la terminal pasando la mochila de datos
+        window.location.href = 'terminal.html?' + params.toString();
     });
 </script>
 
