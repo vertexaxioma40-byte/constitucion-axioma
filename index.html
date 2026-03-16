@@ -5,35 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vertex Axioma | Nodo de Innovación</title>
     <style>
-        html, body { 
-            background-color: #050a15; 
-            color: #ffffff; 
-            margin: 0; padding: 0; 
-            font-family: 'Courier New', monospace; 
-        }
+        html, body { background-color: #050a15; color: #ffffff; margin: 0; padding: 0; font-family: 'Courier New', monospace; }
         body { display: flex; flex-direction: column; align-items: center; padding: 50px 20px; }
-        .container { 
-            background: #0a1122; 
-            padding: 40px; 
-            border: 2px solid #002060; 
-            border-radius: 10px; 
-            box-shadow: 0 0 30px rgba(0, 32, 96, 0.6); 
-            width: 100%; max-width: 500px; text-align: center;
-        }
+        .container { background: #0a1122; padding: 40px; border: 2px solid #002060; border-radius: 10px; box-shadow: 0 0 30px rgba(0, 32, 96, 0.6); width: 100%; max-width: 500px; text-align: center; }
         h1 { font-size: 1.8rem; letter-spacing: 3px; color: #ffffff; margin-bottom: 5px; }
         .subtitle { color: #4da6ff; font-size: 0.9rem; margin-bottom: 30px; display: block; }
-        
-        form { display: flex; flex-direction: column; gap: 20px; }
-        label { font-size: 0.8rem; color: #4da6ff; text-align: left; text-transform: uppercase; }
-        input, select { 
-            background: #000; border: 1px solid #4da6ff; color: #fff; 
-            padding: 15px; font-family: 'Courier New', monospace; 
-        }
-        button { 
-            background: #002060; color: #fff; border: 1px solid #4da6ff; 
-            padding: 18px; cursor: pointer; font-weight: bold; 
-            text-transform: uppercase; transition: 0.3s;
-        }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { font-size: 0.75rem; color: #4da6ff; text-align: left; text-transform: uppercase; font-weight: bold; margin-top: 10px; }
+        input, select { background: #000; border: 1px solid #4da6ff; color: #fff; padding: 12px; font-family: 'Courier New', monospace; font-size: 0.9rem; }
+        button { background: #002060; color: #fff; border: 1px solid #4da6ff; padding: 18px; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.3s; margin-top: 10px; }
         button:hover { background: #003399; box-shadow: 0 0 15px #4da6ff; }
         .footer-text { font-size: 0.7rem; color: #4da6ff; margin-top: 20px; opacity: 0.7; }
     </style>
@@ -45,56 +25,61 @@
     <span class="subtitle">Auditoría 4.0 & Integridad Forense</span>
     
     <form id="main-form">
-        <label>Identificación de Acceso</label>
+        <label>Operador Técnico</label>
         <input type="text" name="nombre" id="nombre" placeholder="NOMBRE COMPLETO" required>
-        <input type="email" name="email" id="email" placeholder="CORREO ELECTRÓNICO" required>
+        <input type="email" name="email" id="email" placeholder="CORREO TÉCNICO" required>
         
+        <label>Titular del Activo (Empresa/Cliente)</label>
+        <input type="text" name="titular" id="titular" placeholder="EJ: VANTAC S.A. / GABRIEL VADELL" required>
+        <input type="email" name="mailEmpresa" id="mailEmpresa" placeholder="CORREO DE LA ORGANIZACIÓN" required>
+
         <label>Documentación Requerida</label>
         <select name="documento" required>
-            <option value="" disabled selected>SELECCIONE EL REPORTE...</option>
-            <option value="constitucion">CONSTITUCIÓN AXIOMA® (Versión Blindada)</option>
+            <option value="sello" selected>SELLO DE INMUTABILIDAD TRANSFRONTERIZA</option>
+            <option value="constitucion">CONSTITUCIÓN AXIOMA®</option>
             <option value="integridad">PROTOCOLO DE INTEGRIDAD FORENSE</option>
-            <option value="sello">SELLO DE INMUTABILIDAD TRANSFRONTERIZA</option>
-            <option value="integracion">GUÍA DE INTEGRACIÓN 4.0</option>
         </select>
         
-        <button type="submit" id="submit-btn">SOLICITAR ACCESO AL NODO</button>
+        <button type="submit" id="submit-btn">SINCRONIZAR CON NODO VERTEX</button>
     </form>
     
-    <p class="footer-text">Sincronizado con el Nodo Vertex</p>
+    <p class="footer-text">Vertex Axioma | Sistema Petrificado</p>
 </div>
 
 <script>
-    // URL de tu API de EXCEL (La que termina en /exec)
-    const URL_EXCEL = "https://script.google.com/macros/s/AKfycbzFAVflsFHxqKiE_fjmoKVC6pl9U77dBa7-K71cIiXjq-tp9juBSFURh75I7-bN6qhBVg/exec";
+    // URL de tu Google Script (El Nodo Central v7.1)
+    const URL_EXCEL = "https://script.google.com/macros/s/AKfycbx3uLt9jpWuiuEms3c6y44WrPFBKlLyLB9Zgt_16v9OqG8kaUmVWA_tdUGkXnciMEkm/exec";
 
     const form = document.getElementById('main-form');
     const btn = document.getElementById('submit-btn');
 
     form.addEventListener('submit', e => {
         e.preventDefault();
-        btn.innerText = "SINCRONIZANDO...";
+        btn.innerText = "PETRIFICANDO IDENTIDAD...";
         btn.disabled = true;
 
-        // Guardamos en memoria para que la Terminal lo recuerde
-        const nombreVal = document.getElementById('nombre').value;
-        const emailVal = document.getElementById('email').value;
-        localStorage.setItem('vertex_nombre', nombreVal);
-        localStorage.setItem('vertex_email', emailVal);
-
-        const formData = new FormData(form);
+        const formData = new URLSearchParams(new FormData(form));
         
+        // Impacto en MONITOR (Excel) vía POST
         fetch(URL_EXCEL, { 
             method: 'POST', 
             mode: 'no-cors', 
-            body: new URLSearchParams(formData) 
+            body: formData 
         })
         .then(() => {
-            window.location.href = 'gracias.html';
+            // Guardamos todo en memoria para que la terminal lo chupe
+            localStorage.setItem('v_nombre', document.getElementById('nombre').value);
+            localStorage.setItem('v_email', document.getElementById('email').value);
+            localStorage.setItem('v_titular', document.getElementById('titular').value);
+            localStorage.setItem('v_mailEmpresa', document.getElementById('mailEmpresa').value);
+
+            // Redirigir a la Terminal pasando los datos por URL para asegurar el impacto
+            const finalParams = formData.toString();
+            window.location.href = 'terminal.html?' + finalParams;
         })
         .catch(error => {
             console.error('Error:', error);
-            alert("Error de conexión. Intente nuevamente.");
+            alert("Fallo en la sincronización del Nodo.");
             btn.innerText = "REINTENTAR";
             btn.disabled = false;
         });
