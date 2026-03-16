@@ -27,7 +27,7 @@
         
         <div class="input-group">
             <label>NOMBRE (Operador/Técnico)</label>
-            <input type="text" id="nombre" placeholder="Nombre del técnico">
+            <input type="text" id="nombre" placeholder="Cargando operador...">
         </div>
 
         <div class="input-group">
@@ -45,102 +45,4 @@
                 <label>PUREZA (%)</label>
                 <input type="text" id="pureza" placeholder="98%">
             </div>
-            <div class="input-group">
-                <label>PESO (Kg/Tn)</label>
-                <input type="text" id="peso" placeholder="500tn">
-            </div>
-        </div>
-
-        <div class="input-group">
-            <label>COORDENADAS GPS</label>
-            <input type="text" id="coords" placeholder="-23.385, -66.745">
-        </div>
-        
-        <button id="btnPetrificar" onclick="enviarDatos()">PETRIFICAR REGISTRO 4.0</button>
-        
-        <div id="status"></div>
-        
-        <div class="footer">
-            <b>Sello de Inmutabilidad Transfronteriza</b><br>
-            Vertex Axioma - Protocolo AXIOMA®
-        </div>
-    </div>
-
-    <script>
-        // Capturamos el mail de la empresa del índice
-        let mailEmpresaOriginal = "";
-
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            
-            // Prioridad Índice sobre Memoria
-            const n = urlParams.get('nombre') || localStorage.getItem('v_nombre');
-            const e = urlParams.get('email') || localStorage.getItem('v_email');
-            mailEmpresaOriginal = urlParams.get('mailEmpresa') || e; // Guardamos el mail de la empresa
-
-            if(n) document.getElementById('nombre').value = n;
-            if(e) document.getElementById('email').value = e;
-            if(urlParams.get('activo')) document.getElementById('activo').value = urlParams.get('activo');
-            if(urlParams.get('pureza')) document.getElementById('pureza').value = urlParams.get('pureza');
-            if(urlParams.get('peso')) document.getElementById('peso').value = urlParams.get('peso');
-            if(urlParams.get('coords')) document.getElementById('coords').value = urlParams.get('coords');
-        };
-
-        function enviarDatos() {
-            const btn = document.getElementById('btnPetrificar');
-            const status = document.getElementById('status');
-            
-            // USAR TU URL DE GOOGLE SCRIPT v6.1
-            const urlBase = "https://script.google.com/macros/s/AKfycbzV8yTwLaVF7EsCwTm9I8v8jJEdPX2UJPX-fc2g04ZDc8JJwNuPOxnbPwRJ_WZqaxoJ/exec"; 
-            
-            const fields = {
-                nombre: document.getElementById('nombre').value,
-                email: document.getElementById('email').value,
-                mailEmpresa: mailEmpresaOriginal, // Enviamos el mail de Vantac por atrás
-                activo: document.getElementById('activo').value,
-                pureza: document.getElementById('pureza').value,
-                peso: document.getElementById('peso').value,
-                coords: document.getElementById('coords').value
-            };
-
-            if(!fields.nombre || !fields.email || !fields.coords) {
-                mostrarStatus("⚠️ Error: Campos críticos vacíos.", "error");
-                return;
-            }
-
-            // Guardar para el próximo logueo
-            localStorage.setItem('v_nombre', fields.nombre);
-            localStorage.setItem('v_email', fields.email);
-
-            // Acción del botón
-            btn.disabled = true;
-            btn.innerText = "PETRIFICANDO...";
-            status.style.display = "none";
-
-            const params = new URLSearchParams(fields).toString();
-            
-            console.log("Enviando a:", urlBase + "?" + params); // Para ver en consola si falla
-
-            fetch(`${urlBase}?${params}`, { mode: 'no-cors' }) // 'no-cors' ayuda a evitar bloqueos de navegador
-                .then(() => {
-                    mostrarStatus("✅ ¡Impacto en MONITOR Exitoso! Verificá tu correo.", "success");
-                    btn.disabled = false;
-                    btn.innerText = "PETRIFICAR REGISTRO 4.0";
-                })
-                .catch(err => {
-                    mostrarStatus("❌ Error de red. Revisá la consola.", "error");
-                    btn.disabled = false;
-                    btn.innerText = "REINTENTAR";
-                    console.error(err);
-                });
-        }
-
-        function mostrarStatus(msg, tipo) {
-            const status = document.getElementById('status');
-            status.innerText = msg;
-            status.className = tipo;
-            status.style.display = "block";
-        }
-    </script>
-</body>
-</html>
+            <div class="input-group
