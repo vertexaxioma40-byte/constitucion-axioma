@@ -1,97 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <base target="_top">
-    <title>Vertex Axioma - Terminal</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertex Axioma | Terminal de Campo</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #0e1a2b; color: #e0e0e0; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background: #16263e; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 400px; border: 1px solid #2a4165; }
-        h2 { text-align: center; color: #4fc3f7; border-bottom: 2px solid #4fc3f7; padding-bottom: 10px; text-transform: uppercase; font-size: 1.2em; }
-        .input-group { margin-bottom: 12px; }
-        label { display: block; margin-bottom: 4px; font-size: 0.8em; color: #90caf9; font-weight: bold; }
-        input { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #2a4165; background: #0e1a2b; color: #fff; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: #0288d1; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; border: 1px solid #4fc3f7; }
-        button:disabled { background: #455a64; cursor: not-allowed; }
-        #status { margin-top: 15px; text-align: center; padding: 10px; border-radius: 5px; display: none; font-size: 0.9em; }
+        body { background-color: #050a15; color: #ffffff; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .terminal-box { background: #0a1122; padding: 30px; border: 2px solid #4da6ff; border-radius: 5px; box-shadow: 0 0 20px rgba(77, 166, 255, 0.3); width: 100%; max-width: 450px; }
+        h2 { color: #4da6ff; font-size: 1.2rem; text-align: center; letter-spacing: 2px; }
+        .data-stream { font-size: 0.8rem; color: #4da6ff; margin-bottom: 20px; border-bottom: 1px solid #1a2a44; padding-bottom: 10px; }
+        label { display: block; font-size: 0.7rem; margin-top: 15px; color: #888; text-transform: uppercase; }
+        input, select { width: 100%; background: #000; border: 1px solid #4da6ff; color: #00ff00; padding: 10px; margin-top: 5px; box-sizing: border-box; font-family: 'Courier New', monospace; }
+        button { width: 100%; background: #002060; color: #fff; border: 1px solid #4da6ff; padding: 15px; margin-top: 25px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:hover { background: #4da6ff; color: #000; }
+        #status { font-size: 0.7rem; text-align: center; margin-top: 15px; color: #00ff00; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Vertex Axioma</h2>
-        <div class="input-group"><label>NOMBRE OPERADOR</label><input type="text" id="nombre"></div>
-        <div class="input-group"><label>EMAIL TÉCNICO</label><input type="email" id="email"></div>
-        <div class="input-group"><label>ACTIVO</label><input type="text" id="activo"></div>
-        <div class="input-group"><label>PUREZA (%)</label><input type="text" id="pureza"></div>
-        <div class="input-group"><label>PESO</label><input type="text" id="peso"></div>
-        <div class="input-group"><label>COORDENADAS GPS</label><input type="text" id="coords"></div>
+
+<div class="terminal-box">
+    <h2>TERMINAL V.6.2</h2>
+    <div class="data-stream" id="user-info">Sincronizando identidad...</div>
+
+    <form id="terminal-form">
+        <label>Activo Real</label>
+        <select id="activo" name="activo">
+            <option value="LITTIO-01">LITTIO-01</option>
+            <option value="ORO">ORO</option>
+            <option value="COBRE">COBRE</option>
+        </select>
+
+        <label>Pureza Certificada</label>
+        <input type="text" id="pureza" name="pureza" placeholder="98.5%" required>
+
+        <label>Peso de Carga (kg)</label>
+        <input type="text" id="peso" name="peso" placeholder="1000" required>
+
+        <label>Coordenadas GPS (Lat, Lng)</label>
+        <input type="text" id="coords" name="coords" placeholder="-23.385, -66.745" required>
+
+        <button type="submit" id="petrificar-btn">PETRIFICAR PRUEBA</button>
+    </form>
+    <div id="status">ESTADO: ESPERANDO INSTRUCCIÓN</div>
+</div>
+
+<script>
+    // URL del Google Script (Nodo Central)
+    const urlBase = "https://script.google.com/macros/s/AKfycbxkUZfdCkfIumlijyEmETEDRAQr_kREEv8dPEbsSo_t63LI1uOO_eBL0oDi1uj6Sg5H/exec";
+
+    // Recuperar datos del Índice
+    const params = new URLSearchParams(window.location.search);
+    const nombre = params.get('nombre') || localStorage.getItem('v_nombre') || "TÉCNICO";
+    const email = params.get('email') || localStorage.getItem('v_email') || "S/D";
+    const mailEmpresa = params.get('mailEmpresa') || localStorage.getItem('v_mailEmpresa') || email;
+    const titular = params.get('titular') || localStorage.getItem('v_titular') || "VERTEX AXIOMA";
+
+    document.getElementById('user-info').innerText = `OPERADOR: ${nombre} | TITULAR: ${titular}`;
+
+    document.getElementById('terminal-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('petrificar-btn');
+        const status = document.getElementById('status');
         
-        <button id="btnPetrificar" onclick="ejecutar()">PETRIFICAR REGISTRO 4.0</button>
-        <div id="status"></div>
-    </div>
+        btn.disabled = true;
+        btn.innerText = "PROCESANDO HASH...";
+        status.innerText = "ESTADO: GENERANDO SELLO DE INMUTABILIDAD";
 
-    <script>
-        let mailEmpresaParam = "";
+        // Combinar datos de sesión con datos de campo
+        const queryParams = new URLSearchParams({
+            nombre: nombre,
+            email: email,
+            mailEmpresa: mailEmpresa,
+            titular: titular,
+            activo: document.getElementById('activo').value,
+            pureza: document.getElementById('pureza').value,
+            peso: document.getElementById('peso').value,
+            coords: document.getElementById('coords').value
+        });
 
-        window.onload = function() {
-            const params = new URLSearchParams(window.location.search);
-            
-            // 🔥 TRUCO MAESTRO: Si la URL trae un nombre, BORRAMOS la memoria de las 14:25
-            if (params.get('nombre')) {
-                console.log("Detectado nuevo ingreso. Limpiando caché local...");
-                localStorage.clear(); 
-                sessionStorage.clear();
-            }
+        // Impacto final por GET (como a las 12:46)
+        const finalUrl = `${urlBase}?${queryParams.toString()}`;
 
-            // Cargamos los datos actuales del link
-            document.getElementById('nombre').value = params.get('nombre') || "";
-            document.getElementById('email').value = params.get('email') || "";
-            document.getElementById('activo').value = params.get('activo') || "";
-            document.getElementById('pureza').value = params.get('pureza') || "";
-            document.getElementById('peso').value = params.get('peso') || "";
-            document.getElementById('coords').value = params.get('coords') || "";
-            
-            mailEmpresaParam = params.get('mailEmpresa') || params.get('email') || "";
-        };
+        fetch(finalUrl, { mode: 'no-cors' })
+        .then(() => {
+            status.innerText = "ESTADO: REGISTRO PETRIFICADO CON ÉXITO";
+            btn.innerText = "PETRIFICADO ✅";
+            // Limpiar memoria para el próximo registro
+            localStorage.clear();
+            setTimeout(() => { window.location.href = "https://www.google.com"; }, 2000);
+        })
+        .catch(err => {
+            console.error(err);
+            status.innerText = "ERROR EN EL NODO";
+            btn.disabled = false;
+            btn.innerText = "REINTENTAR";
+        });
+    });
+</script>
 
-        function ejecutar() {
-            const btn = document.getElementById('btnPetrificar');
-            const status = document.getElementById('status');
-            const urlBase = "https://script.google.com/macros/s/AKfycbxkUZfdCkfIumlijyEmETEDRAQr_kREEv8dPEbsSo_t63LI1uOO_eBL0oDi1uj6Sg5H/exec";
-            
-            const data = {
-                nombre: document.getElementById('nombre').value,
-                email: document.getElementById('email').value,
-                mailEmpresa: mailEmpresaParam,
-                activo: document.getElementById('activo').value,
-                pureza: document.getElementById('pureza').value,
-                peso: document.getElementById('peso').value,
-                coords: document.getElementById('coords').value
-            };
-
-            if(!data.nombre || !data.email || !data.coords) {
-                alert("⚠️ Error: Datos críticos incompletos para el Sello.");
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerText = "PETRIFICANDO...";
-
-            // Impacto vía URL Directa
-            const queryString = Object.keys(data).map(k => k + '=' + encodeURIComponent(data[k])).join('&');
-            const finalUrl = urlBase + "?" + queryString;
-
-            const img = new Image();
-            img.src = finalUrl;
-            
-            setTimeout(() => {
-                status.style.display = "block";
-                status.style.backgroundColor = "rgba(76, 175, 80, 0.2)";
-                status.style.color = "#81c784";
-                status.innerText = "✅ Impacto en MONITOR Exitoso.";
-                btn.disabled = false;
-                btn.innerText = "PETRIFICAR REGISTRO 4.0";
-            }, 1000);
-        }
-    </script>
 </body>
 </html>
