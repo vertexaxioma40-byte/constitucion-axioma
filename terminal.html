@@ -66,18 +66,30 @@
     </div>
 
     <script>
-        // --- MEMORIA VERTEX: Cargar datos guardados al abrir ---
+        // --- MEMORIA VERTEX INTELIGENTE v5.4 ---
         window.onload = function() {
-            if(localStorage.getItem('v_nombre')) document.getElementById('nombre').value = localStorage.getItem('v_nombre');
-            if(localStorage.getItem('v_email')) document.getElementById('email').value = localStorage.getItem('v_email');
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // 1. Prioridad: Link (URL) | 2. Prioridad: Memoria (localStorage)
+            const n = urlParams.get('nombre') || localStorage.getItem('v_nombre');
+            const e = urlParams.get('email') || localStorage.getItem('v_email');
+            
+            if(n) document.getElementById('nombre').value = n;
+            if(e) document.getElementById('email').value = e;
+
+            // Datos del Activo (Siempre del Link para evitar errores forenses)
+            if(urlParams.get('activo')) document.getElementById('activo').value = urlParams.get('activo');
+            if(urlParams.get('pureza')) document.getElementById('pureza').value = urlParams.get('pureza');
+            if(urlParams.get('peso')) document.getElementById('peso').value = urlParams.get('peso');
+            if(urlParams.get('coords')) document.getElementById('coords').value = urlParams.get('coords');
         };
 
         function enviarDatos() {
             const btn = document.querySelector('button');
             const status = document.getElementById('status');
+            // Mantenemos tu URL de ejecución (v5.8)
             const urlBase = "https://script.google.com/macros/s/AKfycbwuJeVqxmQkdQY-4qBQD92QTt_4NXYJNsL3kFgy1ZNVb6iYR3TkwlSNSRLWSVEdAH9v/exec"; 
             
-            // Captura de datos
             const fields = {
                 nombre: document.getElementById('nombre').value,
                 email: document.getElementById('email').value,
@@ -92,26 +104,23 @@
                 return;
             }
 
-            // Guardar en memoria para la próxima vez
+            // Actualizar memoria con lo último enviado
             localStorage.setItem('v_nombre', fields.nombre);
             localStorage.setItem('v_email', fields.email);
 
             btn.disabled = true;
-            btn.innerText = "PETRIFICANDO EN LIBRO DE AUDITORÍA...";
+            btn.innerText = "PETRIFICANDO EN MONITOR...";
             status.style.display = "none";
 
-            // Construcción de URL con todas las variables
             const params = new URLSearchParams(fields).toString();
-            const urlFinal = `${urlBase}?${params}`;
-
-            fetch(urlFinal)
-                .then(response => response.text())
+            fetch(`${urlBase}?${params}`)
+                .then(r => r.text())
                 .then(data => {
-                    mostrarStatus("¡Registro Inmutable Exitoso! PDFs en camino.", "success");
+                    mostrarStatus("¡Impacto exitoso en MONITOR! PDFs enviados.", "success");
                     btn.disabled = false;
                     btn.innerText = "PETRIFICAR REGISTRO 4.0";
                 })
-                .catch(error => {
+                .catch(err => {
                     mostrarStatus("Falla de conexión con el Nodo.", "error");
                     btn.disabled = false;
                     btn.innerText = "REINTENTAR";
