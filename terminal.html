@@ -2,110 +2,96 @@
 <html>
 <head>
     <base target="_top">
-    <title>Vertex Axioma - Terminal Forense</title>
+    <title>Vertex Axioma - Terminal</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #0e1a2b; color: #e0e0e0; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background: #16263e; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 420px; border: 1px solid #2a4165; }
-        h2 { text-align: center; color: #4fc3f7; margin-bottom: 20px; letter-spacing: 2px; text-transform: uppercase; border-bottom: 2px solid #4fc3f7; padding-bottom: 10px; font-size: 1.2em; }
-        .input-group { margin-bottom: 12px; }
-        label { display: block; margin-bottom: 4px; font-size: 0.85em; color: #90caf9; font-weight: bold; }
-        input { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #2a4165; background: #0e1a2b; color: #fff; box-sizing: border-box; font-size: 0.9em; }
-        .row { display: flex; gap: 10px; }
-        .row .input-group { flex: 1; }
-        button { width: 100%; padding: 14px; background: #0288d1; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1em; transition: 0.3s; margin-top: 15px; border: 1px solid #4fc3f7; }
-        button:hover { background: #03a9f4; }
-        #status { margin-top: 15px; text-align: center; font-size: 0.85em; padding: 10px; border-radius: 5px; display: none; }
-        .success { background: rgba(76, 175, 80, 0.2); color: #81c784; border: 1px solid #4caf50; }
-        .error { background: rgba(244, 67, 54, 0.2); color: #e57373; border: 1px solid #f44336; }
-        .footer { text-align: center; font-size: 0.7em; margin-top: 20px; color: #546e7a; line-height: 1.4; }
+        .container { background: #16263e; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 400px; border: 1px solid #2a4165; }
+        h2 { text-align: center; color: #4fc3f7; border-bottom: 2px solid #4fc3f7; padding-bottom: 10px; text-transform: uppercase; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 0.8em; color: #90caf9; font-weight: bold; }
+        input { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #2a4165; background: #0e1a2b; color: #fff; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: #0288d1; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        button:disabled { background: #455a64; }
+        #status { margin-top: 15px; text-align: center; padding: 10px; border-radius: 5px; display: none; }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Vertex Axioma</h2>
-        
-        <div class="input-group"><label>NOMBRE</label><input type="text" id="nombre"></div>
+        <div class="input-group"><label>NOMBRE OPERADOR</label><input type="text" id="nombre"></div>
         <div class="input-group"><label>EMAIL TÉCNICO</label><input type="email" id="email"></div>
         <div class="input-group"><label>ACTIVO</label><input type="text" id="activo"></div>
-
-        <div class="row">
-            <div class="input-group"><label>PUREZA (%)</label><input type="text" id="pureza"></div>
-            <div class="input-group"><label>PESO</label><input type="text" id="peso"></div>
-        </div>
-
+        <div class="input-group"><label>PUREZA (%)</label><input type="text" id="pureza"></div>
+        <div class="input-group"><label>PESO</label><input type="text" id="peso"></div>
         <div class="input-group"><label>COORDENADAS GPS</label><input type="text" id="coords"></div>
         
-        <button id="btnPetrificar" type="button" onclick="enviarDatos()">PETRIFICAR REGISTRO 4.0</button>
-        
+        <button id="btnPetrificar" onclick="ejecutar()">PETRIFICAR REGISTRO 4.0</button>
         <div id="status"></div>
-        
-        <div class="footer">
-            <b>Sello de Inmutabilidad Transfronteriza</b><br>
-            Vertex Axioma - Protocolo AXIOMA®
-        </div>
     </div>
 
     <script>
-        let mailEmpresaOriginal = "";
+        let mailEmpresaParam = "";
 
         window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('nombre')) { localStorage.clear(); }
+            const params = new URLSearchParams(window.location.search);
+            // Si el índice trae datos, limpiamos para no mezclar
+            if (params.get('nombre')) { localStorage.clear(); }
 
-            document.getElementById('nombre').value = urlParams.get('nombre') || localStorage.getItem('v_nombre') || "";
-            document.getElementById('email').value = urlParams.get('email') || localStorage.getItem('v_email') || "";
-            document.getElementById('activo').value = urlParams.get('activo') || "";
-            document.getElementById('pureza').value = urlParams.get('pureza') || "";
-            document.getElementById('peso').value = urlParams.get('peso') || "";
-            document.getElementById('coords').value = urlParams.get('coords') || "";
+            document.getElementById('nombre').value = params.get('nombre') || localStorage.getItem('v_nombre') || "";
+            document.getElementById('email').value = params.get('email') || localStorage.getItem('v_email') || "";
+            document.getElementById('activo').value = params.get('activo') || "";
+            document.getElementById('pureza').value = params.get('pureza') || "";
+            document.getElementById('peso').value = params.get('peso') || "";
+            document.getElementById('coords').value = params.get('coords') || "";
             
-            mailEmpresaOriginal = urlParams.get('mailEmpresa') || document.getElementById('email').value;
+            // Guardamos el mail de la empresa que viene del índice de forma invisible
+            mailEmpresaParam = params.get('mailEmpresa') || "";
         };
 
-        function enviarDatos() {
+        function ejecutar() {
             const btn = document.getElementById('btnPetrificar');
             const status = document.getElementById('status');
             
-            // URL LIMPIA v6.1
-            const urlBase = "https://script.google.com/macros/s/AKfycbzV8yTwLaVF7EsCwTm9I8v8jJEdPX2UJPX-fc2g04ZDc8JJwNuPOxnbPwRJ_WZqaxoJ/exec"; 
+            // URL de tu Script de Google
+            const urlBase = "https://script.google.com/macros/s/AKfycbzV8yTwLaVF7EsCwTm9I8v8jJEdPX2UJPX-fc2g04ZDc8JJwNuPOxnbPwRJ_WZqaxoJ/exec";
             
-            const fields = {
+            const data = {
                 nombre: document.getElementById('nombre').value,
                 email: document.getElementById('email').value,
-                mailEmpresa: mailEmpresaOriginal,
+                mailEmpresa: mailEmpresaParam, // Se envía aunque no haya campo en pantalla
                 activo: document.getElementById('activo').value,
                 pureza: document.getElementById('pureza').value,
                 peso: document.getElementById('peso').value,
                 coords: document.getElementById('coords').value
             };
 
-            if(!fields.nombre || !fields.email || !fields.coords) {
-                alert("⚠️ Error: Datos críticos incompletos.");
+            if(!data.nombre || !data.email || !data.coords) {
+                alert("Faltan datos críticos.");
                 return;
             }
 
-            // Iniciar visualmente
             btn.disabled = true;
-            btn.innerText = "PETRIFICANDO...";
+            btn.innerText = "PROCESANDO SELLO...";
+
+            // Construcción manual de la URL para evitar errores de codificación
+            const queryString = Object.keys(data).map(key => key + '=' + encodeURIComponent(data[key])).join('&');
+            const finalUrl = urlBase + "?" + queryString;
+
+            // MÉTODO DE IMPACTO POR IMAGEN (El más robusto para saltar bloqueos)
+            const img = new Image();
+            img.src = finalUrl;
             
-            const params = new URLSearchParams(fields).toString();
-            const finalUrl = urlBase + "?" + params;
-
-            // MÉTODO DE IMPACTO DIRECTO (Script Tag) - Evita bloqueos de CORS
-            const script = document.createElement('script');
-            script.src = finalUrl;
-            document.body.appendChild(script);
-
-            // Simular éxito visual (el script de Google no responde CORS, pero el impacto ocurre)
             setTimeout(() => {
-                status.innerText = "✅ ¡Impacto en MONITOR Exitoso! Verificá tu correo.";
-                status.className = "success";
                 status.style.display = "block";
+                status.style.backgroundColor = "rgba(76, 175, 80, 0.2)";
+                status.style.color = "#81c784";
+                status.innerText = "✅ Impacto enviado al Nodo Vertex.";
                 btn.disabled = false;
                 btn.innerText = "PETRIFICAR REGISTRO 4.0";
-                localStorage.setItem('v_nombre', fields.nombre);
-                localStorage.setItem('v_email', fields.email);
-            }, 2000);
+                
+                localStorage.setItem('v_nombre', data.nombre);
+                localStorage.setItem('v_email', data.email);
+            }, 1500);
         }
     </script>
 </body>
