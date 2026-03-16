@@ -1,109 +1,95 @@
-// Vertex Axioma - Protocolo de Integridad Forense v4.6 (Direct Geo-Forense Link)
-// APIs: OpenWeather + Agromonitoring + Copernicus Direct Visualizer
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <title>Vertex Axioma - Terminal de Registro Forense</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0e1a2b; color: #e0e0e0; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background: #16263e; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 400px; border: 1px solid #2a4165; }
+        h2 { text-align: center; color: #4fc3f7; margin-bottom: 25px; letter-spacing: 2px; text-transform: uppercase; border-bottom: 2px solid #4fc3f7; padding-bottom: 10px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 0.9em; color: #90caf9; }
+        input { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #2a4165; background: #0e1a2b; color: #fff; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #0288d1; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: 0.3s; margin-top: 10px; }
+        button:hover { background: #03a9f4; box-shadow: 0 0 15px rgba(3,169,244,0.5); }
+        #status { margin-top: 20px; text-align: center; font-size: 0.85em; padding: 10px; border-radius: 5px; display: none; }
+        .success { background: rgba(76, 175, 80, 0.2); color: #81c784; border: 1px solid #4caf50; }
+        .error { background: rgba(244, 67, 54, 0.2); color: #e57373; border: 1px solid #f44336; }
+        .logo { text-align: center; font-size: 0.7em; margin-top: 15px; color: #546e7a; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Vertex Axioma</h2>
+        <div class="input-group">
+            <label>Nombre del Operador / Activo</label>
+            <input type="text" id="nombre" placeholder="Ej: Salar Olaroz Test">
+        </div>
+        <div class="input-group">
+            <label>Email para Reporte AXIOMA®</label>
+            <input type="email" id="email" placeholder="ejemplo@correo.com">
+        </div>
+        <div class="input-group">
+            <label>Coordenadas GPS (Lat, Lon)</label>
+            <input type="text" id="coords" placeholder="-23.385, -66.745">
+        </div>
+        <div class="input-group">
+            <label>Activo / Mineral</label>
+            <input type="text" id="activo" placeholder="Ej: Litio / Cobre">
+        </div>
+        
+        <button onclick="enviarDatos()">PETRIFICAR REGISTRO</button>
+        
+        <div id="status"></div>
+        
+        <div class="logo">
+            Sello de Inmutabilidad Transfronteriza<br>
+            Protocolo de Integridad Forense v4.6
+        </div>
+    </div>
 
-var ID_EXCEL = "1CpyMUXykr_SPQoPHqVZXcTOhZ0_NKeU1MShMDziyX1Q";
-var ID_CONTRATO = "1oH7Ayo0B3cT4cqdyvwQjeyLBjzS9ifz2kHq0SRXb1J8";
-var ID_SELLO = "1eVI8_L5BUTeMm4ltmYx30RPs3O8PfVJlS0Npieba9LI";
+    <script>
+        function enviarDatos() {
+            const btn = document.querySelector('button');
+            const status = document.getElementById('status');
+            const urlBase = "https://script.google.com/macros/s/AKfycbwIs3RjPktzqPX7I45hM_iIcuuPCGOQsStZ7gQowWM0l6sS-wVziMw-LleP7DD-PYoE/exec"; // <--- PEGA TU URL DE GOOGLE SCRIPT AQUÍ
+            
+            const nombre = document.getElementById('nombre').value;
+            const email = document.getElementById('email').value;
+            const coords = document.getElementById('coords').value;
+            const activo = document.getElementById('activo').value;
 
-function doGet(e) {
-  var data = e.parameter; 
-  var ss = SpreadsheetApp.openById(ID_EXCEL);
-  var sheet = ss.getSheets()[0];
-  var fecha = Utilities.formatDate(new Date(), "GMT-3", "dd/MM/yyyy HH:mm");
-  
-  var origen = data.device ? "DRON_IOT: " + data.device : "WEB_MANUAL";
-  var nombre  = data.nombre || "S/D";
-  var email   = data.email || "";
-  var activo  = data.activo || "S/D";
-  var pureza  = data.pureza || "0%";
-  var gps     = data.coords || "-34.65,-58.62"; 
+            if(!nombre || !email || !coords) {
+                mostrarStatus("Faltan datos críticos para el Protocolo.", "error");
+                return;
+            }
 
-  // --- CONFIGURACIÓN DE APIS ---
-  var keyOpenWeather = "e971a0fb3893de1f2ef41d294822790e";
-  var keyAgro = "edb08afae954d9dc873b8b4c5b37e287"; 
-  
-  var tempAire = "S/D", tempSuelo = "S/D", humedad = 0;
-  var ndvi = "S/D", ndwi = "S/D", evi = "S/D", dswi = "S/D"; 
+            btn.disabled = true;
+            btn.innerText = "PROCESANDO SATÉLITE...";
+            status.style.display = "none";
 
-  // --- PROCESAMIENTO GEOGRÁFICO ---
-  var coordsLimpia = gps.replace(";", ",").replace(/\s/g, "");
-  var lat = coordsLimpia.split(",")[0];
-  var lon = coordsLimpia.split(",")[1];
+            const urlFinal = `${urlBase}?nombre=${encodeURIComponent(nombre)}&email=${encodeURIComponent(email)}&coords=${encodeURIComponent(coords)}&activo=${encodeURIComponent(activo)}`;
 
-  // --- CONSTRUCTOR DE LINK FORENSE v4.6 (ELIMINA PASOS MANUALES) ---
-  // Este link fuerza al navegador a: 1. Ir a las coordenadas, 2. Usar Sentinel-2, 3. Activar SWIR, 4. Zoom 14.
-  // Es un link "crudo" para el Data Space de la UE.
-  var linkSatelital = "https://browser.dataspace.copernicus.eu/?zoom=14&lat=" + lat + "&lng=" + lon + "&themeId=DEFAULT-THEME&visualizationLayerId=6_SWIR&DATA_COLLECTION=SENTINEL-2";
+            fetch(urlFinal)
+                .then(response => response.text())
+                .then(data => {
+                    mostrarStatus("¡Registro Petrificado con Éxito! Revisá tu mail.", "success");
+                    btn.disabled = false;
+                    btn.innerText = "PETRIFICAR REGISTRO";
+                })
+                .catch(error => {
+                    mostrarStatus("Error de Conexión con el Nodo Vertex.", "error");
+                    btn.disabled = false;
+                    btn.innerText = "REINTENTAR PETRIFICACIÓN";
+                });
+        }
 
-  try {
-    var nLat = parseFloat(lat), nLon = parseFloat(lon);
-
-    // 1. CLIMA (OPENWEATHER)
-    var resAire = UrlFetchApp.fetch("https://api.openweathermap.org/data/2.5/weather?lat="+nLat+"&lon="+nLon+"&appid="+keyOpenWeather+"&units=metric");
-    var dataAire = JSON.parse(resAire.getContentText());
-    tempAire = dataAire.main.temp + "°C";
-    humedad = dataAire.main.humidity;
-
-    // 2. SUELO (AGROMONITORING)
-    var resSuelo = UrlFetchApp.fetch("http://api.agromonitoring.com/agro/1.0/soil?lat="+nLat+"&lon="+nLon+"&appid="+keyAgro);
-    tempSuelo = (JSON.parse(resSuelo.getContentText()).t0 - 273.15).toFixed(2) + "°C";
-
-    // 3. ÍNDICES SATELITALES (HISTORIAL)
-    var end = Math.floor(Date.now() / 1000);
-    var start = end - (45 * 24 * 60 * 60); 
-    var urlPoligono = "http://api.agromonitoring.com/agro/1.0/ndvi/history?lat="+nLat+"&lon="+nLon+"&start="+start+"&end="+end+"&appid="+keyAgro;
-    var resIndices = UrlFetchApp.fetch(urlPoligono);
-    var dataIndices = JSON.parse(resIndices.getContentText());
-    
-    if (dataIndices && dataIndices.length > 0) {
-      var d = dataIndices[0].data;
-      ndvi = d.mean.toFixed(3);
-      evi  = (d.mean * 1.2).toFixed(3); 
-      ndwi = (1 - d.mean).toFixed(3);   
-      dswi = (d.mean < 0.3) ? "ALTO" : "BAJO"; 
-    }
-  } catch(err) {
-    tempSuelo = "Error Sat";
-    ndvi = "Error Sat";
-  }
-
-  // --- HASH DE ORIGEN (DNA DIGITAL) ---
-  var hash = Utilities.base64Encode(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, nombre + fecha + origen)).substring(0, 10).toUpperCase().replace(/[^A-Z0-9]/g, 'X');
-
-  try {
-    // REGISTRO PETRIFICADO EN EXCEL
-    sheet.appendRow([
-      fecha, nombre, email, hash, pureza, data.peso || "0kg", gps, data.titular || "S/D", activo, 
-      "100%", origen, "✅ FAVORABLE", "INMUNE", "PETRIFICADO", 
-      "Aire: " + tempAire, "Suelo: " + tempSuelo, "NDVI: " + ndvi, "Agua: " + ndwi, "Vigor EVI: " + evi, "Estrés: " + dswi, "Hum: " + humedad + "%", linkSatelital
-    ]);
-
-    // ENVÍO DE DOCUMENTACIÓN AXIOMA® (Actualizado con String() para evitar fallas)
-    if (email !== "") {
-      var campos = { 
-        NOMBRE: String(nombre), EMAIL: String(email), HASH: String(hash), ACTIVO: String(activo), 
-        FECHA: String(fecha), CLIMA: String(tempAire), SUELO: String(tempSuelo), VIGOR: String(ndvi), MAPA: String(linkSatelital) 
-      };
-      enviarDoc(ID_CONTRATO, "CONTRATO_", campos);
-    }
-    
-    return ContentService.createTextOutput("OK - REGISTRO VERTEX SATELITAL COMPLETO");
-  } catch (err) {
-    return ContentService.createTextOutput("Error: " + err.message);
-  }
-}
-
-function enviarDoc(id, prefijo, campos) {
-  try {
-    var copia = DriveApp.getFileById(id).makeCopy(prefijo + campos.HASH);
-    var doc = DocumentApp.openById(copia.getId());
-    var body = doc.getBody();
-    for (var k in campos) { body.replaceText("\\{\\{\\s*" + k + "\\s*\\}\\}", campos[k]); }
-    doc.saveAndClose();
-    var pdf = copia.getAs('application/pdf');
-    MailApp.sendEmail({ to: campos.EMAIL, subject: "🛡️ " + prefijo + " Vertex Axioma", body: "Registro Forense Inmutable bajo Protocolo AXIOMA®. Link Mapa Directo: " + campos.MAPA, attachments: [pdf] });
-    copia.setTrashed(true);
-  } catch (e) {
-    SpreadsheetApp.openById(ID_EXCEL).getSheets()[0].appendRow([new Date(), "ERROR_DRIVE", campos.EMAIL, e.toString()]);
-  }
-}
+        function mostrarStatus(msg, tipo) {
+            const status = document.getElementById('status');
+            status.innerText = msg;
+            status.className = tipo;
+            status.style.display = "block";
+        }
+    </script>
+</body>
+</html>
