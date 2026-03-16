@@ -27,7 +27,7 @@
         
         <div class="input-group">
             <label>NOMBRE (Operador/Técnico)</label>
-            <input type="text" id="nombre" placeholder="Cargando operador...">
+            <input type="text" id="nombre" placeholder="Nombre del técnico">
         </div>
 
         <div class="input-group">
@@ -45,4 +45,47 @@
                 <label>PUREZA (%)</label>
                 <input type="text" id="pureza" placeholder="98%">
             </div>
-            <div class="input-group
+            <div class="input-group">
+                <label>PESO (Kg/Tn)</label>
+                <input type="text" id="peso" placeholder="500tn">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>COORDENADAS GPS</label>
+            <input type="text" id="coords" placeholder="-23.385, -66.745">
+        </div>
+        
+        <button id="btnPetrificar" onclick="enviarDatos()">PETRIFICAR REGISTRO 4.0</button>
+        
+        <div id="status"></div>
+        
+        <div class="footer">
+            <b>Sello de Inmutabilidad Transfronteriza</b><br>
+            Vertex Axioma - Protocolo AXIOMA®
+        </div>
+    </div>
+
+    <script>
+        let mailEmpresaOriginal = "";
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            const urlNombre = urlParams.get('nombre');
+            const urlEmail = urlParams.get('email');
+
+            // Limpieza si entra un operador nuevo
+            if (urlNombre || urlEmail) {
+                localStorage.clear();
+            }
+
+            const n = urlNombre || localStorage.getItem('v_nombre');
+            const e = urlEmail || localStorage.getItem('v_email');
+            mailEmpresaOriginal = urlParams.get('mailEmpresa') || e;
+
+            if(n) document.getElementById('nombre').value = n;
+            if(e) document.getElementById('email').value = e;
+            
+            // Carga de datos del activo desde el link del Índice
+            if(urlParams.get('activo')) document.getElementById('activo').value = url
