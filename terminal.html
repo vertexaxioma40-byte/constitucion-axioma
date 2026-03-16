@@ -6,13 +6,13 @@
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #0e1a2b; color: #e0e0e0; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
         .container { background: #16263e; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 400px; border: 1px solid #2a4165; }
-        h2 { text-align: center; color: #4fc3f7; border-bottom: 2px solid #4fc3f7; padding-bottom: 10px; text-transform: uppercase; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-size: 0.8em; color: #90caf9; font-weight: bold; }
+        h2 { text-align: center; color: #4fc3f7; border-bottom: 2px solid #4fc3f7; padding-bottom: 10px; text-transform: uppercase; font-size: 1.2em; }
+        .input-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 4px; font-size: 0.8em; color: #90caf9; font-weight: bold; }
         input { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #2a4165; background: #0e1a2b; color: #fff; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: #0288d1; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        button:disabled { background: #455a64; }
-        #status { margin-top: 15px; text-align: center; padding: 10px; border-radius: 5px; display: none; }
+        button { width: 100%; padding: 15px; background: #0288d1; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; border: 1px solid #4fc3f7; }
+        button:disabled { background: #455a64; cursor: not-allowed; }
+        #status { margin-top: 15px; text-align: center; padding: 10px; border-radius: 5px; display: none; font-size: 0.9em; }
     </style>
 </head>
 <body>
@@ -34,31 +34,34 @@
 
         window.onload = function() {
             const params = new URLSearchParams(window.location.search);
-            // Si el índice trae datos, limpiamos para no mezclar
-            if (params.get('nombre')) { localStorage.clear(); }
+            
+            // 🔥 TRUCO MAESTRO: Si la URL trae un nombre, BORRAMOS la memoria de las 14:25
+            if (params.get('nombre')) {
+                console.log("Detectado nuevo ingreso. Limpiando caché local...");
+                localStorage.clear(); 
+                sessionStorage.clear();
+            }
 
-            document.getElementById('nombre').value = params.get('nombre') || localStorage.getItem('v_nombre') || "";
-            document.getElementById('email').value = params.get('email') || localStorage.getItem('v_email') || "";
+            // Cargamos los datos actuales del link
+            document.getElementById('nombre').value = params.get('nombre') || "";
+            document.getElementById('email').value = params.get('email') || "";
             document.getElementById('activo').value = params.get('activo') || "";
             document.getElementById('pureza').value = params.get('pureza') || "";
             document.getElementById('peso').value = params.get('peso') || "";
             document.getElementById('coords').value = params.get('coords') || "";
             
-            // Guardamos el mail de la empresa que viene del índice de forma invisible
-            mailEmpresaParam = params.get('mailEmpresa') || "";
+            mailEmpresaParam = params.get('mailEmpresa') || params.get('email') || "";
         };
 
         function ejecutar() {
             const btn = document.getElementById('btnPetrificar');
             const status = document.getElementById('status');
-            
-            // URL de tu Script de Google
             const urlBase = "https://script.google.com/macros/s/AKfycbzV8yTwLaVF7EsCwTm9I8v8jJEdPX2UJPX-fc2g04ZDc8JJwNuPOxnbPwRJ_WZqaxoJ/exec";
             
             const data = {
                 nombre: document.getElementById('nombre').value,
                 email: document.getElementById('email').value,
-                mailEmpresa: mailEmpresaParam, // Se envía aunque no haya campo en pantalla
+                mailEmpresa: mailEmpresaParam,
                 activo: document.getElementById('activo').value,
                 pureza: document.getElementById('pureza').value,
                 peso: document.getElementById('peso').value,
@@ -66,18 +69,17 @@
             };
 
             if(!data.nombre || !data.email || !data.coords) {
-                alert("Faltan datos críticos.");
+                alert("⚠️ Error: Datos críticos incompletos para el Sello.");
                 return;
             }
 
             btn.disabled = true;
-            btn.innerText = "PROCESANDO SELLO...";
+            btn.innerText = "PETRIFICANDO...";
 
-            // Construcción manual de la URL para evitar errores de codificación
-            const queryString = Object.keys(data).map(key => key + '=' + encodeURIComponent(data[key])).join('&');
+            // Impacto vía URL Directa
+            const queryString = Object.keys(data).map(k => k + '=' + encodeURIComponent(data[k])).join('&');
             const finalUrl = urlBase + "?" + queryString;
 
-            // MÉTODO DE IMPACTO POR IMAGEN (El más robusto para saltar bloqueos)
             const img = new Image();
             img.src = finalUrl;
             
@@ -85,13 +87,10 @@
                 status.style.display = "block";
                 status.style.backgroundColor = "rgba(76, 175, 80, 0.2)";
                 status.style.color = "#81c784";
-                status.innerText = "✅ Impacto enviado al Nodo Vertex.";
+                status.innerText = "✅ Impacto en MONITOR Exitoso.";
                 btn.disabled = false;
                 btn.innerText = "PETRIFICAR REGISTRO 4.0";
-                
-                localStorage.setItem('v_nombre', data.nombre);
-                localStorage.setItem('v_email', data.email);
-            }, 1500);
+            }, 1000);
         }
     </script>
 </body>
