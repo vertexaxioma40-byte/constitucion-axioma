@@ -5,97 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vertex Axioma | Terminal de Operaciones</title>
     <style>
-        html, body { background-color: #050a15; color: #ffffff; margin: 0; padding: 0; font-family: 'Courier New', monospace; }
-        body { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
-        .container { background: #0a1122; padding: 30px; border: 2px solid #002060; border-radius: 10px; box-shadow: 0 0 30px rgba(0, 32, 96, 0.6); width: 100%; max-width: 600px; }
-        h2 { font-size: 1.4rem; letter-spacing: 2px; color: #4da6ff; text-align: center; border-bottom: 1px solid #002060; padding-bottom: 10px; }
-        .info-panel { background: #000; padding: 15px; border-left: 4px solid #4da6ff; margin-bottom: 20px; font-size: 0.85rem; }
-        .control-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        label { font-size: 0.75rem; color: #4da6ff; text-transform: uppercase; font-weight: bold; }
-        input, select { background: #050a15; border: 1px solid #002060; color: #fff; padding: 12px; font-family: 'Courier New', monospace; font-size: 1rem; }
-        .btn-petrificar { background: #002060; color: #fff; border: 1px solid #4da6ff; padding: 20px; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.3s; width: 100%; font-size: 1.1rem; }
-        .btn-petrificar:hover { background: #003399; box-shadow: 0 0 20px #4da6ff; }
-        .btn-petrificar:disabled { opacity: 0.5; cursor: not-allowed; }
-        hr { border: 0; border-top: 1px dashed #002060; margin: 20px 0; }
-        .status-tag { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 0.7rem; background: #002060; color: #4da6ff; margin-top: 5px; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background-color: #050a15; }
+        iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body>
+    <iframe id="nodo-vertex" src="" style="width: 100%; height: 100%; border: none;"></iframe>
 
-<div class="container">
-    <h2>NODO DE OPERACIONES VERTEX</h2>
-    
-    <div class="info-panel">
-        <div>OPERADOR: <span id="display-nombre">CARGANDO...</span></div>
-        <div>TITULAR: <span id="display-titular">CARGANDO...</span></div>
-        <div class="status-tag">ESTADO: CONECTADO AL NODO</div>
-    </div>
-
-    <div class="control-group">
-        <label for="idActivo">🚛 ACTIVO IDENTIFICADO:</label>
-        <select id="idActivo">
-            <option value="CAMION_SCANIA_01">CAMIÓN SCANIA 01</option>
-            <option value="DJI_ENTERPRISE_P1">DJI ENTERPRISE P1</option>
-            <option value="SILO_ACOPIO_A">SILO ACOPIO A</option>
-            <option value="VAGON_BELGRANO_C">VAGÓN BELGRANO C</option>
-        </select>
-        
-        <label for="fuente" style="margin-top:10px;">📡 FUENTE DE EVIDENCIA:</label>
-        <select id="fuente">
-            <option value="BALANZA">⚖️ BALANZA DE PRECISIÓN</option>
-            <option value="DRON">🛰️ REPORTE VOLUMETRÍA</option>
-            <option value="IOT">🌡️ SENSOR AMBIENTAL</option>
-            <option value="OPTICO">🔬 FIRMA ESPECTRAL</option>
-        </select>
-    </div>
-
-    <button onclick="ejecutarPetrificacion()" class="btn-petrificar" id="btn-main">
-        🛡️ PETRIFICAR EVIDENCIA
-    </button>
-</div>
-
-<script>
-    // Recuperamos el paquete de datos guardado en el Indice
-    const d = JSON.parse(localStorage.getItem('v_datos'));
-
-    window.onload = function() {
-        if(d) {
-            document.getElementById('display-nombre').innerText = d.nombre || "DESCONOCIDO";
-            document.getElementById('display-titular').innerText = d.titular || "SIN TITULAR";
-        }
-    };
-
-    function ejecutarPetrificacion() {
-        const btn = document.getElementById('btn-main');
-        btn.innerText = "⚡ PROCESANDO...";
-        btn.disabled = true;
-
-        // Construimos el envío respetando las variables de ayer
-        const payload = {
-            nombre: d ? d.nombre : "DESCONOCIDO",
-            email: d ? d.email : "",
-            titular: d ? d.titular : "SIN TITULAR",
-            mailEmpresa: d ? d.mailEmpresa : "",
-            idActivo: document.getElementById('idActivo').value,
-            fuente: document.getElementById('fuente').value,
-            idOperacion: "VTX-" + Math.random().toString(36).substr(2, 7).toUpperCase()
+    <script>
+        window.onload = function() {
+            // PEGA TU URL DE GOOGLE (LA QUE TERMINA EN /exec) AQUÍ ABAJO
+            const urlGoogle = "TU_URL_DE_GOOGLE_AQUI";
+            
+            const params = window.location.search;
+            // Construimos la URL para que Google sepa que tiene que mostrar la terminal
+            const finalUrl = urlGoogle + params + (params ? "&p=terminal" : "?p=terminal");
+            
+            document.getElementById('nodo-vertex').src = finalUrl;
         };
-
-        // LLAMADA AL MOTOR DE GOOGLE
-        google.script.run
-            .withSuccessHandler(function() {
-                alert("✅ EVIDENCIA PETRIFICADA CON ÉXITO.\nREVISÁ TU MAIL.");
-                btn.innerText = "🛡️ PETRIFICAR EVIDENCIA";
-                btn.disabled = false;
-            })
-            .withFailureHandler(function(err) {
-                alert("❌ ERROR: " + err);
-                btn.disabled = false;
-                btn.innerText = "REINTENTAR";
-            })
-            .procesarEntradaVertex(payload);
-    }
-</script>
-
+    </script>
 </body>
 </html>
