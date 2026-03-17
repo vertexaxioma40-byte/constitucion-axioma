@@ -60,18 +60,23 @@
         const titularVal = document.getElementById('titular').value;
         const mailEmpresaVal = document.getElementById('mailEmpresa').value;
 
-        // 2. Guardamos en localStorage (Respaldo)
+        // 2. Guardamos en localStorage para respaldo
         localStorage.setItem('v_nombre', nombreVal);
         localStorage.setItem('v_email', emailVal);
         localStorage.setItem('v_titular', titularVal);
         localStorage.setItem('v_mailEmpresa', mailEmpresaVal);
 
-        // 3. Saltamos a la terminal usando la URL actual de forma directa
-        // Esto evita llamar a getScriptUrl() y es mucho más rápido
-        const urlActual = window.location.href.split('?')[0];
-        const params = `?p=terminal&nombre=${encodeURIComponent(nombreVal)}&email=${encodeURIComponent(emailVal)}&titular=${encodeURIComponent(titularVal)}&mailEmpresa=${encodeURIComponent(mailEmpresaVal)}`;
-
-        // Redirección forzada al nivel superior (para salir del iframe de Google)
-        window.top.location.href = urlActual + params;
+        // 3. Pedimos la URL al servidor de forma explícita
+        // Esto es lo que Google recomienda para evitar bloqueos
+        google.script.run.withSuccessHandler(function(url) {
+            const params = `?p=terminal&nombre=${encodeURIComponent(nombreVal)}&email=${encodeURIComponent(emailVal)}&titular=${encodeURIComponent(titularVal)}&mailEmpresa=${encodeURIComponent(mailEmpresaVal)}`;
+            
+            // Forzamos la redirección en la ventana principal
+            if (window.top) {
+                window.top.location.href = url + params;
+            } else {
+                window.location.href = url + params;
+            }
+        }).getScriptUrl();
     });
 </script>
