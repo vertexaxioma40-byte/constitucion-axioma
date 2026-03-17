@@ -2,53 +2,86 @@
 <html>
 <head>
   <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vertex Axioma | Terminal</title>
   <style>
     body { background-color: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-    .console { border: 1px solid #0f0; padding: 20px; width: 90%; max-width: 600px; background: #050a15; box-shadow: 0 0 15px rgba(0,255,0,0.3); }
-    .status { color: #888; font-size: 0.8rem; margin-bottom: 10px; }
-    .btn-petrificar { background: #0f0; color: #000; padding: 20px; width: 100%; font-size: 1.2rem; cursor: pointer; border: none; font-weight: bold; margin-top: 20px; }
-    .btn-petrificar:hover { background: #fff; }
-    #log { font-size: 0.9rem; line-height: 1.4; }
+    .console { border: 1px solid #0f0; padding: 20px; width: 95%; max-width: 600px; background: #050a15; box-shadow: 0 0 15px rgba(0,255,0,0.3); }
+    .status { color: #888; font-size: 0.8rem; margin-bottom: 10px; text-transform: uppercase; }
+    .btn-petrificar { background: #0f0; color: #000; padding: 20px; width: 100%; font-size: 1.2rem; cursor: pointer; border: none; font-weight: bold; margin-top: 20px; text-transform: uppercase; }
+    .btn-petrificar:hover { background: #fff; box-shadow: 0 0 20px #fff; }
+    .btn-petrificar:disabled { background: #333; color: #888; cursor: not-allowed; }
+    #log { font-size: 0.9rem; line-height: 1.4; white-space: pre-wrap; }
+    select { width: 100%; background: #000; color: #0f0; border: 1px solid #0f0; padding: 12px; font-family: 'Courier New', monospace; margin-top: 10px; }
   </style>
 </head>
 <body>
-  <div class="console">
-    <div class="status">SISTEMA AXIOMA V4.0 - ESTADO: ONLINE</div>
-    <div id="log">> INICIALIZANDO NODO...<br>> CARGANDO CREDENCIALES...</div>
-    <br>
-    <select id="idActivo" style="width:100%; background:black; color:#0f0; border:1px solid #0f0; padding:10px;">
-        <option value="CAMION_SCANIA_01">CAMIÓN SCANIA 01</option>
-        <option value="DJI_ENTERPRISE_P1">DJI ENTERPRISE P1</option>
-        <option value="SILO_ACOPIO_A">SILO ACOPIO A</option>
-    </select>
-    <button class="btn-petrificar" id="btn-p" onclick="ejecutar()">🛡️ PETRIFICAR EVIDENCIA</button>
+  <div class="container">
+    <div class="console">
+      <div class="status">SISTEMA AXIOMA V4.0 - NODO OPERATIVO</div>
+      <div id="log">> INICIALIZANDO INTERFAZ...
+> CARGANDO PROTOCOLOS DE PETRIFICACIÓN...</div>
+      
+      <div style="margin-top:20px;">
+        <label style="font-size:0.7rem;">SELECCIONAR ACTIVO:</label>
+        <select id="idActivo">
+            <option value="CAMION_SCANIA_01">CAMIÓN SCANIA 01</option>
+            <option value="DJI_ENTERPRISE_P1">DJI ENTERPRISE P1</option>
+            <option value="SILO_ACOPIO_A">SILO ACOPIO A</option>
+            <option value="VAGON_BELGRANO_C">VAGÓN BELGRANO C</option>
+        </select>
+      </div>
+
+      <button class="btn-petrificar" id="btn-p" onclick="ejecutar()">🛡️ PETRIFICAR EVIDENCIA</button>
+    </div>
   </div>
 
   <script>
-    const d = JSON.parse(localStorage.getItem('v_datos'));
+    // Recuperamos los datos que guardó el Indice
+    const datosRecuperados = JSON.parse(localStorage.getItem('v_datos'));
     
-    if(d) {
-      document.getElementById('log').innerHTML += `<br>> OPERADOR: ${d.nombre}<br>> TITULAR: ${d.titular}`;
+    if(datosRecuperados) {
+      document.getElementById('log').innerHTML += `\n> OPERADOR DETECTADO: ${datosRecuperados.nombre}\n> TITULAR: ${datosRecuperados.titular}`;
+    } else {
+      document.getElementById('log').innerHTML += `\n> ADVERTENCIA: NO SE DETECTARON CREDENCIALES EN MEMORIA.`;
     }
 
     function ejecutar() {
       const btn = document.getElementById('btn-p');
-      btn.disabled = true;
-      btn.innerText = "PROCESANDO...";
+      const log = document.getElementById('log');
       
+      btn.disabled = true;
+      btn.innerText = "PROCESANDO HASH...";
+      log.innerHTML += "\n> ESTABLECIENDO CONEXIÓN CON EL LIBRO DE AUDITORÍA...";
+
+      // Preparamos el paquete de datos para el Código.gs
       const payload = {
-        ...d,
+        nombre: datosRecuperados ? datosRecuperados.nombre : "DESCONOCIDO",
+        email: datosRecuperados ? datosRecuperados.email : "",
+        titular: datosRecuperados ? datosRecuperados.titular : "SIN TITULAR",
+        mailEmpresa: datosRecuperados ? datosRecuperados.mailEmpresa : "",
         idActivo: document.getElementById('idActivo').value,
         idOperacion: "VTX-" + Math.random().toString(36).substr(2, 7).toUpperCase(),
-        fuente: "Consola Directa"
+        fuente: "Consola Vertex"
       };
 
-      google.script.run.withSuccessHandler(() => {
-        document.getElementById('log').innerHTML += "<br>> SELLO GENERADO CON ÉXITO.<br>> REVISAR MAIL PARA PDF.";
-        alert("EVIDENCIA PETRIFICADA.");
-        btn.disabled = false;
-        btn.innerText = "🛡️ PETRIFICAR EVIDENCIA";
-      }).procesarEntradaVertex(payload);
+      // ESTA ES LA CONEXIÓN REAL CON GOOGLE
+      google.script.run
+        .withSuccessHandler(function(res) {
+            log.innerHTML += "\n> OK: REGISTRO INMUTABLE CREADO.";
+            log.innerHTML += "\n> PDF GENERADO Y ENVIADO.";
+            alert("EVIDENCIA PETRIFICADA CON ÉXITO.");
+            btn.innerText = "🛡️ PETRIFICAR EVIDENCIA";
+            btn.disabled = false;
+        })
+        .withFailureHandler(function(err) {
+            log.innerHTML += "\n> ERROR CRÍTICO: " + err;
+            alert("FALLO EN LA CONEXIÓN: " + err);
+            btn.disabled = false;
+            btn.innerText = "REINTENTAR";
+        })
+        .procesarEntradaVertex(payload);
     }
   </script>
 </body>
