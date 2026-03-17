@@ -1,39 +1,55 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vertex Axioma | Terminal de Operaciones</title>
-    <style>
-        body, html { 
-            margin: 0; 
-            padding: 0; 
-            height: 100%; 
-            width: 100%;
-            overflow: hidden; 
-            background-color: #050a15; 
-        }
-        iframe { 
-            width: 100%; 
-            height: 100%; 
-            border: none; 
-        }
-    </style>
+  <base target="_top">
+  <style>
+    body { background-color: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+    .console { border: 1px solid #0f0; padding: 20px; width: 90%; max-width: 600px; background: #050a15; box-shadow: 0 0 15px rgba(0,255,0,0.3); }
+    .status { color: #888; font-size: 0.8rem; margin-bottom: 10px; }
+    .btn-petrificar { background: #0f0; color: #000; padding: 20px; width: 100%; font-size: 1.2rem; cursor: pointer; border: none; font-weight: bold; margin-top: 20px; }
+    .btn-petrificar:hover { background: #fff; }
+    #log { font-size: 0.9rem; line-height: 1.4; }
+  </style>
 </head>
 <body>
-    <iframe id="nodo-vertex" src=""></iframe>
+  <div class="console">
+    <div class="status">SISTEMA AXIOMA V4.0 - ESTADO: ONLINE</div>
+    <div id="log">> INICIALIZANDO NODO...<br>> CARGANDO CREDENCIALES...</div>
+    <br>
+    <select id="idActivo" style="width:100%; background:black; color:#0f0; border:1px solid #0f0; padding:10px;">
+        <option value="CAMION_SCANIA_01">CAMIÓN SCANIA 01</option>
+        <option value="DJI_ENTERPRISE_P1">DJI ENTERPRISE P1</option>
+        <option value="SILO_ACOPIO_A">SILO ACOPIO A</option>
+    </select>
+    <button class="btn-petrificar" id="btn-p" onclick="ejecutar()">🛡️ PETRIFICAR EVIDENCIA</button>
+  </div>
 
-    <script>
-        // Este script detecta los datos de la URL y los pasa al "motor" de Google
-        window.onload = function() {
-            const urlGoogle = "https://script.google.com/macros/s/AKfycbzuXEytgkHbTeiqe0no9k4cs8sH_4uMBJ2fhWDCC6l5XYNFUHq-r45qnPtHW1IWtAXT/exec"; // <--- PEGA TU LINK ACÁ
-            const params = window.location.search;
-            
-            // Si venimos del Indice, le pegamos los parámetros a la URL de Google
-            const finalUrl = urlGoogle + params + (params ? "&p=terminal" : "?p=terminal");
-            
-            document.getElementById('nodo-vertex').src = finalUrl;
-        };
-    </script>
+  <script>
+    const d = JSON.parse(localStorage.getItem('v_datos'));
+    
+    if(d) {
+      document.getElementById('log').innerHTML += `<br>> OPERADOR: ${d.nombre}<br>> TITULAR: ${d.titular}`;
+    }
+
+    function ejecutar() {
+      const btn = document.getElementById('btn-p');
+      btn.disabled = true;
+      btn.innerText = "PROCESANDO...";
+      
+      const payload = {
+        ...d,
+        idActivo: document.getElementById('idActivo').value,
+        idOperacion: "VTX-" + Math.random().toString(36).substr(2, 7).toUpperCase(),
+        fuente: "Consola Directa"
+      };
+
+      google.script.run.withSuccessHandler(() => {
+        document.getElementById('log').innerHTML += "<br>> SELLO GENERADO CON ÉXITO.<br>> REVISAR MAIL PARA PDF.";
+        alert("EVIDENCIA PETRIFICADA.");
+        btn.disabled = false;
+        btn.innerText = "🛡️ PETRIFICAR EVIDENCIA";
+      }).procesarEntradaVertex(payload);
+    }
+  </script>
 </body>
 </html>
