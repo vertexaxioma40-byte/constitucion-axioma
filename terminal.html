@@ -62,34 +62,6 @@
     <button onclick="ejecutarPetrificacion()" class="btn-petrificar" id="btn-main">
         🛡️ PETRIFICAR EVIDENCIA
     </button>
-function ejecutarPetrificacion() {
-    const btn = document.getElementById('btn-main');
-    btn.innerText = "⚡ PETRIFICANDO...";
-    btn.disabled = true;
-
-    const datos = {
-        nombre: document.getElementById('display-nombre').innerText,
-        idOperacion: document.getElementById('idOperacion').value,
-        idActivo: document.getElementById('idActivo').value,
-        fuente: document.getElementById('fuente').value,
-        titular: document.getElementById('display-titular').innerText
-        // Agregá aquí el resto de los campos si los necesitás
-    };
-
-    // Esto es lo que envía los datos al Excel
-    google.script.run
-        .withSuccessHandler(function(res) {
-            alert("✅ EVIDENCIA REGISTRADA");
-            btn.innerText = "🛡️ PETRIFICAR EVIDENCIA";
-            btn.disabled = false;
-        })
-        .withFailureHandler(function(err) {
-            alert("❌ ERROR DE RED: " + err);
-            btn.innerText = "🛡️ REINTENTAR";
-            btn.disabled = false;
-        })
-        .procesarEntradaVertex(datos); 
-}
     
     <div style="text-align: center; margin-top: 15px;">
         <p style="font-size: 0.7rem; color: #4da6ff; opacity: 0.6;">
@@ -99,11 +71,9 @@ function ejecutarPetrificacion() {
 </div>
 
 <script>
-    // 1. Al cargar la página, recuperamos los datos de la "mochila"
+    // 1. Al cargar la página, recuperamos los datos
     window.onload = function() {
         const params = new URLSearchParams(window.location.search);
-        
-        // Priorizamos URL, si no, buscamos en LocalStorage
         const nombre = params.get('nombre') || localStorage.getItem('v_nombre') || "Sin Identificar";
         const titular = params.get('titular') || localStorage.getItem('v_titular') || "Sin Identificar";
         
@@ -111,33 +81,36 @@ function ejecutarPetrificacion() {
         document.getElementById('display-titular').innerText = titular;
     };
 
-    // 2. Función principal de envío al Tribunal (Código.gs)
+    // 2. Función de envío al Excel (Código.gs)
     function ejecutarPetrificacion() {
         const btn = document.getElementById('btn-main');
         const params = new URLSearchParams(window.location.search);
         
-        btn.innerText = "⚡ PROCESANDO HASH MAESTRO...";
+        btn.innerText = "⚡ PETRIFICANDO...";
         btn.disabled = true;
 
         const datos = {
-            nombre: params.get('nombre') || localStorage.getItem('v_nombre'),
+            nombre: document.getElementById('display-nombre').innerText,
+            titular: document.getElementById('display-titular').innerText,
             email: params.get('email') || localStorage.getItem('v_email'),
-            titular: params.get('titular') || localStorage.getItem('v_titular'),
             mailEmpresa: params.get('mailEmpresa') || localStorage.getItem('v_mailEmpresa'),
             idOperacion: document.getElementById('idOperacion').value,
             idActivo: document.getElementById('idActivo').value,
             fuente: document.getElementById('fuente').value
         };
 
-        // Enviamos al cerebro en Código.gs
         google.script.run
             .withSuccessHandler(function(res) {
-                alert("✅ ÉXITO: Evidencia del activo " + datos.idActivo + " ha sido petrificada bajo la Operación " + datos.idOperacion);
+                if(res === "OK") {
+                    alert("✅ EVIDENCIA PETRIFICADA: " + datos.idOperacion);
+                } else {
+                    alert("⚠️ NOTA: " + res);
+                }
                 btn.innerText = "🛡️ PETRIFICAR EVIDENCIA";
                 btn.disabled = false;
             })
             .withFailureHandler(function(err) {
-                alert("❌ ERROR CRÍTICO DE CONEXIÓN");
+                alert("❌ ERROR CRÍTICO: " + err);
                 btn.innerText = "🛡️ REINTENTAR";
                 btn.disabled = false;
             })
@@ -147,4 +120,3 @@ function ejecutarPetrificacion() {
 
 </body>
 </html>
- 
