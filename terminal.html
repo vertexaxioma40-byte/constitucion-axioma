@@ -3,85 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal Vertex Axioma - Auditoría 4.0</title>
+    <title>Vertex Axioma | Consola de Importación</title>
     <style>
-        body { font-family: 'Courier New', Courier, monospace; background-color: #0a0a0a; color: #00ff00; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .terminal { background: #111; padding: 30px; border: 2px solid #00ff00; border-radius: 10px; width: 400px; box-shadow: 0 0 20px rgba(0, 255, 0, 0.2); }
-        h2 { text-align: center; color: #fff; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid #00ff00; padding-bottom: 10px; }
-        label { display: block; margin-top: 15px; font-size: 12px; text-transform: uppercase; }
-        input, select { width: 100%; padding: 10px; margin-top: 5px; background: #222; border: 1px solid #00ff00; color: #00ff00; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; margin-top: 25px; background: #00ff00; color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
-        button:hover { background: #00cc00; box-shadow: 0 0 15px #00ff00; }
-        #status { margin-top: 20px; text-align: center; font-size: 12px; color: #888; }
-        .disclaimer { font-size: 10px; color: #555; margin-top: 15px; text-align: justify; line-height: 1.2; }
+        body { background-color: #050a15; color: #ffffff; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .terminal-box { background: #0a1122; padding: 30px; border: 2px solid #4da6ff; border-radius: 5px; box-shadow: 0 0 20px rgba(77, 166, 255, 0.3); width: 100%; max-width: 450px; }
+        h2 { color: #4da6ff; font-size: 1.2rem; text-align: center; letter-spacing: 2px; }
+        .data-stream { font-size: 0.8rem; color: #4da6ff; margin-bottom: 20px; border-bottom: 1px solid #1a2a44; padding-bottom: 10px; }
+        label { display: block; font-size: 0.7rem; margin-top: 15px; color: #888; text-transform: uppercase; }
+        select, input { width: 100%; background: #000; border: 1px solid #4da6ff; color: #00ff00; padding: 10px; margin-top: 5px; box-sizing: border-box; font-family: 'Courier New', monospace; }
+        button { width: 100%; background: #002060; color: #fff; border: 1px solid #4da6ff; padding: 15px; margin-top: 25px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:hover { background: #4da6ff; color: #000; }
+        #status { font-size: 0.7rem; text-align: center; margin-top: 15px; color: #00ff00; }
     </style>
 </head>
 <body>
 
-<div class="terminal">
-    <h2>Nodo Vertex</h2>
-    <p style="font-size: 10px; text-align: center;">CONSOLA DE IMPORTACIÓN FORENSE</p>
+<div class="terminal-box">
+    <h2>TERMINAL V.8.0</h2>
+    <div class="data-stream">CONSOLA DE IMPORTACIÓN - PROTOCOLO AXIOMA®</div>
 
-    <label>Operador / Oficial de Integridad</label>
-    <input type="text" id="nombre" placeholder="Nombre del Técnico" value="OPERADOR VERTEX">
+    <label>Oficial de Integridad</label>
+    <input type="text" id="nombre" value="OPERADOR VERTEX">
 
-    <label>Email de la Empresa (Titular)</label>
+    <label>Email Titular (Para Sello)</label>
     <input type="email" id="mailEmpresa" placeholder="empresa@dominio.com">
 
-    <label>Seleccionar Fuente de Evidencia (API)</label>
+    <label>Fuente de Datos (API Externa)</label>
     <select id="fuente">
-        <option value="DRON">🛸 Importar: Reporte API Vuelo Dron #001</option>
-        <option value="BALANZA">⚖️ Importar: Reporte API Balanza IoT #001</option>
-        <option value="RIEGO">🌊 Importar: Reporte API Sensor Riego #001</option>
-        <option value="HUMEDAD">🪴 Importar: Reporte API Sensor Humedad #001</option>
-        <option value="OPTICO">📷 Importar: Reporte API Sensor Óptico #001</option>
+        <option value="DRON">🛸 REPORTE API DRON #001</option>
+        <option value="BALANZA">⚖️ REPORTE API BALANZA #001</option>
+        <option value="RIEGO">🌊 REPORTE API RIEGO #001</option>
+        <option value="HUMEDAD">🪴 REPORTE API HUMEDAD #001</option>
+        <option value="OPTICO">📷 REPORTE API ÓPTICO #001</option>
     </select>
 
-    <button id="btnPetrificar" onclick="petrificar()">Petrificar Declaración</button>
-
-    <div id="status">ESTADO: LISTO PARA AUDITORÍA 4.0</div>
-    
-    <div class="disclaimer">
-        AL PETRIFICAR, EL USUARIO DECLARA BAJO JURAMENTO LA VERACIDAD DE LA FUENTE SELECCIONADA. EL REGISTRO SERÁ INMORTALIZADO CON HASH DE ORIGEN EN EL LIBRO DE AUDITORÍA 4.0.
-    </div>
+    <button onclick="petrificar()">PETRIFICAR PRUEBA</button>
+    <div id="status">ESTADO: ESPERANDO INSTRUCCIÓN</div>
 </div>
 
 <script>
     function petrificar() {
-        const btn = document.getElementById('btnPetrificar');
+        const btn = document.querySelector('button');
         const status = document.getElementById('status');
         const nombre = document.getElementById('nombre').value;
         const mailEmpresa = document.getElementById('mailEmpresa').value;
         const fuente = document.getElementById('fuente').value;
 
-        if (!mailEmpresa) { alert("Por favor, ingrese el email del titular."); return; }
+        if (!mailEmpresa) { alert("Falta Email del Titular"); return; }
 
         btn.disabled = true;
-        btn.innerText = "PETRIFICANDO...";
-        status.innerText = "ACCEDIENDO A API " + fuente + " EN DRIVE...";
+        btn.innerText = "IMPORTANDO JSON...";
+        status.innerText = "ACCEDIENDO A NODO CENTRAL...";
 
-        // URL DE TU NODO CENTRAL v8.0
         const scriptURL = "https://script.google.com/macros/s/AKfycbx_Qi68HRBsCYju_Ws29qnQNGPN1KxzV3--Z69wrwsKx3TV867vqgIi-3ClfPA8w0CG/exec";
-        
         const finalUrl = `${scriptURL}?nombre=${encodeURIComponent(nombre)}&mailEmpresa=${encodeURIComponent(mailEmpresa)}&fuente=${encodeURIComponent(fuente)}`;
 
         fetch(finalUrl, { mode: 'no-cors' })
         .then(() => {
-            status.style.color = "#00ff00";
             status.innerText = "ESTADO: REGISTRO PETRIFICADO CON ÉXITO";
             btn.innerText = "PETRIFICADO ✅";
-            btn.style.background = "#004400";
-            btn.style.color = "#fff";
-            console.log("Protocolo AXIOMA completado.");
         })
-        .catch(err => {
-            console.error(err);
-            status.innerText = "ERROR DE CONEXIÓN CON EL NODO";
+        .catch(() => {
+            status.innerText = "ERROR EN NODO";
             btn.disabled = false;
             btn.innerText = "REINTENTAR";
         });
     }
 </script>
-
 </body>
 </html>
