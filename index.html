@@ -51,7 +51,7 @@
     form.addEventListener('submit', e => {
         e.preventDefault(); 
         
-        btn.innerText = "ACCEDIENDO...";
+        btn.innerText = "ACCEDIENDO AL NODO...";
         btn.disabled = true;
 
         // 1. Capturamos los datos
@@ -60,21 +60,18 @@
         const titularVal = document.getElementById('titular').value;
         const mailEmpresaVal = document.getElementById('mailEmpresa').value;
 
-        // 2. Guardamos en localStorage para que la terminal los recupere
+        // 2. Guardamos en localStorage (Respaldo)
         localStorage.setItem('v_nombre', nombreVal);
         localStorage.setItem('v_email', emailVal);
         localStorage.setItem('v_titular', titularVal);
         localStorage.setItem('v_mailEmpresa', mailEmpresaVal);
 
-        // 3. Le pedimos al Código.gs la URL para saltar a la terminal
-        // Pasamos los datos por la URL para asegurar que lleguen
+        // 3. Saltamos a la terminal usando la URL actual de forma directa
+        // Esto evita llamar a getScriptUrl() y es mucho más rápido
+        const urlActual = window.location.href.split('?')[0];
         const params = `?p=terminal&nombre=${encodeURIComponent(nombreVal)}&email=${encodeURIComponent(emailVal)}&titular=${encodeURIComponent(titularVal)}&mailEmpresa=${encodeURIComponent(mailEmpresaVal)}`;
 
-        google.script.run.withSuccessHandler(function(url) {
-            window.top.location.href = url + params;
-        }).getScriptUrl();
+        // Redirección forzada al nivel superior (para salir del iframe de Google)
+        window.top.location.href = urlActual + params;
     });
 </script>
-
-</body>
-</html>
