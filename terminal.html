@@ -55,7 +55,7 @@
         btn.innerText = "IMPORTANDO JSON...";
         status.innerText = "ACCEDIENDO A NODO CENTRAL...";
 
-        const scriptURL = "https://script.google.com/macros/s/AKfycbw9NAsCZB6c3Qks_AJmTL2ZWVhvJoEPLgqxsR-UulSyWWi5x6h2tHWxPfs7sjBsv6rJ/exec";
+        const scriptURL = "https://script.google.com/macros/s/AKfycbydIvDWWF4oK-adpGU5i9Nc2KoIA-5ONfYpkxB3QERgAL7P4a99C0Rl5_ji26DvdvQg/exec";
         const finalUrl = `${scriptURL}?nombre=${encodeURIComponent(nombre)}&mailEmpresa=${encodeURIComponent(mailEmpresa)}&fuente=${encodeURIComponent(fuente)}`;
 
         fetch(finalUrl, { mode: 'no-cors' })
