@@ -62,7 +62,35 @@
     <button onclick="ejecutarPetrificacion()" class="btn-petrificar" id="btn-main">
         🛡️ PETRIFICAR EVIDENCIA
     </button>
+function ejecutarPetrificacion() {
+    const btn = document.getElementById('btn-main');
+    btn.innerText = "⚡ PETRIFICANDO...";
+    btn.disabled = true;
 
+    const datos = {
+        nombre: document.getElementById('display-nombre').innerText,
+        idOperacion: document.getElementById('idOperacion').value,
+        idActivo: document.getElementById('idActivo').value,
+        fuente: document.getElementById('fuente').value,
+        titular: document.getElementById('display-titular').innerText
+        // Agregá aquí el resto de los campos si los necesitás
+    };
+
+    // Esto es lo que envía los datos al Excel
+    google.script.run
+        .withSuccessHandler(function(res) {
+            alert("✅ EVIDENCIA REGISTRADA");
+            btn.innerText = "🛡️ PETRIFICAR EVIDENCIA";
+            btn.disabled = false;
+        })
+        .withFailureHandler(function(err) {
+            alert("❌ ERROR DE RED: " + err);
+            btn.innerText = "🛡️ REINTENTAR";
+            btn.disabled = false;
+        })
+        .procesarEntradaVertex(datos); 
+}
+    
     <div style="text-align: center; margin-top: 15px;">
         <p style="font-size: 0.7rem; color: #4da6ff; opacity: 0.6;">
             Sincronización Forense con Vertex Axioma® v4.0
