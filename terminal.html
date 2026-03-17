@@ -3,26 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vertex Axioma | Terminal de Operaciones</title>
+    <title>Vertex Axioma | Terminal de Campo</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background-color: #050a15; }
-        iframe { width: 100%; height: 100%; border: none; }
+        body { background-color: #050a15; color: #ffffff; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .terminal-box { background: #0a1122; padding: 30px; border: 2px solid #4da6ff; border-radius: 5px; box-shadow: 0 0 20px rgba(77, 166, 255, 0.3); width: 100%; max-width: 450px; }
+        h2 { color: #4da6ff; font-size: 1.2rem; text-align: center; letter-spacing: 2px; }
+        .data-stream { font-size: 0.8rem; color: #4da6ff; margin-bottom: 20px; border-bottom: 1px solid #1a2a44; padding-bottom: 10px; }
+        label { display: block; font-size: 0.7rem; margin-top: 15px; color: #888; text-transform: uppercase; }
+        input, select { width: 100%; background: #000; border: 1px solid #4da6ff; color: #00ff00; padding: 10px; margin-top: 5px; box-sizing: border-box; font-family: 'Courier New', monospace; }
+        button { width: 100%; background: #002060; color: #fff; border: 1px solid #4da6ff; padding: 15px; margin-top: 25px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:hover { background: #4da6ff; color: #000; }
+        #status { font-size: 0.7rem; text-align: center; margin-top: 15px; color: #00ff00; }
     </style>
 </head>
 <body>
-    <iframe id="nodo-vertex" src="" style="width: 100%; height: 100%; border: none;"></iframe>
 
-    <script>
-        window.onload = function() {
-            // PEGA TU URL DE GOOGLE (LA QUE TERMINA EN /exec) AQUÍ ABAJO
-            const urlGoogle = "TU_URL_DE_GOOGLE_AQUI";
-            
-            const params = window.location.search;
-            // Construimos la URL para que Google sepa que tiene que mostrar la terminal
-            const finalUrl = urlGoogle + params + (params ? "&p=terminal" : "?p=terminal");
-            
-            document.getElementById('nodo-vertex').src = finalUrl;
-        };
-    </script>
+<div class="terminal-box">
+    <h2>TERMINAL V.6.2</h2>
+    <div class="data-stream" id="user-info">Sincronizando identidad...</div>
+
+    <form id="terminal-form">
+        <label>Activo Real</label>
+        <select id="activo" name="activo">
+            <option value="LITTIO-01">LITTIO-01</option>
+            <option value="ORO">ORO</option>
+            <option value="COBRE">COBRE</option>
+        </select>
+
+        <label>Pureza Certificada</label>
+        <input type="text" id="pureza" name="pureza" placeholder="98.5%" required>
+
+        <label>Peso de Carga (kg)</label>
+        <input type="text" id="peso" name="peso" placeholder="1000" required>
+
+        <label>Coordenadas GPS (Lat, Lng)</label>
+        <input type="text" id="coords" name="coords" placeholder="-23.385, -66.745" required>
+
+        <button type="submit" id="petrificar-btn">PETRIFICAR PRUEBA</button>
+    </form>
+    <div id="status">ESTADO: ESPERANDO INSTRUCCIÓN</div>
+</div>
+
+<script>
+    // URL del Google Script (Nodo Central)
+    const urlBase = "https://script.google.com/macros/s/AKfycbzCJHJB_PrUEEM10YGg_dFvklzgB7-i5Jj6R_74rBb1eNUj3OSUAzYYcrObu-RpdV1R/exec";
+
+    // Recuperar datos del Índice
+    const params = new URLSearchParams(window.location.search);
+    const nombre = params.get('nombre') || localStorage.getItem('v_nombre') || "TÉCNICO";
+    const email = params.get('email') || localStorage.getItem('v_email') || "S/D";
+    const mailEmpresa = params.get('mailEmpresa') || localStorage.getItem('v_mailEmpresa') || email;
+    const titular = params.get('titular') || localStorage.getItem('v_titular') || "VERTEX AXIOMA";
+
+    document.getElementById('user-info').innerText = `OPERADOR: ${nombre} | TITULAR: ${titular}`;
+
+    document.getElementById('terminal-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('petrificar-btn');
+        const status = document.getElementById('status');
+        
+        btn.disabled = true;
+        btn.innerText = "PROCESANDO HASH...";
+        status.innerText = "ESTADO: GENERANDO SELLO DE INMUTABILIDAD";
+
+        // Combinar datos de sesión con datos de campo
+        const queryParams = new URLSearchParams({
+            nombre: nombre,
+            email: email,
+            mailEmpresa: mailEmpresa,
+            titular: titular,
+            activo: document.getElementById('activo').value,
+            pureza: document.getElementById('pureza').value,
+            peso: document.getElementById('peso').value,
+            coords: document.getElementById('coords').value
+        });
+
+        // Impacto final por GET (como a las 12:46)
+        const finalUrl = `${urlBase}?${queryParams.toString()}`;
+
+        fetch(finalUrl, { mode: 'no-cors' })
+        .then(() => {
+            status.innerText = "ESTADO: REGISTRO PETRIFICADO CON ÉXITO";
+            btn.innerText = "PETRIFICADO ✅";
+            // Limpiar memoria para el próximo registro
+            localStorage.clear();
+            setTimeout(() => { window.location.href = "https://www.google.com"; }, 2000);
+        })
+        .catch(err => {
+            console.error(err);
+            status.innerText = "ERROR EN EL NODO";
+            btn.disabled = false;
+            btn.innerText = "REINTENTAR";
+        });
+    });
+</script>
+
 </body>
 </html>
