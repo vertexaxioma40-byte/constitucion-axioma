@@ -86,7 +86,7 @@
         // Llamada final al Nodo Central (Tu Google Script)
         status.innerText = "GENERANDO SELLO DE INMUTABILIDAD...";
         
-        const scriptURL = "https://script.google.com/macros/s/AKfycbytrgBozzbEXBcxilb8mcdpO7AdgxkXMyvwMQ6tQhTB57F4xHfeuMGCPTA_rVcWjSn-/exec";
+        const scriptURL = "https://script.google.com/macros/s/AKfycbyqYqMswzNVxPUpFJCyrqieZOjl9RwkAyMeaFocTL81aEseajGA1lqXCEKIj6-F1ORG/exec";
         const finalUrl = `${scriptURL}?nombre=${encodeURIComponent(nombre)}&mailEmpresa=${encodeURIComponent(mailEmpresa)}&fuente=${encodeURIComponent(fuente)}&accion=FULL_PROCESO`;
 
         fetch(finalUrl, { mode: 'no-cors' })
