@@ -52,7 +52,7 @@
             log.innerHTML += "> Generando Sello de Inmutabilidad Transfronteriza...<br>";
             
             // CAMBIA ESTA URL POR TU ÚLTIMA URL DE DEPLOY (EXEC)
-            const url = "https://script.google.com/macros/s/AKfycbz7mnRggHEsEFeNPiaNbl01VsShlTLbCa5FxJbgWf6pgcFFXXu82qtpfpVv4--nykS1/exec";
+            const url = "https://script.google.com/macros/s/AKfycbwxCXMSqLHeZOvgHUlFseNtdVP6o--dLtJL509nBr6hJDLcb5d5snpofBbdINnwL9zy/exec";
             
             fetch(`${url}?nombre=${encodeURIComponent(nombre)}&mailEmpresa=${encodeURIComponent(mail)}`, {mode:'no-cors'})
             .then(() => {
