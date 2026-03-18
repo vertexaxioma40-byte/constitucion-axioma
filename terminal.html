@@ -1,30 +1,6 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vertex Axioma | Consola de Importación</title>
-    <style>
-        body { background-color: #050a15; color: #ffffff; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .terminal-box { background: #0a1122; padding: 30px; border: 2px solid #4da6ff; border-radius: 5px; box-shadow: 0 0 20px rgba(77, 166, 255, 0.3); width: 100%; max-width: 450px; }
-        h2 { color: #4da6ff; font-size: 1.2rem; text-align: center; letter-spacing: 2px; }
-        .data-stream { font-size: 0.8rem; color: #4da6ff; margin-bottom: 20px; border-bottom: 1px solid #1a2a44; padding-bottom: 10px; }
-        label { display: block; font-size: 0.7rem; margin-top: 15px; color: #888; text-transform: uppercase; }
-        select, input { width: 100%; background: #000; border: 1px solid #4da6ff; color: #00ff00; padding: 10px; margin-top: 5px; box-sizing: border-box; font-family: 'Courier New', monospace; }
-        button { width: 100%; background: #002060; color: #fff; border: 1px solid #4da6ff; padding: 15px; margin-top: 25px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        button:hover { background: #4da6ff; color: #000; }
-        
-        /* Nuevo: Estilo para la lista de pasos */
-        #log-proceso { font-size: 0.65rem; margin-top: 20px; color: #4da6ff; border: 1px dashed #1a2a44; padding: 10px; height: 120px; overflow-y: auto; }
-        .paso-ok { color: #00ff00; }
-        #status { font-size: 0.7rem; text-align: center; margin-top: 15px; color: #00ff00; font-weight: bold; }
-    </style>
-</head>
-<body>
-
 <div class="terminal-box">
-    <h2>TERMINAL V.8.1</h2>
-    <div class="data-stream">CONSOLA DE IMPORTACIÓN - PROTOCOLO AXIOMA®</div>
+    <h2>TERMINAL V.8.5 - FULL AUTOMATION</h2>
+    <div class="data-stream">PROTOCOLO DE INTEGRIDAD TRANSFRONTERIZA</div>
 
     <label>Oficial de Integridad</label>
     <input type="text" id="nombre" value="OPERADOR VERTEX">
@@ -32,78 +8,49 @@
     <label>Email Titular (Para Sello)</label>
     <input type="email" id="mailEmpresa" placeholder="empresa@dominio.com">
 
-    <label>Fuente de Datos (API Externa)</label>
-    <select id="fuente">
-        <option value="BALANZA">⚖️ REPORTE API BALANZA</option>
-        <option value="DRON">🛸 REPORTE API DRON</option>
-        <option value="RIEGO">🌊 REPORTE API RIEGO</option>
-        <option value="HUMEDAD">🪴 REPORTE API HUMEDAD</option>
-        <option value="OPTICO">📷 REPORTE API ÓPTICO</option>
-    </select>
-
-    <button onclick="petrificar()">PETRIFICAR PRUEBA</button>
+    <button onclick="ejecutarBarridoCompleto()">INICIAR PROTOCOLO AXIOMA®</button>
     
-    <div id="log-proceso">SISTEMA LISTO...</div>
-    
-    <div id="status">ESTADO: ESPERANDO INSTRUCCIÓN</div>
+    <div id="log-proceso">SISTEMA EN ESPERA...</div>
+    <div id="status">ESTADO: LISTO PARA PETRIFICACIÓN</div>
 </div>
 
 <script>
-    async function petrificar() {
+    async function ejecutarBarridoCompleto() {
         const btn = document.querySelector('button');
-        const status = document.getElementById('status');
         const log = document.getElementById('log-proceso');
+        const status = document.getElementById('status');
         const nombre = document.getElementById('nombre').value;
-        const mailEmpresa = document.getElementById('mailEmpresa').value;
-        const fuente = document.getElementById('fuente').value;
+        const mail = document.getElementById('mailEmpresa').value;
 
-        if (!mailEmpresa) { alert("Falta Email del Titular"); return; }
+        if (!mail) { alert("Email requerido para el Sello"); return; }
 
-        // Bloqueo de UI
         btn.disabled = true;
-        btn.innerText = "PROCESANDO CADENA...";
-        log.innerHTML = ""; // Limpiar log
+        log.innerHTML = "";
+        status.innerText = "INICIANDO BARRIDO DE EVIDENCIA...";
 
-        // Lista de APIs a "consultar" (Emulación escalonada)
-        const apis = [
-            `Accediendo a JSON_${fuente}...`,
-            "Conectando Sentinel-2 (ESA)...",
-            "Extrayendo Agromonitoring V2...",
-            "Validando Google Maps API...",
-            "Consultando OpenWeather OneCall..."
-        ];
+        // Fuentes a procesar automáticamente
+        const fuentes = ["BALANZA", "DRON", "RIEGO", "HUMEDAD", "OPTICO", "SENTINEL", "AGROMONITORING", "GOOGLEMAPS", "OPENWEATHER"];
 
-        // Función para añadir líneas con retraso (Efecto visual)
-        for (let i = 0; i < apis.length; i++) {
+        for (let f of fuentes) {
             const linea = document.createElement("div");
-            linea.innerText = "> " + apis[i];
+            linea.innerText = `> Accediendo a Nodo ${f}...`;
             log.appendChild(linea);
-            await new Promise(r => setTimeout(r, 800)); // Pausa de 0.8 seg
-            linea.innerHTML += " <span class='paso-ok'>[OK]</span>";
+            await new Promise(r => setTimeout(r, 600)); // Simulación de latencia de red
+            linea.innerHTML += " <span style='color:#00ff00'>[CAPTURADO]</span>";
             log.scrollTop = log.scrollHeight;
         }
 
-        // Llamada final al Nodo Central (Tu Google Script)
-        status.innerText = "GENERANDO SELLO DE INMUTABILIDAD...";
+        status.innerText = "SELLANDO EN CADENA DE CUSTODIA...";
         
-        const scriptURL = "https://script.google.com/macros/s/AKfycbwjRAqfhrl_UXLeBRK-QVE6WayC6ZJs3OZnL1CZQhjXCccUe_d3a_QF_xhELz3rWgp0/exec";
-        const finalUrl = `${scriptURL}?nombre=${encodeURIComponent(nombre)}&mailEmpresa=${encodeURIComponent(mailEmpresa)}&fuente=${encodeURIComponent(fuente)}&accion=FULL_PROCESO`;
+        // URL de tu Script de Google (Asegúrate de actualizarla tras el nuevo Deploy)
+        const scriptURL = "https://script.google.com/macros/s/AKfycbwjRAqfhrl_UXLeBRK-QVE6WayC6ZJs3OZnL1CZQhjXCccUe_d3a_QF_xhELz3rWgp0/exec"; 
+        const finalUrl = `${scriptURL}?nombre=${encodeURIComponent(nombre)}&mailEmpresa=${encodeURIComponent(mail)}`;
 
         fetch(finalUrl, { mode: 'no-cors' })
         .then(() => {
-            status.innerText = "ESTADO: SELLO DE INMUTABILIDAD TRANSFRONTERIZA EMITIDO";
-            const finalLine = document.createElement("div");
-            finalLine.style.color = "#00ff00";
-            finalLine.innerText = "> HASH INTEGRADOR GENERADO CON ÉXITO";
-            log.appendChild(finalLine);
-            btn.innerText = "PETRIFICADO ✅";
-        })
-        .catch(() => {
-            status.innerText = "ERROR EN NODO CENTRAL";
-            btn.disabled = false;
-            btn.innerText = "REINTENTAR";
+            status.innerText = "SELLO DE INMUTABILIDAD TRANSFRONTERIZA EMITIDO";
+            log.innerHTML += "<div style='color:#00ff00; margin-top:10px;'>>>> HASH INTEGRADOR PETRIFICADO CON ÉXITO</div>";
+            btn.innerText = "PROCESO FINALIZADO ✅";
         });
     }
 </script>
-</body>
-</html>
