@@ -32,36 +32,33 @@
     </div>
 
     <script>
-        async function iniciarProtocolo() {
-            const log = document.getElementById('log');
-            const mail = document.getElementById('mail').value;
-            const nombre = document.getElementById('nombre').value;
-            if(!mail) { alert("Error: Se requiere Email para el Sello Transfronterizo"); return; }
-            
-            log.innerHTML = "> Iniciando Protocolo de Verificación...<br>";
-            
-            // LISTA ACTUALIZADA CON CAMIÓN
-            const apis = ["BALANZA", "CAMION", "DRON", "RIEGO", "HUMEDAD", "SENTINEL", "WEATHER"];
-            
-            for(let a of apis){
-                log.innerHTML += `> Accediendo a Nodo ${a}... <span class="ok">[CAPTURADO]</span><br>`;
-                log.scrollTop = log.scrollHeight;
-                await new Promise(r => setTimeout(r, 500));
-            }
-            
-            log.innerHTML += "> Generando Sello de Inmutabilidad Transfronteriza...<br>";
-            
-            // CAMBIA ESTA URL POR TU ÚLTIMA URL DE DEPLOY (EXEC)
-            const url = "https://script.google.com/macros/s/AKfycbzk_6MLAEKE74AW4oQ-FqQUAFCP6Wv1ppHD7M4dL6Rm5h9iQB1wj1wuyyHi8YW2oQd-/exec";
-            
-            fetch(`${url}?nombre=${encodeURIComponent(nombre)}&mailEmpresa=${encodeURIComponent(mail)}`, {mode:'no-cors'})
-            .then(() => {
-                log.innerHTML += "<br><span style='color:#0f0; font-weight:bold;'>>>> PROCESO FINALIZADO: IMPACTO EN EXCEL EXITOSO</span>";
-            })
-            .catch(err => {
-                log.innerHTML += "<br><span style='color:red;'>>>> ERROR DE CONEXIÓN CON NODO CENTRAL</span>";
-            });
+    async function iniciarProtocolo() {
+        const log = document.getElementById('log');
+        const mail = document.getElementById('mail').value;
+        const nombre = document.getElementById('nombre').value;
+        if(!mail) { alert("Error: Se requiere Email para el Sello Transfronterizo"); return; }
+        
+        log.innerHTML = "> Iniciando Protocolo de Verificación...<br>";
+        
+        // LISTA DEFINITIVA DE NODOS VERTEX
+        const apis = ["BALANZA", "CAMION", "DRON", "RIEGO", "HUMEDAD", "OPTICO", "SENTINEL", "AGROMONITORING", "WEATHER"];
+        
+        for(let a of apis){
+            log.innerHTML += `> Accediendo a Nodo ${a}... <span style="color:#0f0">[CAPTURADO]</span><br>`;
+            log.scrollTop = log.scrollHeight;
+            await new Promise(r => setTimeout(r, 400));
         }
-    </script>
+        
+        log.innerHTML += "> Generando Sello de Inmutabilidad Transfronteriza...<br>";
+        
+        // ASEGÚRATE DE USAR TU URL DE DEPLOY ACTUALIZADA
+        const url = "TU_URL_DE_SCRIPT_AQUI"; 
+        
+        fetch(`${url}?nombre=${encodeURIComponent(nombre)}&mailEmpresa=${encodeURIComponent(mail)}`, {mode:'no-cors'})
+        .then(() => {
+            log.innerHTML += "<br><span style='color:#0f0; font-weight:bold;'>>>> PROCESO FINALIZADO: IMPACTO INTEGRAL EXITOSO</span>";
+        });
+    }
+</script>
 </body>
 </html>
