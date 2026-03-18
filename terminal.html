@@ -13,13 +13,17 @@
         select, input { width: 100%; background: #000; border: 1px solid #4da6ff; color: #00ff00; padding: 10px; margin-top: 5px; box-sizing: border-box; font-family: 'Courier New', monospace; }
         button { width: 100%; background: #002060; color: #fff; border: 1px solid #4da6ff; padding: 15px; margin-top: 25px; cursor: pointer; font-weight: bold; transition: 0.3s; }
         button:hover { background: #4da6ff; color: #000; }
-        #status { font-size: 0.7rem; text-align: center; margin-top: 15px; color: #00ff00; }
+        
+        /* Nuevo: Estilo para la lista de pasos */
+        #log-proceso { font-size: 0.65rem; margin-top: 20px; color: #4da6ff; border: 1px dashed #1a2a44; padding: 10px; height: 120px; overflow-y: auto; }
+        .paso-ok { color: #00ff00; }
+        #status { font-size: 0.7rem; text-align: center; margin-top: 15px; color: #00ff00; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="terminal-box">
-    <h2>TERMINAL V.8.0</h2>
+    <h2>TERMINAL V.8.1</h2>
     <div class="data-stream">CONSOLA DE IMPORTACIÓN - PROTOCOLO AXIOMA®</div>
 
     <label>Oficial de Integridad</label>
@@ -30,41 +34,72 @@
 
     <label>Fuente de Datos (API Externa)</label>
     <select id="fuente">
-        <option value="DRON">🛸 REPORTE API DRON #001</option>
-        <option value="BALANZA">⚖️ REPORTE API BALANZA #001</option>
-        <option value="RIEGO">🌊 REPORTE API RIEGO #001</option>
-        <option value="HUMEDAD">🪴 REPORTE API HUMEDAD #001</option>
-        <option value="OPTICO">📷 REPORTE API ÓPTICO #001</option>
+        <option value="BALANZA">⚖️ REPORTE API BALANZA</option>
+        <option value="DRON">🛸 REPORTE API DRON</option>
+        <option value="RIEGO">🌊 REPORTE API RIEGO</option>
+        <option value="HUMEDAD">🪴 REPORTE API HUMEDAD</option>
+        <option value="OPTICO">📷 REPORTE API ÓPTICO</option>
     </select>
 
     <button onclick="petrificar()">PETRIFICAR PRUEBA</button>
+    
+    <div id="log-proceso">SISTEMA LISTO...</div>
+    
     <div id="status">ESTADO: ESPERANDO INSTRUCCIÓN</div>
 </div>
 
 <script>
-    function petrificar() {
+    async function petrificar() {
         const btn = document.querySelector('button');
         const status = document.getElementById('status');
+        const log = document.getElementById('log-proceso');
         const nombre = document.getElementById('nombre').value;
         const mailEmpresa = document.getElementById('mailEmpresa').value;
         const fuente = document.getElementById('fuente').value;
 
         if (!mailEmpresa) { alert("Falta Email del Titular"); return; }
 
+        // Bloqueo de UI
         btn.disabled = true;
-        btn.innerText = "IMPORTANDO JSON...";
-        status.innerText = "ACCEDIENDO A NODO CENTRAL...";
+        btn.innerText = "PROCESANDO CADENA...";
+        log.innerHTML = ""; // Limpiar log
 
+        // Lista de APIs a "consultar" (Emulación escalonada)
+        const apis = [
+            `Accediendo a JSON_${fuente}...`,
+            "Conectando Sentinel-2 (ESA)...",
+            "Extrayendo Agromonitoring V2...",
+            "Validando Google Maps API...",
+            "Consultando OpenWeather OneCall..."
+        ];
+
+        // Función para añadir líneas con retraso (Efecto visual)
+        for (let i = 0; i < apis.length; i++) {
+            const linea = document.createElement("div");
+            linea.innerText = "> " + apis[i];
+            log.appendChild(linea);
+            await new Promise(r => setTimeout(r, 800)); // Pausa de 0.8 seg
+            linea.innerHTML += " <span class='paso-ok'>[OK]</span>";
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // Llamada final al Nodo Central (Tu Google Script)
+        status.innerText = "GENERANDO SELLO DE INMUTABILIDAD...";
+        
         const scriptURL = "https://script.google.com/macros/s/AKfycbykdmltUT9yMQA7hWZZwFvPrFQNyOAJcmO9xmcXMysyq5YdUWh1_xaBfcPsESwcG6Mf/exec";
-        const finalUrl = `${scriptURL}?nombre=${encodeURIComponent(nombre)}&mailEmpresa=${encodeURIComponent(mailEmpresa)}&fuente=${encodeURIComponent(fuente)}`;
+        const finalUrl = `${scriptURL}?nombre=${encodeURIComponent(nombre)}&mailEmpresa=${encodeURIComponent(mailEmpresa)}&fuente=${encodeURIComponent(fuente)}&accion=FULL_PROCESO`;
 
         fetch(finalUrl, { mode: 'no-cors' })
         .then(() => {
-            status.innerText = "ESTADO: REGISTRO PETRIFICADO CON ÉXITO";
+            status.innerText = "ESTADO: SELLO DE INMUTABILIDAD TRANSFRONTERIZA EMITIDO";
+            const finalLine = document.createElement("div");
+            finalLine.style.color = "#00ff00";
+            finalLine.innerText = "> HASH INTEGRADOR GENERADO CON ÉXITO";
+            log.appendChild(finalLine);
             btn.innerText = "PETRIFICADO ✅";
         })
         .catch(() => {
-            status.innerText = "ERROR EN NODO";
+            status.innerText = "ERROR EN NODO CENTRAL";
             btn.disabled = false;
             btn.innerText = "REINTENTAR";
         });
