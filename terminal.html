@@ -43,7 +43,7 @@
         status.innerText = "SELLANDO EN CADENA DE CUSTODIA...";
         
         // URL de tu Script de Google (Asegúrate de actualizarla tras el nuevo Deploy)
-        const scriptURL = "https://script.google.com/macros/s/AKfycbwjRAqfhrl_UXLeBRK-QVE6WayC6ZJs3OZnL1CZQhjXCccUe_d3a_QF_xhELz3rWgp0/exec"; 
+        const scriptURL = "https://script.google.com/macros/s/AKfycbwkoP4EHsXNQMb8jQytnzcqOjqaEfuno7p-DKgo-Jkr3HjXRhegiHbFWMPhAp4wjs-x/exec"; 
         const finalUrl = `${scriptURL}?nombre=${encodeURIComponent(nombre)}&mailEmpresa=${encodeURIComponent(mail)}`;
 
         fetch(finalUrl, { mode: 'no-cors' })
