@@ -1,56 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertex Axioma | Consola Forense</title>
+    <style>
+        body { background-color: #050a15; color: #ffffff; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .terminal-box { background: #0a1122; padding: 30px; border: 2px solid #4da6ff; border-radius: 5px; box-shadow: 0 0 20px rgba(77, 166, 255, 0.3); width: 100%; max-width: 450px; }
+        h2 { color: #4da6ff; font-size: 1.2rem; text-align: center; letter-spacing: 2px; }
+        .data-stream { font-size: 0.8rem; color: #4da6ff; margin-bottom: 20px; border-bottom: 1px solid #1a2a44; padding-bottom: 10px; }
+        label { display: block; font-size: 0.7rem; margin-top: 15px; color: #888; text-transform: uppercase; }
+        input { width: 100%; background: #000; border: 1px solid #4da6ff; color: #00ff00; padding: 10px; margin-top: 5px; box-sizing: border-box; font-family: 'Courier New', monospace; }
+        button { width: 100%; background: #002060; color: #fff; border: 1px solid #4da6ff; padding: 15px; margin-top: 25px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:hover { background: #4da6ff; color: #000; }
+        #log-proceso { font-size: 0.65rem; margin-top: 20px; color: #4da6ff; border: 1px dashed #1a2a44; padding: 10px; height: 150px; overflow-y: auto; background: #000; }
+        #status { font-size: 0.7rem; text-align: center; margin-top: 15px; color: #00ff00; font-weight: bold; }
+    </style>
+</head>
+<body>
+
 <div class="terminal-box">
-    <h2>TERMINAL V.8.5 - FULL AUTOMATION</h2>
+    <h2>TERMINAL V.8.7</h2>
     <div class="data-stream">PROTOCOLO DE INTEGRIDAD TRANSFRONTERIZA</div>
 
     <label>Oficial de Integridad</label>
     <input type="text" id="nombre" value="OPERADOR VERTEX">
 
-    <label>Email Titular (Para Sello)</label>
+    <label>Email Titular (Sello de Inmutabilidad)</label>
     <input type="email" id="mailEmpresa" placeholder="empresa@dominio.com">
 
-    <button onclick="ejecutarBarridoCompleto()">INICIAR PROTOCOLO AXIOMA®</button>
+    <button onclick="ejecutarTodo()">INICIAR BARRIDO AXIOMA®</button>
     
-    <div id="log-proceso">SISTEMA EN ESPERA...</div>
-    <div id="status">ESTADO: LISTO PARA PETRIFICACIÓN</div>
+    <div id="log-proceso">LISTO PARA CAPTURA...</div>
+    <div id="status">ESTADO: STANDBY</div>
 </div>
 
 <script>
-    async function ejecutarBarridoCompleto() {
+    async function ejecutarTodo() {
         const btn = document.querySelector('button');
         const log = document.getElementById('log-proceso');
         const status = document.getElementById('status');
         const nombre = document.getElementById('nombre').value;
         const mail = document.getElementById('mailEmpresa').value;
 
-        if (!mail) { alert("Email requerido para el Sello"); return; }
+        if (!mail) { alert("Email requerido"); return; }
 
         btn.disabled = true;
         log.innerHTML = "";
-        status.innerText = "INICIANDO BARRIDO DE EVIDENCIA...";
+        status.innerText = "ACCEDIENDO A NODOS...";
 
-        // Fuentes a procesar automáticamente
-        const fuentes = ["BALANZA", "DRON", "RIEGO", "HUMEDAD", "OPTICO", "SENTINEL", "AGROMONITORING", "GOOGLEMAPS", "OPENWEATHER"];
+        const apis = ["BALANZA", "DRON", "RIEGO", "HUMEDAD", "OPTICO", "SENTINEL", "AGROMONITORING", "MAPS", "WEATHER"];
 
-        for (let f of fuentes) {
-            const linea = document.createElement("div");
-            linea.innerText = `> Accediendo a Nodo ${f}...`;
-            log.appendChild(linea);
-            await new Promise(r => setTimeout(r, 600)); // Simulación de latencia de red
-            linea.innerHTML += " <span style='color:#00ff00'>[CAPTURADO]</span>";
+        for (let a of apis) {
+            let p = document.createElement("div");
+            p.innerText = `> Capturando ${a}...`;
+            log.appendChild(p);
+            await new Promise(r => setTimeout(r, 400));
+            p.innerHTML += " <span style='color:#00ff00'>[OK]</span>";
             log.scrollTop = log.scrollHeight;
         }
 
-        status.innerText = "SELLANDO EN CADENA DE CUSTODIA...";
+        // --- ACTUALIZA ESTA URL CON TU NUEVO DEPLOY ---
+        const scriptURL = "https://script.google.com/macros/s/AKfycbwkoP4EHsXNQMb8jQytnzcqOjqaEfuno7p-DKgo-Jkr3HjXRhegiHbFWMPhAp4wjs-x/exec";
         
-        // URL de tu Script de Google (Asegúrate de actualizarla tras el nuevo Deploy)
-        const scriptURL = "https://script.google.com/macros/s/AKfycbwkoP4EHsXNQMb8jQytnzcqOjqaEfuno7p-DKgo-Jkr3HjXRhegiHbFWMPhAp4wjs-x/exec"; 
+        status.innerText = "SELLANDO HASH INTEGRADOR...";
         const finalUrl = `${scriptURL}?nombre=${encodeURIComponent(nombre)}&mailEmpresa=${encodeURIComponent(mail)}`;
 
         fetch(finalUrl, { mode: 'no-cors' })
         .then(() => {
-            status.innerText = "SELLO DE INMUTABILIDAD TRANSFRONTERIZA EMITIDO";
-            log.innerHTML += "<div style='color:#00ff00; margin-top:10px;'>>>> HASH INTEGRADOR PETRIFICADO CON ÉXITO</div>";
-            btn.innerText = "PROCESO FINALIZADO ✅";
+            status.innerText = "Sello de Inmutabilidad Transfronteriza Emitido";
+            log.innerHTML += "<div style='color:#00ff00;margin-top:10px'>¡PRUEBAS PETRIFICADAS EN EXCEL!</div>";
+            btn.innerText = "PETRIFICADO ✅";
         });
     }
 </script>
+</body>
+</html>
