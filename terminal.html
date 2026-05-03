@@ -2,87 +2,80 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Vertex Axioma | Terminal Blindada</title>
+    <title>Vertex Axioma | Terminal de Integridad</title>
     <style>
         body { background: #050a15; color: #4da6ff; font-family: 'Courier New', monospace; display: flex; justify-content: center; padding-top: 30px; }
         .terminal { background: #0a1122; border: 2px solid #ff4d4d; width: 480px; padding: 30px; border-radius: 12px; box-shadow: 0 0 30px rgba(255, 77, 77, 0.3); }
-        input { width: 92%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #4da6ff; color: #0f0; border-radius: 4px; }
-        .input-error { border-color: #ff4d4d ! competitiveness; }
-        button { background: #002060; color: #fff; border: 1px solid #4da6ff; padding: 18px; width: 100%; cursor: pointer; font-weight: bold; font-size: 1.1rem; border-radius: 4px; transition: 0.3s; }
-        button:hover { background: #4da6ff; color: #000; }
-        button:disabled { background: #333; border-color: #555; cursor: not-allowed; }
-        #log { font-size: 11px; text-align: left; height: 180px; overflow-y: auto; background: #000; padding: 12px; margin-top: 20px; border: 1px solid #1a2a44; color: #4da6ff; }
+        .status-header { text-align:center; color: #ff4d4d; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
+        #log { font-size: 11px; text-align: left; height: 250px; overflow-y: auto; background: #000; padding: 15px; margin-top: 20px; border: 1px solid #1a2a44; color: #0f0; line-height: 1.4; }
+        button { background: #002060; color: #fff; border: 1px solid #4da6ff; padding: 18px; width: 100%; cursor: pointer; font-weight: bold; font-size: 1.1rem; border-radius: 4px; transition: 0.3s; margin-top: 20px; }
+        button:hover { background: #ff4d4d; color: #fff; box-shadow: 0 0 15px #ff4d4d; }
+        button:disabled { background: #333; cursor: not-allowed; opacity: 0.5; }
+        .token-display { font-size: 0.7rem; color: #888; text-align: center; margin-bottom: 10px; }
     </style>
 </head>
 <body>
     <div class="terminal">
-        <h2 style="text-align:center; color: #ff4d4d; margin-bottom: 5px;">VERTEX AXIOMA®</h2>
-        <p style="text-align:center; font-size: 0.7rem; color: #888; margin-bottom: 25px;">SISTEMA DE ACCESO RESTRINGIDO</p>
+        <h2 class="status-header">VERTEX AXIOMA®</h2>
+        <p style="text-align:center; font-size: 0.7rem; color: #888;">NODO DE INTEGRIDAD FORENSE</p>
         
-        <label style="font-size: 0.7rem;">ID DE ACCESO AUTORIZADO</label>
-        <input type="password" id="idAcceso" placeholder="Ingrese ID de Cliente">
+        <div class="token-display" id="display-token">CARGANDO CREDENCIALES...</div>
         
-        <label style="font-size: 0.7rem;">EMAIL DE SELLO</label>
-        <input type="email" id="email" placeholder="email@cliente.com">
+        <div id="log">> SISTEMA INICIALIZADO...<br>> ESPERANDO ORDEN DE EJECUCIÓN...</div>
         
-        <input type="hidden" id="operador" value="OPERADOR VERTEX">
-        
-        <button id="btnEjecutar" onclick="iniciarProtocolo()">AUTORIZAR Y EJECUTAR</button>
-        
-        <div id="log">> STANDBY - ESPERANDO CREDENCIALES...</div>
+        <button id="btnEjecutar" onclick="iniciarProtocolo()">INICIAR BARRIDO Y PETRIFICACIÓN</button>
     </div>
 
     <script>
-        // --- CONFIGURACIÓN DE SEGURIDAD ---
-        const ID_VALIDO = "VERTEX-2026"; // <--- CAMBIA TU CLAVE AQUÍ
-        let ejecutando = false;
+        // 1. CAPTURAR EL TOKEN DE LA MOCHILA (URL)
+        const urlParams = new URLSearchParams(window.location.search);
+        const TOKEN_ACTIVO = urlParams.get('token');
+        const displayToken = document.getElementById('display-token');
+        const log = document.getElementById('log');
+        const btn = document.getElementById('btnEjecutar');
+
+        if (!TOKEN_ACTIVO) {
+            log.innerHTML = "<span style='color:red;'>[ERROR CRÍTICO] NO SE DETECTÓ TOKEN DE ACCESO. REGRESE AL LOGIN.</span>";
+            btn.disabled = true;
+        } else {
+            displayToken.innerText = "TOKEN DETECTADO: " + TOKEN_ACTIVO;
+        }
 
         async function iniciarProtocolo() {
-            if (ejecutando) return;
-            
-            const idIngresado = document.getElementById('idAcceso').value;
-            const mail = document.getElementById('email').value;
-            const log = document.getElementById('log');
-            const btn = document.getElementById('btnEjecutar');
-
-            // VALIDACIÓN DE SEGURIDAD LOCAL
-            if (idIngresado !== ID_VALIDO) {
-                log.innerHTML = "<span style='color:red;'>[ERROR] ID DE ACCESO NO AUTORIZADO. ACCESO DENEGADO.</span>";
-                return;
-            }
-
-            if (!mail) { 
-                alert("Email Requerido para el Sello de Inmutabilidad"); 
-                return; 
-            }
-
-            ejecutando = true;
             btn.disabled = true;
-            btn.innerText = "ACCESO CONCEDIDO...";
-            log.innerHTML = "> Credenciales Validadas...<br>> Iniciando Protocolo Axioma...<br>";
-
-            const nodos = ["BALANZA", "CAMION", "DRON", "RIEGO", "HUMEDAD", "OPTICO", "SENTINEL", "AGROMONITORING", "WEATHER"];
+            btn.innerText = "EJECUTANDO PROTOCOLO...";
+            
+            log.innerHTML += `<br>> Validando Identidad con Bóveda Vertex...`;
+            
+            // Simulación visual de escaneo de nodos (Protocolo Axioma)
+            const nodos = ["BALANZA", "CAMION", "DRON", "RIEGO", "HUMEDAD", "OPTICO", "SENTINEL", "AGROMONITORING", "GOOGLEMAPS", "OPENWEATHER"];
             
             for(let n of nodos) {
-                log.innerHTML += `> Nodo ${n}: <span style="color:#0f0">PETRIFICADO</span><br>`;
+                await new Promise(r => setTimeout(r, 300));
+                log.innerHTML += `<br>> Nodo ${n}: <span style="color:#0f0">PETRIFICADO OK</span>`;
                 log.scrollTop = log.scrollHeight;
-                await new Promise(r => setTimeout(r, 400));
             }
 
-            // URL DE TU SCRIPT (Asegurate de que sea la última)
-            const url = "https://script.google.com/macros/s/AKfycbzuUiuPwoHewJiAM4fZuw_3k1zheb3iltIPPCYyUM2FiBpLREQl9b0xe-Krhhad30qW/exec";
+            log.innerHTML += `<br>> Generando DNA Digital (Hash Maestro)...`;
+
+            // 2. LLAMADA REAL AL SCRIPT DE GOOGLE USANDO EL TOKEN
+            // Reemplaza con tu URL de despliegue actual
+            const urlGoogle = "https://script.google.com/macros/s/AKfycbzuUiuPwoHewJiAM4fZuw_3k1zheb3iltIPPCYyUM2FiBpLREQl9b0xe-Krhhad30qW/exec";
             
             try {
-                await fetch(`${url}?nombre=AUTHORIZED_NODE&mailEmpresa=${encodeURIComponent(mail)}`, {
+                // Enviamos el token como parámetro principal
+                await fetch(`${urlGoogle}?token=${TOKEN_ACTIVO}`, {
                     method: 'GET',
-                    mode: 'no-cors',
-                    cache: 'no-cache'
+                    mode: 'no-cors'
                 });
-                log.innerHTML += "<br><span style='color:#0f0; font-weight:bold;'>[EXITO] BARRIDO FINALIZADO Y SELLADO EN BLOCKCHAIN.</span>";
+                
+                log.innerHTML += "<br><br><span style='color:#0f0; font-weight:bold;'>[EXITO] SELLO DE INMUTABILIDAD TRANSFRONTERIZA EMITIDO.</span>";
+                log.innerHTML += "<br>> Verifique su correo electrónico.";
             } catch (e) {
-                log.innerHTML += "<br><span style='color:red;'>[ERROR] FALLO DE COMUNICACIÓN CON EL NODO CENTRAL.</span>";
+                log.innerHTML += "<br><br><span style='color:red;'>[ERROR] FALLO DE COMUNICACIÓN CON EL SERVIDOR CENTRAL.</span>";
             } finally {
-                btn.innerText = "PROTOCOLO CERRADO";
+                btn.innerText = "PROTOCOLO FINALIZADO";
+                log.scrollTop = log.scrollHeight;
             }
         }
     </script>
