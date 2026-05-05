@@ -3,56 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vertex Axioma | Acceso Blindado</title>
+    <title>Vertex Axioma - Centro de Mando</title>
     <style>
-        html, body { background-color: #050a15; color: #ffffff; margin: 0; padding: 0; font-family: 'Courier New', monospace; }
-        body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 0 20px; }
-        .container { background: #0a1122; padding: 40px; border: 2px solid #002060; border-radius: 10px; box-shadow: 0 0 30px rgba(0, 32, 96, 0.6); width: 100%; max-width: 400px; text-align: center; }
-        h1 { font-size: 1.8rem; letter-spacing: 3px; color: #ffffff; margin-bottom: 5px; }
-        .subtitle { color: #4da6ff; font-size: 0.8rem; margin-bottom: 30px; display: block; text-transform: uppercase; }
-        form { display: flex; flex-direction: column; gap: 15px; }
-        label { font-size: 0.75rem; color: #4da6ff; text-align: left; text-transform: uppercase; font-weight: bold; }
-        input { background: #000; border: 1px solid #4da6ff; color: #00ff00; padding: 15px; font-family: 'Courier New', monospace; text-align: center; font-size: 1.2rem; letter-spacing: 2px; }
-        button { background: #002060; color: #fff; border: 1px solid #4da6ff; padding: 18px; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.3s; margin-top: 10px; }
-        button:hover { background: #003399; box-shadow: 0 0 15px #4da6ff; }
-        .status-msg { font-size: 0.7rem; color: #ff4d4d; margin-top: 15px; display: none; }
+        :root {
+            --azul-axioma: #00a3ff;
+            --dorado-forense: #C5A059;
+            --fondo-oscuro: #050a14;
+            --tarjeta-oscura: #0a1120;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--fondo-oscuro);
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: var(--tarjeta-oscura);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid #1e2a44;
+            box-shadow: 0 0 25px rgba(0, 163, 255, 0.15);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        img.logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+        h2 { margin-bottom: 5px; letter-spacing: 1px; }
+        p { color: #8892b0; font-size: 0.9rem; margin-bottom: 25px; }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            background: #000000;
+            color: var(--azul-axioma);
+            border: 1px solid #1e2a44;
+            border-radius: 8px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        button {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .btn-carga { background-color: #002060; color: white; border: 1px solid var(--azul-axioma); }
+        .btn-consulta { background-color: var(--dorado-forense); color: #050a14; }
+        button:hover { transform: translateY(-2px); filter: brightness(1.2); }
+        .footer { margin-top: 30px; font-size: 0.6rem; color: #444; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>VERTEX AXIOMA®</h1>
-    <span class="subtitle">Protocolo de Integridad 4.0</span>
+    <img src="https://raw.githubusercontent.com/USUARIO/REPOSITORIO/main/Logo.jpg" alt="Vertex Axioma" class="logo">
     
-    <form id="access-form">
-        <label>Ingrese su Token de Acceso</label>
-        <input type="text" id="token" placeholder="TK-XXXX-XXXX" required>
-        <button type="submit" id="submit-btn">VALIDAR IDENTIDAD</button>
-    </form>
-    
-    <div id="error-msg" class="status-msg">TOKEN NO RECONOCIDO O INACTIVO</div>
+    <h2>Centro de Mando</h2>
+    <p>Protocolo de Integridad Forense 4.9</p>
+
+    <input type="text" id="tokenInput" placeholder="Ingrese su Token Vertex">
+
+    <div class="btn-group">
+        <button class="btn-carga" onclick="ejecutar('carga')">INICIAR BARRIDO DE NODOS</button>
+        <button class="btn-consulta" onclick="ejecutar('consulta')">CONSULTAR ACTIVOS</button>
+    </div>
+
+    <div class="footer">
+        CONSTITUCIÓN AXIOMA® | PROTECCIÓN FORENSE
+    </div>
 </div>
 
 <script>
-    const form = document.getElementById('access-form');
-    const btn = document.getElementById('submit-btn');
-    const errorMsg = document.getElementById('error-msg');
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const token = document.getElementById('token').value.trim();
+    function ejecutar(accion) {
+        const token = document.getElementById('tokenInput').value;
         
-        btn.innerText = "VERIFICANDO...";
-        btn.disabled = true;
-        errorMsg.style.display = 'none';
+        // IMPORTANTE: Pegá aquí la URL de la "Nueva Implementación" que hiciste en Google Apps Script
+        const scriptURL = "https://script.google.com/macros/s/TU_NUEVA_ID_AQUI/exec";
 
-        // GUARDAMOS EL TOKEN EN LOCALSTORAGE PARA LA TERMINAL
-        localStorage.setItem('v_token', token);
+        if (!token) {
+            alert("Acceso Denegado: Ingrese Token Vertex");
+            return;
+        }
 
-        // REDIRIGIMOS A LA TERMINAL PASANDO EL TOKEN
-        // La terminal será la encargada de hacer la llamada al script de Google
-        window.location.href = `terminal.html?token=${token}`;
-    });
+        const finalURL = `${scriptURL}?token=${token}&accion=${accion}`;
+        window.location.href = finalURL;
+    }
 </script>
 
 </body>
