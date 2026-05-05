@@ -1,83 +1,127 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Vertex Axioma | Terminal de Integridad</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertex Axioma - API de Integridad</title>
     <style>
-        body { background: #050a15; color: #4da6ff; font-family: 'Courier New', monospace; display: flex; justify-content: center; padding-top: 30px; }
-        .terminal { background: #0a1122; border: 2px solid #ff4d4d; width: 480px; padding: 30px; border-radius: 12px; box-shadow: 0 0 30px rgba(255, 77, 77, 0.3); }
-        .status-header { text-align:center; color: #ff4d4d; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
-        #log { font-size: 11px; text-align: left; height: 250px; overflow-y: auto; background: #000; padding: 15px; margin-top: 20px; border: 1px solid #1a2a44; color: #0f0; line-height: 1.4; }
-        button { background: #002060; color: #fff; border: 1px solid #4da6ff; padding: 18px; width: 100%; cursor: pointer; font-weight: bold; font-size: 1.1rem; border-radius: 4px; transition: 0.3s; margin-top: 20px; }
-        button:hover { background: #ff4d4d; color: #fff; box-shadow: 0 0 15px #ff4d4d; }
-        button:disabled { background: #333; cursor: not-allowed; opacity: 0.5; }
-        .token-display { font-size: 0.7rem; color: #888; text-align: center; margin-bottom: 10px; }
+        :root {
+            --azul-axioma: #002060;
+            --dorado-forense: #C5A059;
+            --blanco-puro: #ffffff;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: var(--blanco-puro);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            border-top: 8px solid var(--azul-axioma);
+        }
+        img.logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+        h2 { color: var(--azul-axioma); font-size: 1.5rem; margin-bottom: 5px; }
+        p { color: #666; font-size: 0.9rem; margin-bottom: 25px; }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: var(--dorado-forense);
+            outline: none;
+        }
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        button {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+            font-size: 1rem;
+        }
+        .btn-carga {
+            background-color: var(--azul-axioma);
+            color: white;
+        }
+        .btn-consulta {
+            background-color: var(--dorado-forense);
+            color: var(--azul-axioma);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 0.7rem;
+            color: #999;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
-    <div class="terminal">
-        <h2 class="status-header">VERTEX AXIOMA®</h2>
-        <p style="text-align:center; font-size: 0.7rem; color: #888;">NODO DE INTEGRIDAD FORENSE</p>
-        
-        <div class="token-display" id="display-token">CARGANDO CREDENCIALES...</div>
-        
-        <div id="log">> SISTEMA INICIALIZADO...<br>> ESPERANDO ORDEN DE EJECUCIÓN...</div>
-        
-        <button id="btnEjecutar" onclick="iniciarProtocolo()">INICIAR BARRIDO Y PETRIFICACIÓN</button>
+
+<div class="container">
+    <img src="https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/Logo.jpg" alt="Vertex Axioma" class="logo">
+    
+    <h2>Centro de Mando</h2>
+    <p>Protocolo de Integridad Forense 4.9</p>
+
+    <input type="text" id="tokenInput" placeholder="Ingrese su Token Vertex">
+
+    <div class="btn-group">
+        <button class="btn-carga" onclick="ejecutar('carga')">INICIAR BARRIDO DE NODOS</button>
+        <button class="btn-consulta" onclick="ejecutar('consulta')">CONSULTAR ACTIVOS</button>
     </div>
 
-    <script>
-        // 1. CAPTURAR EL TOKEN DE LA MOCHILA (URL)
-        const urlParams = new URLSearchParams(window.location.search);
-        const TOKEN_ACTIVO = urlParams.get('token');
-        const displayToken = document.getElementById('display-token');
-        const log = document.getElementById('log');
-        const btn = document.getElementById('btnEjecutar');
+    <div class="footer">
+        CONSTITUCIÓN AXIOMA® | PROTECCIÓN FORENSE
+    </div>
+</div>
 
-        if (!TOKEN_ACTIVO) {
-            log.innerHTML = "<span style='color:red;'>[ERROR CRÍTICO] NO SE DETECTÓ TOKEN DE ACCESO. REGRESE AL LOGIN.</span>";
-            btn.disabled = true;
-        } else {
-            displayToken.innerText = "TOKEN DETECTADO: " + TOKEN_ACTIVO;
+<script>
+    function ejecutar(accion) {
+        const token = document.getElementById('tokenInput').value;
+        const scriptURL = "TU_URL_DE_GOOGLE_APPS_SCRIPT";
+
+        if (!token) {
+            alert("Por favor, ingrese un token válido.");
+            return;
         }
 
-        async function iniciarProtocolo() {
-            btn.disabled = true;
-            btn.innerText = "EJECUTANDO PROTOCOLO...";
-            
-            log.innerHTML += `<br>> Validando Identidad con Bóveda Vertex...`;
-            
-            // Simulación visual de escaneo de nodos (Protocolo Axioma)
-            const nodos = ["BALANZA", "CAMION", "DRON", "RIEGO", "HUMEDAD", "OPTICO", "SENTINEL", "AGROMONITORING", "GOOGLEMAPS", "OPENWEATHER"];
-            
-            for(let n of nodos) {
-                await new Promise(r => setTimeout(r, 300));
-                log.innerHTML += `<br>> Nodo ${n}: <span style="color:#0f0">PETRIFICADO OK</span>`;
-                log.scrollTop = log.scrollHeight;
-            }
+        // Construimos la URL con la acción específica
+        const finalURL = `${scriptURL}?token=${token}&accion=${accion}`;
+        
+        // Redirigimos o procesamos según la necesidad
+        window.location.href = finalURL;
+    }
+</script>
 
-            log.innerHTML += `<br>> Generando DNA Digital (Hash Maestro)...`;
-
-            // 2. LLAMADA REAL AL SCRIPT DE GOOGLE USANDO EL TOKEN
-            // Reemplaza con tu URL de despliegue actual
-            const urlGoogle = "https://script.google.com/macros/s/AKfycbz79wbmkdRu9hQi-YVqJ0PuKMpo1FVBI8NLV23JD8xiHBc70ySTzhsm9Ry6A5aAdsrh/exec";
-            
-            try {
-                // Enviamos el token como parámetro principal
-                await fetch(`${urlGoogle}?token=${TOKEN_ACTIVO}`, {
-                    method: 'GET',
-                    mode: 'no-cors'
-                });
-                
-                log.innerHTML += "<br><br><span style='color:#0f0; font-weight:bold;'>[EXITO] SELLO DE INMUTABILIDAD TRANSFRONTERIZA EMITIDO.</span>";
-                log.innerHTML += "<br>> Verifique su correo electrónico.";
-            } catch (e) {
-                log.innerHTML += "<br><br><span style='color:red;'>[ERROR] FALLO DE COMUNICACIÓN CON EL SERVIDOR CENTRAL.</span>";
-            } finally {
-                btn.innerText = "PROTOCOLO FINALIZADO";
-                log.scrollTop = log.scrollHeight;
-            }
-        }
-    </script>
 </body>
 </html>
