@@ -6,39 +6,66 @@
     <title>Vertex Axioma - API de Integridad</title>
     <style>
         :root {
-            --azul-axioma: #002060;
+            --azul-axioma: #00a3ff; /* Azul brillante para Dark Mode */
             --dorado-forense: #C5A059;
-            --blanco-puro: #ffffff;
+            --fondo-oscuro: #050a14;
+            --tarjeta-oscura: #0a1120;
         }
         body {
-    background-color: #050a14; /* Azul oscuro profundo */
-    color: #ffffff;
-}
-.container {
-    background: #0a1120; /* Fondo del cuadro */
-    border: 1px solid #1e2a44;
-    box-shadow: 0 0 20px rgba(0, 163, 255, 0.2); /* Resplandor tecnológico */
-}
-input[type="text"] {
-    background: #000000;
-    color: #00a3ff;
-    border: 1px solid #00a3ff;
-}        h2 { color: var(--azul-axioma); font-size: 1.5rem; margin-bottom: 5px; }
-        p { color: #666; font-size: 0.9rem; margin-bottom: 25px; }
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--fondo-oscuro);
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: var(--tarjeta-oscura);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid #1e2a44;
+            box-shadow: 0 0 25px rgba(0, 163, 255, 0.15);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        img.logo {
+            max-width: 220px;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        h2 { 
+            color: #ffffff; 
+            font-size: 1.5rem; 
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        p { 
+            color: #8892b0; 
+            font-size: 0.9rem; 
+            margin-bottom: 25px; 
+        }
         
         input[type="text"] {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             margin-bottom: 20px;
-            border: 2px solid #ddd;
+            background: #000000;
+            color: var(--azul-axioma);
+            border: 1px solid #1e2a44;
             border-radius: 8px;
             box-sizing: border-box;
             font-size: 1rem;
             text-align: center;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
         input[type="text"]:focus {
-            border-color: var(--dorado-forense);
+            border-color: var(--azul-axioma);
+            box-shadow: 0 0 10px rgba(0, 163, 255, 0.3);
             outline: none;
         }
         .btn-group {
@@ -52,33 +79,36 @@ input[type="text"] {
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s, background 0.3s;
+            transition: all 0.3s;
             font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .btn-carga {
-            background-color: var(--azul-axioma);
+            background-color: #002060;
             color: white;
+            border: 1px solid var(--azul-axioma);
         }
         .btn-consulta {
             background-color: var(--dorado-forense);
-            color: var(--azul-axioma);
+            color: #050a14;
         }
         button:hover {
             transform: translateY(-2px);
-            opacity: 0.9;
+            filter: brightness(1.2);
         }
         .footer {
             margin-top: 30px;
             font-size: 0.7rem;
-            color: #999;
-            letter-spacing: 1px;
+            color: #444;
+            letter-spacing: 2px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <img src="<img src="https://raw.githubusercontent.com/USUARIO/REPOSITORIO/main/Logo.jpg" alt="Vertex Axioma" class="logo">">
+    <img src="https://raw.githubusercontent.com/USUARIO/REPOSITORIO/main/Logo.jpg" alt="Vertex Axioma" class="logo">
     
     <h2>Centro de Mando</h2>
     <p>Protocolo de Integridad Forense 4.9</p>
@@ -105,10 +135,7 @@ input[type="text"] {
             return;
         }
 
-        // Construimos la URL con la acción específica
         const finalURL = `${scriptURL}?token=${token}&accion=${accion}`;
-        
-        // Redirigimos o procesamos según la necesidad
         window.location.href = finalURL;
     }
 </script>
