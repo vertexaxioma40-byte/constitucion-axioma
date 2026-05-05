@@ -42,7 +42,8 @@
             max-height: 100%;
             max-width: 220px;
         }
-        h2 { margin-bottom: 5px; letter-spacing: 1px; font-size: 1.8rem; }
+        h1 { font-size: 1.6rem; letter-spacing: 2px; margin-bottom: 5px; color: #ffffff; }
+        h2 { margin-top: 0; margin-bottom: 5px; letter-spacing: 1px; font-size: 1.2rem; color: var(--azul-axioma); }
         p { color: #8892b0; font-size: 0.9rem; margin-bottom: 25px; }
         
         input[type="text"] {
@@ -82,10 +83,10 @@
 
 <div class="container">
     <div class="logo-box">
-        <img src="./Logo.jpg" alt="Vertex Axioma" class="logo">
+        <img src="Logo.jpg" alt="V.A." class="logo">
     </div>
     
-    <h2>Centro de Mando</h2>    
+    <h1>VERTEX AXIOMA®</h1>
     <h2>Centro de Mando</h2>
     <p>Protocolo de Integridad Forense 4.9</p>
 
@@ -104,8 +105,6 @@
 <script>
     function ejecutar(accion) {
         const token = document.getElementById('tokenInput').value;
-        
-        // URL de tu Script de Google (ahora está protegida dentro del script)
         const scriptURL = "https://script.google.com/macros/s/AKfycbx8fE81OOgXPhwC7DmF1ThY57EQHsijVG_9VRNKNjJbE17aMQTCmqGSC-ZLvJ4punyA/exec";
 
         if (!token) {
@@ -113,8 +112,7 @@
             return;
         }
 
-        // Redirección profesional
-        const finalURL = `${scriptURL}?token=${token}&accion=${accion}`;
+        const finalURL = `${scriptURL}?token=${encodeURIComponent(token)}&accion=${accion}`;
         window.location.href = finalURL;
     }
 </script>
