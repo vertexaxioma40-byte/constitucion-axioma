@@ -18,7 +18,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
         }
         .container {
@@ -34,10 +34,10 @@
         h1 { font-size: 1.8rem; letter-spacing: 3px; margin-bottom: 5px; color: #ffffff; }
         h2 { margin-top: 0; margin-bottom: 25px; font-size: 0.9rem; color: var(--azul-axioma); text-transform: uppercase; letter-spacing: 1px; }
         
-        input[type="text"] {
+        input[type="text"], input[type="number"] {
             width: 100%;
             padding: 14px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             background: #000000;
             color: var(--azul-axioma);
             border: 1px solid #1e2a44;
@@ -46,6 +46,16 @@
             text-align: center;
             font-size: 1.1rem;
             outline: none;
+        }
+
+        /* Estilo para el visor de nombre fiscal */
+        #nombre_fiscal {
+            font-size: 0.75rem;
+            color: var(--dorado-forense);
+            margin-bottom: 20px;
+            min-height: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .btn-group {
@@ -92,6 +102,9 @@
     <h1>VERTEX AXIOMA®</h1>
     <h2>Centro de Mando</h2>
 
+    <input type="number" id="cuitInput" placeholder="INGRESE CUIT (SIN GUIONES)" onblur="validarConARCA()">
+    <div id="nombre_fiscal">ESPERANDO IDENTIFICACIÓN...</div>
+
     <input type="text" id="tokenInput" placeholder="INGRESE TOKEN VERTEX">
 
     <div class="btn-group">
@@ -105,19 +118,44 @@
 </div>
 
 <script>
+    // Función para validar CUIT con el Padrón de ARCA (Ex-AFIP)
+    function validarConARCA() {
+        const cuit = document.getElementById('cuitInput').value;
+        const visor = document.getElementById('nombre_fiscal');
+        
+        if(cuit.length < 11) return;
+        
+        visor.innerText = "VERIFICANDO EN PADRÓN ARCA...";
+        
+        // Llama a la función que pegaste en el Código.gs
+        google.script.run.withSuccessHandler(res => {
+            if(res.exito) {
+                visor.innerText = "✓ " + res.nombre;
+                visor.style.color = "var(--dorado-forense)";
+            } else {
+                visor.innerText = "ERROR: IDENTIDAD NO LOCALIZADA";
+                visor.style.color = "#ff4444";
+            }
+        }).consultarPadronARCA(cuit);
+    }
+
     function ejecutar(accion) {
         const token = document.getElementById('tokenInput').value;
+        const cuit = document.getElementById('cuitInput').value;
         const scriptURL = "https://script.google.com/macros/s/AKfycbxP-x440b1WJUZsoT1uyN_utohliIxWj9EpYH_uJO15gV1FuZYn5mlle2sF4YPV4l97/exec";
 
-        if (!token) {
-            alert("Acceso Denegado: Ingrese Token Vertex");
+        if (!cuit || !token) {
+            alert("ACCESO DENEGADO: Identidad y Token requeridos.");
             return;
         }
 
-        // Construcción de URL para Google Apps Script
-        const finalURL = scriptURL + "?token=" + encodeURIComponent(token) + "&accion=" + accion;
+        // Construcción de URL con los nuevos parámetros de triple verificación
+        const finalURL = scriptURL + 
+                         "?token=" + encodeURIComponent(token) + 
+                         "&cuit=" + encodeURIComponent(cuit) +
+                         "&accion=" + accion;
         
-        console.log("Conectando con el Nodo...");
+        console.log("Sincronizando con Nodo Vertex...");
         window.location.href = finalURL;
     }
 </script>
