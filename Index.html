@@ -145,16 +145,18 @@
             return;
         }
 
-        // Llamamos directamente a la función del servidor para que procese el barrido
-        google.script.run.withSuccessHandler(res => {
-            alert(res);
-        }).doGet({
-            parameter: {
-                token: token,
-                cuit: cuit,
-                accion: accion
-            }
-        });
+        // Feedback visual inmediato para el usuario
+        console.log("Sincronizando con Nodo Vertex...");
+
+        // Llamada directa a la función de procesamiento en Código.gs
+        google.script.run
+            .withSuccessHandler(res => {
+                alert("ÉXITO: " + res);
+            })
+            .withFailureHandler(err => {
+                alert("ERROR DE PROTOCOLO: " + err.message);
+            })
+            .procesarBarridoVertex(token, cuit, accion); 
     }
 </script>
 </body>
