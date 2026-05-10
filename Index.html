@@ -117,16 +117,14 @@
 </div>
 
 <script>
-    // 1. Validación de Identidad (DNI para tu papá o CUIT para clientes)
     function validarConARCA() {
         const idIngresada = document.getElementById('cuitInput').value;
         const visor = document.getElementById('nombre_fiscal');
         
-        if(idIngresada.length < 7) return; // Mínimo un DNI
+        if(idIngresada.length < 7) return;
         
         visor.innerText = "VERIFICANDO IDENTIDAD VERTEX...";
         
-        // Llamamos a la función del servidor (Código.gs)
         google.script.run.withSuccessHandler(res => {
             if(res.exito) {
                 visor.innerText = "✓ " + res.nombre;
@@ -138,7 +136,6 @@
         }).consultarPadronARCA(idIngresada);
     }
 
-    // 2. Ejecución del Barrido o Consulta
     function ejecutar(accion) {
         const token = document.getElementById('tokenInput').value;
         const cuit = document.getElementById('cuitInput').value;
@@ -148,17 +145,9 @@
             return;
         }
 
-        // Cambiamos el texto del botón para dar feedback
-        const btn = event.target;
-        const textoOriginal = btn.innerText;
-        btn.innerText = "SINCRONIZANDO...";
-        btn.disabled = true;
-
-        // Llamamos a la función principal del servidor
+        // Llamamos directamente a la función del servidor para que procese el barrido
         google.script.run.withSuccessHandler(res => {
             alert(res);
-            btn.innerText = textoOriginal;
-            btn.disabled = false;
         }).doGet({
             parameter: {
                 token: token,
@@ -168,6 +157,5 @@
         });
     }
 </script>
-
 </body>
 </html>
