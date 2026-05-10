@@ -142,7 +142,38 @@
     function ejecutar(accion) {
         const token = document.getElementById('tokenInput').value;
         const cuit = document.getElementById('cuitInput').value;
-        const scriptURL = "https://script.google.com/macros/s/AKfycbz4bZb2F75HTl9QsBdugurXIPP4IMLVXVzksyj1WrdskxKeC_EW-eOIJ6tQ1QFs95el/exec";
+        const scriptURL = "/**
+ * Consulta el Padrón o permite Identidad Manual (Punto 16)
+ */
+function consultarPadronARCA(cuit) {
+  const cuitLimpio = cuit.toString().replace(/-/g, "");
+  
+  // Si es un DNI (menos de 11 dígitos), lo tomamos como Identidad Manual
+  if (cuitLimpio.length < 10) {
+    return {
+      exito: true,
+      nombre: "IDENTIDAD MANUAL: " + cuitLimpio,
+      condicion: "FUERA_DE_PADRON",
+      cuit: cuitLimpio
+    };
+  }
+
+  const url = "https://api.apis.net.pe/v1/ruc?numero=" + cuitLimpio; 
+  try {
+    const response = UrlFetchApp.fetch(url);
+    const data = JSON.parse(response.getContentText());
+    
+    if (data && data.nombre) {
+      return { exito: true, nombre: data.nombre, condicion: data.estado, cuit: cuitLimpio };
+    } else {
+      // Fallback: Si no está en ARCA, permitimos que pase igual con su número
+      return { exito: true, nombre: "ID NO REGISTRADA: " + cuitLimpio, condicion: "S/C", cuit: cuitLimpio };
+    }
+  } catch (e) {
+    // Si la API falla o no lo encuentra, no bloqueamos al usuario
+    return { exito: true, nombre: "IDENTIDAD LOCAL: " + cuitLimpio, cuit: cuitLimpio };
+  }
+}";
 
         if (!cuit || !token) {
             alert("ACCESO DENEGADO: Identidad y Token requeridos.");
