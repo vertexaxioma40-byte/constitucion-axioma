@@ -48,7 +48,6 @@
             outline: none;
         }
 
-        /* Estilo para el visor de nombre fiscal */
         #nombre_fiscal {
             font-size: 0.75rem;
             color: var(--dorado-forense);
@@ -102,7 +101,7 @@
     <h1>VERTEX AXIOMA®</h1>
     <h2>Centro de Mando</h2>
 
-    <input type="number" id="cuitInput" placeholder="INGRESE CUIT (SIN GUIONES)" onblur="validarConARCA()">
+    <input type="number" id="cuitInput" placeholder="DNI O CUIT (SIN GUIONES)" onblur="validarConARCA()">
     <div id="nombre_fiscal">ESPERANDO IDENTIFICACIÓN...</div>
 
     <input type="text" id="tokenInput" placeholder="INGRESE TOKEN VERTEX">
@@ -118,16 +117,16 @@
 </div>
 
 <script>
-    // Función para validar CUIT con el Padrón de ARCA (Ex-AFIP)
+    // 1. Validación de Identidad (DNI para tu papá o CUIT para clientes)
     function validarConARCA() {
-        const cuit = document.getElementById('cuitInput').value;
+        const idIngresada = document.getElementById('cuitInput').value;
         const visor = document.getElementById('nombre_fiscal');
         
-        if(cuit.length < 11) return;
+        if(idIngresada.length < 7) return; // Mínimo un DNI
         
-        visor.innerText = "VERIFICANDO EN PADRÓN ARCA...";
+        visor.innerText = "VERIFICANDO IDENTIDAD VERTEX...";
         
-        // Llama a la función que pegaste en el Código.gs
+        // Llamamos a la función del servidor (Código.gs)
         google.script.run.withSuccessHandler(res => {
             if(res.exito) {
                 visor.innerText = "✓ " + res.nombre;
@@ -136,58 +135,37 @@
                 visor.innerText = "ERROR: IDENTIDAD NO LOCALIZADA";
                 visor.style.color = "#ff4444";
             }
-        }).consultarPadronARCA(cuit);
+        }).consultarPadronARCA(idIngresada);
     }
 
+    // 2. Ejecución del Barrido o Consulta
     function ejecutar(accion) {
         const token = document.getElementById('tokenInput').value;
         const cuit = document.getElementById('cuitInput').value;
-        const scriptURL = "/**
- * Consulta el Padrón o permite Identidad Manual (Punto 16)
- */
-function consultarPadronARCA(cuit) {
-  const cuitLimpio = cuit.toString().replace(/-/g, "");
-  
-  // Si es un DNI (menos de 11 dígitos), lo tomamos como Identidad Manual
-  if (cuitLimpio.length < 10) {
-    return {
-      exito: true,
-      nombre: "IDENTIDAD MANUAL: " + cuitLimpio,
-      condicion: "FUERA_DE_PADRON",
-      cuit: cuitLimpio
-    };
-  }
-
-  const url = "https://api.apis.net.pe/v1/ruc?numero=" + cuitLimpio; 
-  try {
-    const response = UrlFetchApp.fetch(url);
-    const data = JSON.parse(response.getContentText());
-    
-    if (data && data.nombre) {
-      return { exito: true, nombre: data.nombre, condicion: data.estado, cuit: cuitLimpio };
-    } else {
-      // Fallback: Si no está en ARCA, permitimos que pase igual con su número
-      return { exito: true, nombre: "ID NO REGISTRADA: " + cuitLimpio, condicion: "S/C", cuit: cuitLimpio };
-    }
-  } catch (e) {
-    // Si la API falla o no lo encuentra, no bloqueamos al usuario
-    return { exito: true, nombre: "IDENTIDAD LOCAL: " + cuitLimpio, cuit: cuitLimpio };
-  }
-}";
-
+        
         if (!cuit || !token) {
             alert("ACCESO DENEGADO: Identidad y Token requeridos.");
             return;
         }
 
-        // Construcción de URL con los nuevos parámetros de triple verificación
-        const finalURL = scriptURL + 
-                         "?token=" + encodeURIComponent(token) + 
-                         "&cuit=" + encodeURIComponent(cuit) +
-                         "&accion=" + accion;
-        
-        console.log("Sincronizando con Nodo Vertex...");
-        window.location.href = finalURL;
+        // Cambiamos el texto del botón para dar feedback
+        const btn = event.target;
+        const textoOriginal = btn.innerText;
+        btn.innerText = "SINCRONIZANDO...";
+        btn.disabled = true;
+
+        // Llamamos a la función principal del servidor
+        google.script.run.withSuccessHandler(res => {
+            alert(res);
+            btn.innerText = textoOriginal;
+            btn.disabled = false;
+        }).doGet({
+            parameter: {
+                token: token,
+                cuit: cuit,
+                accion: accion
+            }
+        });
     }
 </script>
 
