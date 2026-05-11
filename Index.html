@@ -16,10 +16,12 @@
             background-color: var(--fondo-oscuro);
             color: #ffffff;
             display: flex;
+            flex-direction: column; /* Cambiado para que los contenedores se apilen */
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            padding: 20px;
         }
         .container {
             background: var(--tarjeta-oscura);
@@ -28,13 +30,14 @@
             border: 1px solid #1e2a44;
             box-shadow: 0 0 25px rgba(0, 163, 255, 0.15);
             text-align: center;
-            max-width: 400px;
-            width: 90%;
+            max-width: 450px;
+            width: 95%;
+            margin-bottom: 30px; /* Espacio entre el mando y el registro */
         }
         h1 { font-size: 1.8rem; letter-spacing: 3px; margin-bottom: 5px; color: #ffffff; }
         h2 { margin-top: 0; margin-bottom: 25px; font-size: 0.9rem; color: var(--azul-axioma); text-transform: uppercase; letter-spacing: 1px; }
         
-        input[type="text"], input[type="number"] {
+        input[type="text"], input[type="number"], select {
             width: 100%;
             padding: 14px;
             margin-bottom: 10px;
@@ -93,6 +96,14 @@
         }
 
         .footer { margin-top: 30px; font-size: 0.6rem; color: #444; letter-spacing: 2px; }
+        
+        /* Estilo para el área de carga de archivos */
+        .file-zone {
+            margin-top: 15px; 
+            border: 1px dashed var(--azul-axioma); 
+            padding: 20px; 
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
@@ -110,6 +121,30 @@
         <button class="btn-carga" onclick="ejecutar('carga')">INICIAR BARRIDO DE NODOS</button>
         <button class="btn-consulta" onclick="ejecutar('consulta')">CONSULTAR ACTIVOS (HASH)</button>
     </div>
+</div>
+
+<div class="container">
+    <h1>REGISTRO VERTEX®</h1>
+    <h2>Declaración de Activos Reales</h2>
+
+    <div style="text-align: left; font-size: 0.8rem; margin-bottom: 10px; color: var(--dorado-forense);">
+        TIPO DE ACTIVO:
+    </div>
+    <select id="tipoActivo">
+        <option value="DRON">DRON / UNIDAD AÉREA</option>
+        <option value="BALANZA">BALANZA / PESAJE</option>
+        <option value="CAMION">TRANSPORTE / CAMIÓN</option>
+        <option value="ACTIVO_MIXTO">OTRO / GENERAL</option>
+    </select>
+
+    <input type="text" id="descActivo" placeholder="DESCRIPCIÓN DEL ACTIVO">
+    
+    <div class="file-zone">
+        <label style="display: block; margin-bottom: 10px; font-size: 0.8rem;">EVIDENCIA FORENSE (FOTO/PDF):</label>
+        <input type="file" id="fileInput" accept="image/*,application/pdf" style="font-size: 0.75rem; color: white;">
+    </div>
+
+    <button class="btn-carga" onclick="subirYRegistrar()" style="margin-top: 20px;">EMITIR SELLO DE INMUTABILIDAD</button>
 
     <div class="footer">
         CONSTITUCIÓN AXIOMA® | PROTECCIÓN FORENSE
@@ -120,9 +155,7 @@
     function validarConARCA() {
         const idIngresada = document.getElementById('cuitInput').value;
         const visor = document.getElementById('nombre_fiscal');
-        
         if(idIngresada.length < 7) return;
-        
         visor.innerText = "VERIFICANDO IDENTIDAD VERTEX...";
         
         google.script.run.withSuccessHandler(res => {
@@ -139,49 +172,54 @@
     function ejecutar(accion) {
         const token = document.getElementById('tokenInput').value;
         const cuit = document.getElementById('cuitInput').value;
-        
         if (!cuit || !token) {
             alert("ACCESO DENEGADO: Identidad y Token requeridos.");
             return;
         }
-
-        // Feedback visual inmediato para el usuario
-        console.log("Sincronizando con Nodo Vertex...");
-
-        // Llamada directa a la función de procesamiento en Código.gs
         google.script.run
-            .withSuccessHandler(res => {
-                alert("ÉXITO: " + res);
-            })
-            .withFailureHandler(err => {
-                alert("ERROR DE PROTOCOLO: " + err.message);
-            })
+            .withSuccessHandler(res => { alert("ÉXITO: " + res); })
+            .withFailureHandler(err => { alert("ERROR DE PROTOCOLO: " + err.message); })
             .procesarBarridoVertex(token, cuit, accion); 
+    }
+
+    function subirYRegistrar() {
+        const fileInput = document.getElementById('fileInput');
+        const token = document.getElementById('tokenInput').value;
+        const cuit = document.getElementById('cuitInput').value;
+        const tipo = document.getElementById('tipoActivo').value;
+        const desc = document.getElementById('descActivo').value;
+
+        if (!fileInput.files[0] || !cuit || !token) {
+            alert("ERROR: Falta Identidad, Token o Evidencia.");
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const base64Data = e.target.result.split(',')[1];
+            const datosParaNodo = {
+                identidad: cuit,
+                token: token,
+                tipo: tipo,
+                descripcion: desc,
+                nombreArchivo: file.name,
+                archivoBase64: base64Data,
+                timestamp: new Date().toISOString(),
+                sello: "Sello de Inmutabilidad Transfronteriza"
+            };
+            
+            google.script.run
+                .withSuccessHandler(res => {
+                    alert("ACTIVO REGISTRADO EN EL NODO VERTEX.");
+                    location.reload();
+                })
+                .withFailureHandler(err => { alert("FALLA: " + err.message); })
+                .registrarNuevoActivoAPI(datosParaNodo);
+        };
+        reader.readAsDataURL(file);
     }
 </script>
 </body>
 </html>
-
-<div class="container" style="margin-top: 30px; max-width: 500px;">
-    <h1>REGISTRO VERTEX®</h1>
-    <h2>Declaración de Activos Reales</h2>
-
-    <div style="text-align: left; font-size: 0.8rem; margin-bottom: 15px;">
-        <label>TIPO DE ACTIVO:</label>
-        <select id="tipoActivo" style="width: 100%; padding: 10px; background: #000; color: var(--azul-axioma); border: 1px solid #1e2a44; border-radius: 8px;">
-            <option value="DRON">DRON / UNIDAD AÉREA</option>
-            <option value="BALANZA">BALANZA / PESAJE</option>
-            <option value="CAMION">TRANSPORTE / CAMIÓN</option>
-            <option value="ACTIVO_MIXTO">OTRO / GENERAL</option>
-        </select>
-    </div>
-
-    <input type="text" id="descActivo" placeholder="DESCRIPCIÓN DEL ACTIVO (Ej: Drone DJI 04)">
-    
-    <div style="margin-top: 15px; border: 1px dashed var(--azul-axioma); padding: 20px; border-radius: 8px;">
-        <label style="display: block; margin-bottom: 10px; font-size: 0.8rem;">EVIDENCIA FORENSE (FOTO/PDF):</label>
-        <input type="file" id="fileInput" accept="image/*,application/pdf" style="font-size: 0.7rem;">
-    </div>
-
-    <button class="btn-carga" onclick="subirYRegistrar()" style="margin-top: 20px;">EMITIR SELLO DE INMUTABILIDAD</button>
-</div>
