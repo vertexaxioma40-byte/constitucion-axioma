@@ -153,27 +153,39 @@ function validarConARCA() {
     }
 
     function subirYRegistrar() {
-        const f = document.getElementById('fileInput').files[0];
-        const t = document.getElementById('tokenInput').value;
-        const c = document.getElementById('cuitInput').value;
-        if (!f || !c || !t) { alert("Falta archivo, CUIT o Token."); return; }
+    const f = document.getElementById('fileInput').files[0];
+    const t = document.getElementById('tokenInput').value;
+    const c = document.getElementById('cuitInput').value;
+    
+    if (!f || !c || !t) { alert("Falta archivo, CUIT o Token."); return; }
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const d = {
-                identidad: c, token: t, 
-                tipo: document.getElementById('tipoActivo').value,
-                descripcion: document.getElementById('descActivo').value,
-                archivoBase64: e.target.result.split(',')[1],
-                nombreArchivo: f.name
-            };
-            google.script.run.withSuccessHandler(res => {
-                alert("ACTIVO ENVIADO AL NODO");
-                location.reload();
-            }).registrarNuevoActivoAPI(d);
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const d = {
+            identidad: c,
+            token: t, 
+            tipo: document.getElementById('tipoActivo').value,
+            descripcion: document.getElementById('descActivo').value,
+            archivoBase64: e.target.result.split(',')[1],
+            nombreArchivo: f.name
         };
-        reader.readAsDataURL(f);
-    }
+
+        // USÁ LA MISMA URL QUE TE FUNCIONÓ PARA EL CUIT
+        const urlNodo = "TU_URL_DE_APPS_SCRIPT_AQUI"; 
+
+        fetch(urlNodo, {
+            method: 'POST',
+            body: JSON.stringify(d)
+        })
+        .then(response => response.json())
+        .then(res => {
+            alert("Sello de Inmutabilidad Emitido: " + res.mensaje);
+            location.reload();
+        })
+        .catch(err => alert("Error en el Nodo: " + err));
+    };
+    reader.readAsDataURL(f);
+}
 </script>
 </body>
 </html>
