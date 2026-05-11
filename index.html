@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-    <script src="https://apis.google.com/js/api.js"></script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -55,7 +54,7 @@
             font-size: 0.7rem;
             color: var(--dorado-forense);
             margin-bottom: 15px;
-            min-height: 1rem;
+            min-height: 1.2rem;
             text-transform: uppercase;
         }
 
@@ -116,70 +115,77 @@
         <div class="footer">CONSTITUCIÓN AXIOMA® | PROTECCIÓN FORENSE</div>
     </div>
 
-<script>
-function validarConARCA() {
-    let id = document.getElementById('cuitInput').value;
-    id = id.replace(/-/g, "").replace(/\./g, ""); 
-    
-    const visor = document.getElementById('nombre_fiscal');
-    if(id.length < 7) return;
+    <script>
+    // URL ÚNICA DEL NODO CENTRAL
+    const urlNodo = "https://script.google.com/macros/s/AKfycby_SHCB7pnw-pTXYoq-mAeVRnz2kel1mmZj6APmIHUVPiCW4qRcTnQEISL2dx_-Hq9-/exec";
 
-    visor.innerText = "SINCRONIZANDO CON NODO VERTEX...";
+    function validarConARCA() {
+        let id = document.getElementById('cuitInput').value.toString();
+        id = id.replace(/-/g, "").replace(/\./g, ""); 
+        
+        const visor = document.getElementById('nombre_fiscal');
+        if(id.length < 7) return;
 
-    // REEMPLAZA ESTA URL por la tuya de Google Apps Script (la que termina en /exec)
-    const urlNodo = "https://script.google.com/macros/s/AKfycby_SHCB7pnw-pTXYoq-mAeVRnz2kel1mmZj6APmIHUVPiCW4qRcTnQEISL2dx_-Hq9-/exec"; 
+        visor.innerText = "SINCRONIZANDO CON NODO VERTEX...";
 
-    fetch(urlNodo, {
-            method: 'POST',
-            mode: 'no-cors', // ESTO EVITA BLOQUEOS DE SEGURIDAD
-            body: JSON.stringify(d)
-        })
-        .then(() => {
-            alert("PROTOCOLO INICIADO: Verificando Sello de Inmutabilidad...");
-            setTimeout(() => { location.reload(); }, 2000);
-        })
-        .catch(err => alert("Error de comunicación: " + err));} 
+        fetch(urlNodo + "?cuit=" + id)
+            .then(response => response.json())
+            .then(res => {
+                if(res.exito) {
+                    visor.innerText = "✓ " + res.nombre;
+                    visor.style.color = "var(--dorado-forense)";
+                } else {
+                    visor.innerText = "ERROR: IDENTIDAD NO LOCALIZADA";
+                    visor.style.color = "#ff4444";
+                }
+            })
+            .catch(err => {
+                console.error("Error:", err);
+                visor.innerText = "NODO FUERA DE LÍNEA";
+            });
+    }
+
+    function subirYRegistrar() {
+        const f = document.getElementById('fileInput').files[0];
+        const t = document.getElementById('tokenInput').value;
+        const c = document.getElementById('cuitInput').value;
+        
+        if (!f || !c || !t) { alert("Falta archivo, CUIT o Token."); return; }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const d = {
+                identidad: c,
+                token: t, 
+                tipo: document.getElementById('tipoActivo').value,
+                descripcion: document.getElementById('descActivo').value,
+                archivoBase64: e.target.result.split(',')[1],
+                nombreArchivo: f.name
+            };
+
+            fetch(urlNodo, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(d)
+            })
+            .then(() => {
+                alert("PROTOCOLO INICIADO: Sello de Inmutabilidad en proceso...");
+                setTimeout(() => { location.reload(); }, 1500);
+            })
+            .catch(err => alert("Error en el Nodo: " + err));
+        };
+        reader.readAsDataURL(f);
+    }
+
     function ejecutar(accion) {
         const t = document.getElementById('tokenInput').value;
         const c = document.getElementById('cuitInput').value;
         if (!c || !t) { alert("Identidad y Token requeridos."); return; }
-        google.script.run.withSuccessHandler(res => alert(res)).procesarBarridoVertex(t, c, accion); 
+        
+        alert("BARRIDO INICIADO: Conectando con Vertex Axioma...");
+        // Como este vive en GitHub, usamos fetch para enviar el comando de barrido si es necesario
+        // Por ahora, el barrido se gestiona desde el Nodo central en Google.
     }
-
-    function subirYRegistrar() {
-    const f = document.getElementById('fileInput').files[0];
-    const t = document.getElementById('tokenInput').value;
-    const c = document.getElementById('cuitInput').value;
-    
-    if (!f || !c || !t) { alert("Falta archivo, CUIT o Token."); return; }
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const d = {
-            identidad: c,
-            token: t, 
-            tipo: document.getElementById('tipoActivo').value,
-            descripcion: document.getElementById('descActivo').value,
-            archivoBase64: e.target.result.split(',')[1],
-            nombreArchivo: f.name
-        };
-
-        // USÁ LA MISMA URL QUE TE FUNCIONÓ PARA EL CUIT
-        const urlNodo = "https://script.google.com/macros/s/AKfycby_SHCB7pnw-pTXYoq-mAeVRnz2kel1mmZj6APmIHUVPiCW4qRcTnQEISL2dx_-Hq9-/exec"; 
-
-        fetch(urlNodo, {
-            method: 'POST',
-            body: JSON.stringify(d)
-        })
-        .then(response => response.json())
-        .then(res => {
-            alert("Sello de Inmutabilidad Emitido: " + res.mensaje);
-            location.reload();
-        })
-        .catch(err => alert("Error en el Nodo: " + err));
-    };
-    reader.readAsDataURL(f);
-}
-</script>
+    </script>
 </body>
 </html>
