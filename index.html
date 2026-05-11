@@ -119,18 +119,32 @@
 <script>
 function validarConARCA() {
     let id = document.getElementById('cuitInput').value;
-    
-    // ESTA LÍNEA ES EL BLINDAJE: Limpia guiones y puntos automáticamente
     id = id.replace(/-/g, "").replace(/\./g, ""); 
     
     const visor = document.getElementById('nombre_fiscal');
     if(id.length < 7) return;
-    
-   google.script.run.withSuccessHandler(res => {
-        visor.innerText = res.exito ? "✓ " + res.nombre : "ERROR: NO LOCALIZADO";
-        visor.style.color = res.exito ? "var(--dorado-forense)" : "#ff4444";
-    }).consultarPadronARCA(id); // <--- USAR 'id' AQUÍ, SIN NÚMEROS FIJOS
-}
+
+    visor.innerText = "SINCRONIZANDO CON NODO VERTEX...";
+
+    // REEMPLAZA ESTA URL por la tuya de Google Apps Script (la que termina en /exec)
+    const urlNodo = "https://script.google.com/macros/s/TU_ID_DE_SCRIPT/exec"; 
+
+    fetch(urlNodo + "?cuit=" + id)
+        .then(response => response.json())
+        .then(res => {
+            if(res.exito) {
+                visor.innerText = "✓ " + res.nombre;
+                visor.style.color = "var(--dorado-forense)";
+            } else {
+                visor.innerText = "ERROR: IDENTIDAD NO LOCALIZADA";
+                visor.style.color = "#ff4444";
+            }
+        })
+        .catch(err => {
+            console.error("Error de conexión:", err);
+            visor.innerText = "NODO FUERA DE LÍNEA";
+        });
+} 
     function ejecutar(accion) {
         const t = document.getElementById('tokenInput').value;
         const c = document.getElementById('cuitInput').value;
