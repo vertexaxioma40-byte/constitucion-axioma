@@ -127,7 +127,7 @@ function validarConARCA() {
     visor.innerText = "SINCRONIZANDO CON NODO VERTEX...";
 
     // REEMPLAZA ESTA URL por la tuya de Google Apps Script (la que termina en /exec)
-    const urlNodo = "https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycby_SHCB7pnw-pTXYoq-mAeVRnz2kel1mmZj6APmIHUVPiCW4qRcTnQEISL2dx_-Hq9-/exec"; 
+    const urlNodo = "https://script.google.com/macros/s/AKfycby_SHCB7pnw-pTXYoq-mAeVRnz2kel1mmZj6APmIHUVPiCW4qRcTnQEISL2dx_-Hq9-/exec"; 
 
     fetch(urlNodo + "?cuit=" + id)
         .then(response => response.json())
