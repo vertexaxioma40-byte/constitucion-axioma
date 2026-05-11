@@ -161,3 +161,27 @@
 </script>
 </body>
 </html>
+
+<div class="container" style="margin-top: 30px; max-width: 500px;">
+    <h1>REGISTRO VERTEX®</h1>
+    <h2>Declaración de Activos Reales</h2>
+
+    <div style="text-align: left; font-size: 0.8rem; margin-bottom: 15px;">
+        <label>TIPO DE ACTIVO:</label>
+        <select id="tipoActivo" style="width: 100%; padding: 10px; background: #000; color: var(--azul-axioma); border: 1px solid #1e2a44; border-radius: 8px;">
+            <option value="DRON">DRON / UNIDAD AÉREA</option>
+            <option value="BALANZA">BALANZA / PESAJE</option>
+            <option value="CAMION">TRANSPORTE / CAMIÓN</option>
+            <option value="ACTIVO_MIXTO">OTRO / GENERAL</option>
+        </select>
+    </div>
+
+    <input type="text" id="descActivo" placeholder="DESCRIPCIÓN DEL ACTIVO (Ej: Drone DJI 04)">
+    
+    <div style="margin-top: 15px; border: 1px dashed var(--azul-axioma); padding: 20px; border-radius: 8px;">
+        <label style="display: block; margin-bottom: 10px; font-size: 0.8rem;">EVIDENCIA FORENSE (FOTO/PDF):</label>
+        <input type="file" id="fileInput" accept="image/*,application/pdf" style="font-size: 0.7rem;">
+    </div>
+
+    <button class="btn-carga" onclick="subirYRegistrar()" style="margin-top: 20px;">EMITIR SELLO DE INMUTABILIDAD</button>
+</div>
