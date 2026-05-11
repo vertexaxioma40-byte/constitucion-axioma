@@ -16,30 +16,29 @@
             background-color: var(--fondo-oscuro);
             color: #ffffff;
             display: flex;
-            flex-direction: column; /* Cambiado para que los contenedores se apilen */
-            justify-content: center;
+            flex-direction: column; 
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
+            padding: 40px 20px;
         }
         .container {
             background: var(--tarjeta-oscura);
-            padding: 40px;
+            padding: 30px;
             border-radius: 15px;
             border: 1px solid #1e2a44;
             box-shadow: 0 0 25px rgba(0, 163, 255, 0.15);
             text-align: center;
             max-width: 450px;
-            width: 95%;
-            margin-bottom: 30px; /* Espacio entre el mando y el registro */
+            width: 100%;
+            margin-bottom: 30px;
         }
-        h1 { font-size: 1.8rem; letter-spacing: 3px; margin-bottom: 5px; color: #ffffff; }
-        h2 { margin-top: 0; margin-bottom: 25px; font-size: 0.9rem; color: var(--azul-axioma); text-transform: uppercase; letter-spacing: 1px; }
+        h1 { font-size: 1.6rem; letter-spacing: 3px; margin-bottom: 5px; color: #ffffff; }
+        h2 { margin-top: 0; margin-bottom: 20px; font-size: 0.8rem; color: var(--azul-axioma); text-transform: uppercase; letter-spacing: 1px; }
         
         input[type="text"], input[type="number"], select {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             margin-bottom: 10px;
             background: #000000;
             color: var(--azul-axioma);
@@ -47,28 +46,21 @@
             border-radius: 8px;
             box-sizing: border-box;
             text-align: center;
-            font-size: 1.1rem;
+            font-size: 1rem;
             outline: none;
         }
 
         #nombre_fiscal {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--dorado-forense);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             min-height: 1rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
         }
 
         button {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             border: none;
             border-radius: 8px;
             font-weight: bold;
@@ -76,149 +68,92 @@
             text-transform: uppercase;
             transition: 0.3s;
             letter-spacing: 1px;
+            margin-top: 5px;
         }
 
-        .btn-carga {
-            background-color: #002060;
-            color: white;
-            border: 1px solid var(--azul-axioma);
-        }
+        .btn-carga { background-color: #002060; color: white; border: 1px solid var(--azul-axioma); }
+        .btn-consulta { background-color: var(--dorado-forense); color: #050a14; margin-top: 10px; }
 
-        .btn-consulta {
-            background-color: var(--dorado-forense);
-            color: #050a14;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.2);
-            box-shadow: 0 5px 15px rgba(0, 163, 255, 0.2);
-        }
-
-        .footer { margin-top: 30px; font-size: 0.6rem; color: #444; letter-spacing: 2px; }
-        
-        /* Estilo para el área de carga de archivos */
         .file-zone {
             margin-top: 15px; 
             border: 1px dashed var(--azul-axioma); 
-            padding: 20px; 
+            padding: 15px; 
             border-radius: 8px;
+            font-size: 0.8rem;
         }
+
+        .footer { margin-top: 20px; font-size: 0.55rem; color: #444; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>VERTEX AXIOMA®</h1>
-    <h2>Centro de Mando</h2>
-
-    <input type="number" id="cuitInput" placeholder="DNI O CUIT (SIN GUIONES)" onblur="validarConARCA()">
-    <div id="nombre_fiscal">ESPERANDO IDENTIFICACIÓN...</div>
-
-    <input type="text" id="tokenInput" placeholder="INGRESE TOKEN VERTEX">
-
-    <div class="btn-group">
+    <div class="container">
+        <h1>VERTEX AXIOMA®</h1>
+        <h2>Centro de Mando</h2>
+        <input type="number" id="cuitInput" placeholder="DNI O CUIT (SIN GUIONES)" onblur="validarConARCA()">
+        <div id="nombre_fiscal">ESPERANDO IDENTIFICACIÓN...</div>
+        <input type="text" id="tokenInput" placeholder="INGRESE TOKEN VERTEX">
         <button class="btn-carga" onclick="ejecutar('carga')">INICIAR BARRIDO DE NODOS</button>
         <button class="btn-consulta" onclick="ejecutar('consulta')">CONSULTAR ACTIVOS (HASH)</button>
     </div>
-</div>
 
-<div class="container">
-    <h1>REGISTRO VERTEX®</h1>
-    <h2>Declaración de Activos Reales</h2>
-
-    <div style="text-align: left; font-size: 0.8rem; margin-bottom: 10px; color: var(--dorado-forense);">
-        TIPO DE ACTIVO:
+    <div class="container">
+        <h1>REGISTRO VERTEX®</h1>
+        <h2>Declaración de Activos</h2>
+        <select id="tipoActivo">
+            <option value="DRON">DRON / UNIDAD AÉREA</option>
+            <option value="BALANZA">BALANZA / PESAJE</option>
+            <option value="CAMION">TRANSPORTE / CAMIÓN</option>
+            <option value="ACTIVO_MIXTO">OTRO / GENERAL</option>
+        </select>
+        <input type="text" id="descActivo" placeholder="DESCRIPCIÓN (EJ: DRONE 01)">
+        <div class="file-zone">
+            EVIDENCIA (FOTO/PDF):<br><br>
+            <input type="file" id="fileInput" accept="image/*,application/pdf">
+        </div>
+        <button class="btn-carga" onclick="subirYRegistrar()" style="background-color: #004d40;">EMITIR SELLO DE INMUTABILIDAD</button>
+        <div class="footer">CONSTITUCIÓN AXIOMA® | PROTECCIÓN FORENSE</div>
     </div>
-    <select id="tipoActivo">
-        <option value="DRON">DRON / UNIDAD AÉREA</option>
-        <option value="BALANZA">BALANZA / PESAJE</option>
-        <option value="CAMION">TRANSPORTE / CAMIÓN</option>
-        <option value="ACTIVO_MIXTO">OTRO / GENERAL</option>
-    </select>
-
-    <input type="text" id="descActivo" placeholder="DESCRIPCIÓN DEL ACTIVO">
-    
-    <div class="file-zone">
-        <label style="display: block; margin-bottom: 10px; font-size: 0.8rem;">EVIDENCIA FORENSE (FOTO/PDF):</label>
-        <input type="file" id="fileInput" accept="image/*,application/pdf" style="font-size: 0.75rem; color: white;">
-    </div>
-
-    <button class="btn-carga" onclick="subirYRegistrar()" style="margin-top: 20px;">EMITIR SELLO DE INMUTABILIDAD</button>
-
-    <div class="footer">
-        CONSTITUCIÓN AXIOMA® | PROTECCIÓN FORENSE
-    </div>
-</div>
 
 <script>
     function validarConARCA() {
-        const idIngresada = document.getElementById('cuitInput').value;
+        const id = document.getElementById('cuitInput').value;
         const visor = document.getElementById('nombre_fiscal');
-        if(idIngresada.length < 7) return;
-        visor.innerText = "VERIFICANDO IDENTIDAD VERTEX...";
-        
+        if(id.length < 7) return;
         google.script.run.withSuccessHandler(res => {
-            if(res.exito) {
-                visor.innerText = "✓ " + res.nombre;
-                visor.style.color = "var(--dorado-forense)";
-            } else {
-                visor.innerText = "ERROR: IDENTIDAD NO LOCALIZADA";
-                visor.style.color = "#ff4444";
-            }
-        }).consultarPadronARCA(idIngresada);
+            visor.innerText = res.exito ? "✓ " + res.nombre : "ERROR: NO LOCALIZADO";
+            visor.style.color = res.exito ? "var(--dorado-forense)" : "#ff4444";
+        }).consultarPadronARCA(id);
     }
 
     function ejecutar(accion) {
-        const token = document.getElementById('tokenInput').value;
-        const cuit = document.getElementById('cuitInput').value;
-        if (!cuit || !token) {
-            alert("ACCESO DENEGADO: Identidad y Token requeridos.");
-            return;
-        }
-        google.script.run
-            .withSuccessHandler(res => { alert("ÉXITO: " + res); })
-            .withFailureHandler(err => { alert("ERROR DE PROTOCOLO: " + err.message); })
-            .procesarBarridoVertex(token, cuit, accion); 
+        const t = document.getElementById('tokenInput').value;
+        const c = document.getElementById('cuitInput').value;
+        if (!c || !t) { alert("Identidad y Token requeridos."); return; }
+        google.script.run.withSuccessHandler(res => alert(res)).procesarBarridoVertex(t, c, accion); 
     }
 
     function subirYRegistrar() {
-        const fileInput = document.getElementById('fileInput');
-        const token = document.getElementById('tokenInput').value;
-        const cuit = document.getElementById('cuitInput').value;
-        const tipo = document.getElementById('tipoActivo').value;
-        const desc = document.getElementById('descActivo').value;
+        const f = document.getElementById('fileInput').files[0];
+        const t = document.getElementById('tokenInput').value;
+        const c = document.getElementById('cuitInput').value;
+        if (!f || !c || !t) { alert("Falta archivo, CUIT o Token."); return; }
 
-        if (!fileInput.files[0] || !cuit || !token) {
-            alert("ERROR: Falta Identidad, Token o Evidencia.");
-            return;
-        }
-
-        const file = fileInput.files[0];
         const reader = new FileReader();
-
         reader.onload = function(e) {
-            const base64Data = e.target.result.split(',')[1];
-            const datosParaNodo = {
-                identidad: cuit,
-                token: token,
-                tipo: tipo,
-                descripcion: desc,
-                nombreArchivo: file.name,
-                archivoBase64: base64Data,
-                timestamp: new Date().toISOString(),
-                sello: "Sello de Inmutabilidad Transfronteriza"
+            const d = {
+                identidad: c, token: t, 
+                tipo: document.getElementById('tipoActivo').value,
+                descripcion: document.getElementById('descActivo').value,
+                archivoBase64: e.target.result.split(',')[1],
+                nombreArchivo: f.name
             };
-            
-            google.script.run
-                .withSuccessHandler(res => {
-                    alert("ACTIVO REGISTRADO EN EL NODO VERTEX.");
-                    location.reload();
-                })
-                .withFailureHandler(err => { alert("FALLA: " + err.message); })
-                .registrarNuevoActivoAPI(datosParaNodo);
+            google.script.run.withSuccessHandler(res => {
+                alert("ACTIVO ENVIADO AL NODO");
+                location.reload();
+            }).registrarNuevoActivoAPI(d);
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(f);
     }
 </script>
 </body>
