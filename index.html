@@ -129,22 +129,16 @@ function validarConARCA() {
     // REEMPLAZA ESTA URL por la tuya de Google Apps Script (la que termina en /exec)
     const urlNodo = "https://script.google.com/macros/s/AKfycby_SHCB7pnw-pTXYoq-mAeVRnz2kel1mmZj6APmIHUVPiCW4qRcTnQEISL2dx_-Hq9-/exec"; 
 
-    fetch(urlNodo + "?cuit=" + id)
-        .then(response => response.json())
-        .then(res => {
-            if(res.exito) {
-                visor.innerText = "✓ " + res.nombre;
-                visor.style.color = "var(--dorado-forense)";
-            } else {
-                visor.innerText = "ERROR: IDENTIDAD NO LOCALIZADA";
-                visor.style.color = "#ff4444";
-            }
+    fetch(urlNodo, {
+            method: 'POST',
+            mode: 'no-cors', // ESTO EVITA BLOQUEOS DE SEGURIDAD
+            body: JSON.stringify(d)
         })
-        .catch(err => {
-            console.error("Error de conexión:", err);
-            visor.innerText = "NODO FUERA DE LÍNEA";
-        });
-} 
+        .then(() => {
+            alert("PROTOCOLO INICIADO: Verificando Sello de Inmutabilidad...");
+            setTimeout(() => { location.reload(); }, 2000);
+        })
+        .catch(err => alert("Error de comunicación: " + err));} 
     function ejecutar(accion) {
         const t = document.getElementById('tokenInput').value;
         const c = document.getElementById('cuitInput').value;
