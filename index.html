@@ -140,7 +140,7 @@
 
         fetch(urlNodo, {
             method: 'POST',
-            mode: 'no-cors',
+            mode: 'cors',
             body: JSON.stringify(info)
         })
         .then(() => {
