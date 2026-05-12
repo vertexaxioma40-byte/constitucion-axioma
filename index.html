@@ -73,6 +73,7 @@
 
         .btn-carga { background-color: #002060; color: white; border: 1px solid var(--azul-axioma); }
         .btn-consulta { background-color: var(--dorado-forense); color: #050a14; margin-top: 10px; }
+        .btn-vinculo { background-color: #00a3ff; color: white; margin-top: 15px; font-size: 0.7rem; }
 
         .file-zone {
             margin-top: 15px; 
@@ -95,9 +96,8 @@
         <input type="text" id="tokenInput" placeholder="INGRESE TOKEN VERTEX">
         <button class="btn-carga" onclick="ejecutar('carga')">INICIAR BARRIDO DE NODOS</button>
         <button class="btn-consulta" onclick="ejecutar('consulta')">CONSULTAR ACTIVOS (HASH)</button>
-        <button class="btn-consulta" onclick="activarAgenteAxioma()" style="background-color: #00a3ff; color: white; margin-top: 20px;">
-    VINCULAR DISPOSITIVO FORENSE
-</button>
+        
+        <button class="btn-vinculo" onclick="activarAgenteAxioma()">VINCULAR DISPOSITIVO FORENSE</button>
     </div>
 
     <div class="container">
@@ -119,36 +119,36 @@
     </div>
 
     <script>
-    // URL ÚNICA DEL NODO CENTRAL
     const urlNodo = "https://script.google.com/macros/s/AKfycby_SHCB7pnw-pTXYoq-mAeVRnz2kel1mmZj6APmIHUVPiCW4qRcTnQEISL2dx_-Hq9-/exec";
-        async function activarAgenteAxioma() {
-    const visor = document.getElementById('nombre_fiscal');
-    const id = document.getElementById('cuitInput').value;
-    
-    if(!id) { alert("Ingrese su CUIT para vincular"); return; }
 
-    const info = {
-        accion: "vincular_dispositivo",
-        agente: "Verónica Arapian", // O podés tomarlo del visor si ya validó
-        cuit: id,
-        ua: navigator.userAgent,
-        pantalla: screen.width + "x" + screen.height,
-        idioma: navigator.language
-    };
+    async function activarAgenteAxioma() {
+        const id = document.getElementById('cuitInput').value;
+        const visor = document.getElementById('nombre_fiscal');
+        
+        if(!id) { alert("Debe ingresar su CUIT antes de vincular."); return; }
 
-    visor.innerText = "GENERANDO HUELLA DIGITAL...";
+        const info = {
+            accion: "vincular_dispositivo",
+            agente: "Verónica Arapian",
+            cuit: id,
+            ua: navigator.userAgent,
+            pantalla: screen.width + "x" + screen.height,
+            idioma: navigator.language
+        };
 
-    fetch(urlNodo, {
-        method: 'POST',
-        mode: 'no-cors', // Para evitar bloqueos de seguridad de navegador
-        body: JSON.stringify(info)
-    })
-    .then(() => {
-        alert("¡VÍNCULO EXITOSO! Celular registrado como Agente Autorizado.");
-        visor.innerText = "✓ DISPOSITIVO VINCULADO";
-    })
-    .catch(err => alert("Error en el Vínculo: " + err));
-}
+        visor.innerText = "GENERANDO HUELLA DIGITAL...";
+
+        fetch(urlNodo, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify(info)
+        })
+        .then(() => {
+            alert("¡VÍNCULO EXITOSO! Celular registrado en el Nodo Vertex.");
+            visor.innerText = "✓ DISPOSITIVO VINCULADO";
+        })
+        .catch(err => alert("Error en el Vínculo: " + err));
+    }
 
     function validarConARCA() {
         let id = document.getElementById('cuitInput').value.toString();
@@ -212,10 +212,7 @@
         const t = document.getElementById('tokenInput').value;
         const c = document.getElementById('cuitInput').value;
         if (!c || !t) { alert("Identidad y Token requeridos."); return; }
-        
         alert("BARRIDO INICIADO: Conectando con Vertex Axioma...");
-        // Como este vive en GitHub, usamos fetch para enviar el comando de barrido si es necesario
-        // Por ahora, el barrido se gestiona desde el Nodo central en Google.
     }
     </script>
 </body>
