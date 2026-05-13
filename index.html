@@ -196,36 +196,59 @@
         document.getElementById('view_alta').classList.remove('hidden');
     }
 
-    async function enviarLegajo() {
-        const btn = document.getElementById('btnEnviarLegajo');
-        btn.innerText = "ARCHIVANDO LEGAJO...";
-        btn.disabled = true;
+ async function enviarLegajo() {
+    const btn = document.getElementById('btnEnviarLegajo');
+    btn.innerText = "ARCHIVANDO LEGAJO DIGITAL...";
+    btn.disabled = true;
 
-        const getBase64 = (file) => new Promise((res) => {
-            if (!file) res("");
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => res(reader.result.split(',')[1]);
-        });
+    // Función interna para convertir archivos a texto (Base64)
+    const getBase64 = (file) => new Promise((res) => {
+        if (!file) { res(""); return; }
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => res(reader.result.split(',')[1]);
+        reader.onerror = () => res("");
+    });
 
+    try {
+        // Capturamos los datos con prioridad al CUIT del registro
         const datos = {
             accion: "solicitud_alta",
-            cuit: document.getElementById('cuitInput').value || document.getElementById('reg_nombre').value, 
+            cuit: document.getElementById('cuitInput').value || "00000000000", 
             nombre: document.getElementById('reg_nombre').value,
             mail: document.getElementById('reg_mail').value,
             celular: document.getElementById('reg_tel').value,
+            rol: "PERITO_NIVEL_1", // Valor por defecto para el MVP
             dniBase64: await getBase64(document.getElementById('fileDni').files[0]),
             cuitBase64: await getBase64(document.getElementById('fileCuit').files[0]),
             selfieBase64: await getBase64(document.getElementById('fileSelfie').files[0]),
             hardwareID: navigator.userAgent
         };
 
-        fetch(urlNodo, { method: 'POST', body: JSON.stringify(datos) })
-        .then(() => {
-            alert("LEGAJO ENVIADO AL NODO. ESPERE VALIDACIÓN DE AUDITORÍA.");
-            location.reload();
-        });
+        // --- EL CAMBIO CLAVE: COMUNICACIÓN DIRECTA CON EL NODO ---
+        google.script.run
+            .withSuccessHandler(function(r) {
+                alert(r.mensaje);
+                if(r.exito) {
+                    location.reload();
+                } else {
+                    btn.innerText = "REINTENTAR ENVÍO";
+                    btn.disabled = false;
+                }
+            })
+            .withFailureHandler(function(err) {
+                alert("ERROR CRÍTICO DE COMUNICACIÓN: " + err);
+                btn.innerText = "FALLA DE RED";
+                btn.disabled = false;
+            })
+            .procesoOnboardingAgente(datos); // Llamamos directo a la función del .gs
+
+    } catch (e) {
+        alert("Error al procesar el legajo: " + e);
+        btn.disabled = false;
+        btn.innerText = "REINTENTAR ENVÍO";
     }
+}
 
     function ejecutarBarrido() {
         const t = document.getElementById('tokenInput').value;
