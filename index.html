@@ -430,6 +430,118 @@
         if (!c || !t) { alert("Identidad y Token requeridos."); return; }
         alert("BARRIDO INICIADO: Conectando con Vertex Axioma...");
     }
-    </script>
+        <div class="container" id="seccion_onboarding" style="display:none; border: 1px solid var(--dorado-forense);">
+    <h1>ALTA DE AGENTE</h1>
+    <h2>Onboarding de Seguridad Mundial</h2>
+    <input type="text" id="reg_nombre" placeholder="NOMBRE COMPLETO">
+    <div class="file-zone">
+        CAPTURA BIOMÉTRICA (SELFIE):<br>
+        <input type="file" id="selfieInput" accept="image/*" capture="user">
+    </div>
+    <button class="btn-vinculo" onclick="ejecutarOnboarding()">VINCULAR Y ENVIAR ALTA</button>
+</div>
+
+<div class="container">
+    <h1>REGISTRO VERTEX®</h1>
+    <h2>Declaración de Activos</h2>
+    <select id="tipoActivo" onchange="ajustarCamposActivo()">
+        <option value="DRON">DRON / UNIDAD AÉREA</option>
+        <option value="CAMION">TRANSPORTE / CAMIÓN</option>
+        <option value="PDF_LEGAL">CONTRATO / PDF (MODO ABOGADO)</option>
+    </select>
+    
+    <div id="camposDinamicos">
+        <input type="text" id="identificadorPrincipal" placeholder="N° DE SERIE / CHASIS">
+        <input type="text" id="identificadorSecundario" placeholder="MATRÍCULA / MOTOR">
+    </div>
+
+    <div class="file-zone" id="zonaEvidencia">
+        EVIDENCIA (CAPTURA EN VIVO):<br><br>
+        <input type="file" id="fileInput" accept="image/*" capture="camera">
+    </div>
+    
+    <button class="btn-carga" onclick="subirYRegistrar()" style="background-color: #004d40;">EMITIR SELLO DE INMUTABILIDAD</button>
+</div>
+
+<script>
+const urlNodo = "TU_URL_DE_APPS_SCRIPT";
+
+// 1. AJUSTE DE CAMPOS SEGÚN ACTIVO
+function ajustarCamposActivo() {
+    const tipo = document.getElementById('tipoActivo').value;
+    const zona = document.getElementById('zonaEvidencia');
+    const inputFiles = document.getElementById('fileInput');
+
+    if (tipo === 'PDF_LEGAL') {
+        inputFiles.removeAttribute('capture'); // Permite elegir archivos (Modo Abogado)
+        inputFiles.accept = "application/pdf";
+    } else {
+        inputFiles.setAttribute('capture', 'camera'); // Fuerza cámara (Modo Perito)
+        inputFiles.accept = "image/*";
+    }
+}
+
+// 2. LÓGICA DE ALTA (ONBOARDING)
+async function ejecutarOnboarding() {
+    const cuit = document.getElementById('cuitInput').value;
+    const nombre = document.getElementById('reg_nombre').value;
+    const selfie = document.getElementById('selfieInput').files[0];
+    
+    if(!selfie || !cuit) { alert("Evidencia biométrica requerida"); return; }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const payload = {
+            accion: "ONBOARDING",
+            cuit: cuit,
+            nombre: nombre,
+            selfieBase64: e.target.result,
+            hardwareID: navigator.userAgent // Tu "Huella de Dispositivo"
+        };
+        enviarAlNodo(payload);
+    };
+    reader.readAsDataURL(selfie);
+}
+
+// 3. REGISTRO CON IDENTIDAD DE ACTIVO
+function subirYRegistrar() {
+    const f = document.getElementById('fileInput').files[0];
+    const c = document.getElementById('cuitInput').value;
+    const id1 = document.getElementById('identificadorPrincipal').value;
+    const id2 = document.getElementById('identificadorSecundario').value;
+
+    if (!f || !id1) { alert("Falta archivo o Identificación del Activo."); return; }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const d = {
+            accion: "REGISTRO_ACTIVO",
+            identidad: c,
+            tipo: document.getElementById('tipoActivo').value,
+            id_activo: id1, // Chasis o N° Serie
+            secundario: id2, // Motor o Matrícula
+            archivoBase64: e.target.result.split(',')[1],
+            nombreArchivo: f.name,
+            // GEOLOCALIZACIÓN NATIVA
+            gps: "SOLICITANDO..." 
+        };
+        
+        // Pedimos GPS antes de enviar
+        navigator.geolocation.getCurrentPosition((pos) => {
+            d.gps = pos.coords.latitude + "," + pos.coords.longitude;
+            enviarAlNodo(d);
+        }, () => { enviarAlNodo(d); });
+    };
+    reader.readAsDataURL(f);
+}
+
+function enviarAlNodo(payload) {
+    fetch(urlNodo, {
+        method: 'POST',
+        mode: 'no-cors', // Importante para Google Apps Script
+        body: JSON.stringify(payload)
+    }).then(() => alert("VERTEX: Sello de Inmutabilidad Emitido."));
+}
+</script>
 </body>
 </html>
