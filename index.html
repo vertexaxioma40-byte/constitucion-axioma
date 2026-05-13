@@ -216,6 +216,27 @@
     function validarIdentidad() { /* Tu lógica de validación actual */ }
     function ejecutarBarrido() { alert("BARRIDO INICIADO..."); }
     function registrarActivo() { alert("REGISTRANDO ACTIVO..."); }
+        // Dentro de enviarLegajo()
+console.log("Iniciando transferencia al Nodo...");
+
+google.script.run
+    .withSuccessHandler(function(r) {
+        if(r.exito) {
+            alert("✓ " + r.mensaje);
+            location.reload();
+        } else {
+            alert("⚠ ATENCIÓN: " + r.mensaje);
+            btn.innerText = "REINTENTAR ENVÍO";
+            btn.disabled = false;
+        }
+    })
+    .withFailureHandler(function(err) {
+        // Esto detecta si Google cortó la conexión por exceso de tiempo
+        alert("TIMEOUT: El archivo es muy pesado o la conexión es lenta. Intente con fotos de menor resolución.");
+        btn.innerText = "ERROR DE CONEXIÓN";
+        btn.disabled = false;
+    })
+    .procesoOnboardingAgente(payload);
     </script>
 </body>
 </html>
