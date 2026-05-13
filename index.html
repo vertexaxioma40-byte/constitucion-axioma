@@ -213,3 +213,24 @@
             cuit: document.getElementById('cuitInput').value || document.getElementById('reg_nombre').value, 
             nombre: document.getElementById('reg_nombre').value,
             mail: document.getElementById('reg_mail').value,
+            celular: document.getElementById('reg_tel').value,
+            dniBase64: await getBase64(document.getElementById('fileDni').files[0]),
+            cuitBase64: await getBase64(document.getElementById('fileCuit').files[0]),
+            selfieBase64: await getBase64(document.getElementById('fileSelfie').files[0]),
+            hardwareID: navigator.userAgent
+        };
+
+        fetch(urlNodo, { method: 'POST', body: JSON.stringify(datos) })
+        .then(() => {
+            alert("LEGAJO ENVIADO AL NODO. ESPERE VALIDACIÓN DE AUDITORÍA.");
+            location.reload();
+        });
+    }
+
+    function ejecutarBarrido() {
+        const t = document.getElementById('tokenInput').value;
+        alert("BARRIDO INICIADO CON TOKEN: " + t + "\nVerificando integridad de activos...");
+    }
+    </script>
+</body>
+</html>
