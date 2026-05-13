@@ -73,7 +73,6 @@
             margin-bottom: 10px;
         }
 
-        /* ESTILO AZUL SERIO */
         .btn-principal { background-color: var(--azul-profundo); color: white; border: 1px solid var(--azul-axioma); }
         .btn-principal:disabled { background-color: #1a1a1a; color: #444; border: 1px solid #333; cursor: not-allowed; }
         
@@ -155,7 +154,6 @@
     <div class="footer">CONSTITUCIÓN AXIOMA® | SEGURIDAD JURÍDICA DIGITAL</div>
 
     <script>
-    // Configuración de interfaz
     function mostrarAlta() { toggleVistas('view_alta'); }
     function mostrarRegistroActivos() { toggleVistas('view_activos'); }
     function volver() { toggleVistas('panel_control'); }
@@ -179,10 +177,9 @@
         }
     }
 
-    // Lógica de Onboarding Corregida
     async function enviarLegajo() {
         const btn = document.getElementById('btnEnviarLegajo');
-        btn.innerText = "PROCESANDO ARCHIVOS...";
+        btn.innerText = "TRANSFERENCIA AL NODO...";
         btn.disabled = true;
 
         const getBase64 = (file) => new Promise((res) => {
@@ -193,7 +190,7 @@
         });
 
         const payload = {
-            cuit: document.getElementById('cuitInput').value,
+            cuit: document.getElementById('cuitInput').value || "S_D",
             nombre: document.getElementById('reg_nombre').value,
             mail: document.getElementById('reg_mail').value,
             celular: document.getElementById('reg_tel').value,
@@ -205,38 +202,29 @@
         };
 
         google.script.run
-            .withSuccessHandler(r => {
-                alert(r.mensaje);
-                location.reload();
+            .withSuccessHandler(function(r) {
+                if(r.exito) {
+                    alert("✓ " + r.mensaje);
+                    location.reload();
+                } else {
+                    alert("⚠ ATENCIÓN: " + r.mensaje);
+                    btn.innerText = "REINTENTAR ENVÍO";
+                    btn.disabled = false;
+                }
+            })
+            .withFailureHandler(function(err) {
+                alert("TIMEOUT: Los archivos son pesados o la conexión es lenta. Intente nuevamente.");
+                btn.innerText = "ERROR DE CONEXIÓN";
+                btn.disabled = false;
             })
             .procesoOnboardingAgente(payload);
     }
 
-    // Funciones placeholders para que no den error
-    function validarIdentidad() { /* Tu lógica de validación actual */ }
+    function validarIdentidad() {
+        /* Aquí va tu lógica de validación fetch o google.script.run a la base de datos */
+    }
     function ejecutarBarrido() { alert("BARRIDO INICIADO..."); }
     function registrarActivo() { alert("REGISTRANDO ACTIVO..."); }
-        // Dentro de enviarLegajo()
-console.log("Iniciando transferencia al Nodo...");
-
-google.script.run
-    .withSuccessHandler(function(r) {
-        if(r.exito) {
-            alert("✓ " + r.mensaje);
-            location.reload();
-        } else {
-            alert("⚠ ATENCIÓN: " + r.mensaje);
-            btn.innerText = "REINTENTAR ENVÍO";
-            btn.disabled = false;
-        }
-    })
-    .withFailureHandler(function(err) {
-        // Esto detecta si Google cortó la conexión por exceso de tiempo
-        alert("TIMEOUT: El archivo es muy pesado o la conexión es lenta. Intente con fotos de menor resolución.");
-        btn.innerText = "ERROR DE CONEXIÓN";
-        btn.disabled = false;
-    })
-    .procesoOnboardingAgente(payload);
     </script>
 </body>
 </html>
