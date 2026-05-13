@@ -94,86 +94,105 @@
         <input type="number" id="cuitInput" placeholder="DNI O CUIT (SIN GUIONES)" onblur="validarConARCA()">
         <div id="nombre_fiscal">ESPERANDO IDENTIFICACIÓN...</div>
         <input type="text" id="tokenInput" placeholder="INGRESE TOKEN VERTEX">
-        <button class="btn-carga" onclick="ejecutar('carga')">INICIAR BARRIDO DE NODOS</button>
-        <button class="btn-consulta" onclick="ejecutar('consulta')">CONSULTAR ACTIVOS (HASH)</button>
         
-        <button class="btn-vinculo" onclick="activarAgenteAxioma()">VINCULAR DISPOSITIVO FORENSE</button>
+        <button class="btn-carga" onclick="ejecutarBarrido()">INICIAR BARRIDO DE NODOS</button>
+        <button class="btn-vinculo" onclick="mostrarOnboarding()">VINCULAR DISPOSITIVO FORENSE</button>
+    </div>
+
+    <div class="container" id="seccion_onboarding" style="display:none; border: 2px solid var(--dorado-forense);">
+        <h1>ALTA DE AGENTE</h1>
+        <h2>Onboarding de Seguridad</h2>
+        <input type="text" id="reg_nombre_agente" placeholder="NOMBRE COMPLETO DEL AGENTE">
+        <div class="file-zone">
+            CAPTURA BIOMÉTRICA (SELFIE EN VIVO):<br><br>
+            <input type="file" id="selfieInput" accept="image/*" capture="user">
+        </div>
+        <button class="btn-vinculo" onclick="ejecutarOnboarding()">ENVIAR SOLICITUD DE ALTA</button>
     </div>
 
     <div class="container">
         <h1>REGISTRO VERTEX®</h1>
         <h2>Declaración de Activos</h2>
-        <select id="tipoActivo">
+        <select id="tipoActivo" onchange="ajustarCamposActivo()">
             <option value="DRON">DRON / UNIDAD AÉREA</option>
             <option value="BALANZA">BALANZA / PESAJE</option>
             <option value="CAMION">TRANSPORTE / CAMIÓN</option>
-            <option value="ACTIVO_MIXTO">OTRO / GENERAL</option>
+            <option value="PDF_LEGAL">CONTRATO / PDF (MODO ABOGADO)</option>
         </select>
-        <input type="text" id="descActivo" placeholder="DESCRIPCIÓN (EJ: DRONE 01)">
-        <div class="file-zone">
-            EVIDENCIA (FOTO/PDF):<br><br>
-            <input type="file" id="fileInput" accept="image/*,application/pdf">
+        
+        <div id="camposActivo">
+            <input type="text" id="idPrincipal" placeholder="N° DE SERIE / CHASIS">
+            <input type="text" id="idSecundario" placeholder="MATRÍCULA / MOTOR">
         </div>
+
+        <div class="file-zone" id="zonaEvidencia">
+            EVIDENCIA (CAPTURA EN VIVO):<br><br>
+            <input type="file" id="fileInput" accept="image/*" capture="camera">
+        </div>
+        
         <button class="btn-carga" onclick="subirYRegistrar()" style="background-color: #004d40;">EMITIR SELLO DE INMUTABILIDAD</button>
         <div class="footer">CONSTITUCIÓN AXIOMA® | PROTECCIÓN FORENSE</div>
     </div>
 
     <script>
+    // REEMPLAZA ESTO CON TU URL DE GOOGLE APPS SCRIPT
     const urlNodo = "https://script.google.com/macros/s/AKfycbwb8leHLASqG0mf9DXXiD5JgAbzaK-3X4g30zgkyOf0wUT3LU5VMKlTzZY1PEbcjQY/exec";
 
-    async function activarAgenteAxioma() {
-        const id = document.getElementById('cuitInput').value;
-        const visor = document.getElementById('nombre_fiscal');
-        
-        if(!id) { alert("Debe ingresar su CUIT antes de vincular."); return; }
-
-        const info = {
-            accion: "vincular_dispositivo",
-            agente: "Verónica Arapian",
-            cuit: id,
-            ua: navigator.userAgent,
-            pantalla: screen.width + "x" + screen.height,
-            idioma: navigator.language
-        };
-
-        visor.innerText = "GENERANDO HUELLA DIGITAL...";
-
-        fetch(urlNodo, {
-            method: 'POST',
-            mode: 'cors',
-            body: JSON.stringify(info)
-        })
-        .then(() => {
-            alert("¡VÍNCULO EXITOSO! Celular registrado en el Nodo Vertex.");
-            visor.innerText = "✓ DISPOSITIVO VINCULADO";
-        })
-        .catch(err => alert("Error en el Vínculo: " + err));
+    function mostrarOnboarding() {
+        document.getElementById('seccion_onboarding').style.display = 'block';
+        window.scrollTo(0, document.getElementById('seccion_onboarding').offsetTop);
     }
 
-    function validarConARCA() {
-        let id = document.getElementById('cuitInput').value.toString();
-        id = id.replace(/-/g, "").replace(/\./g, ""); 
-        
+    function ajustarCamposActivo() {
+        const tipo = document.getElementById('tipoActivo').value;
+        const inputFiles = document.getElementById('fileInput');
+        if (tipo === 'PDF_LEGAL') {
+            inputFiles.removeAttribute('capture');
+            inputFiles.accept = "application/pdf";
+        } else {
+            inputFiles.setAttribute('capture', 'camera');
+            inputFiles.accept = "image/*";
+        }
+    }
+
+    async function validarConARCA() {
+        let id = document.getElementById('cuitInput').value;
         const visor = document.getElementById('nombre_fiscal');
-        if(id.length < 7) return;
-
+        if(!id) return;
         visor.innerText = "SINCRONIZANDO CON NODO VERTEX...";
+        
+        try {
+            const response = await fetch(urlNodo + "?cuit=" + id);
+            const res = await response.json();
+            if(res.exito) {
+                visor.innerText = "✓ " + res.nombre;
+                visor.style.color = "var(--dorado-forense)";
+            } else {
+                visor.innerText = "ERROR: IDENTIDAD NO LOCALIZADA";
+                visor.style.color = "#ff4444";
+            }
+        } catch(e) { visor.innerText = "NODO FUERA DE LÍNEA"; }
+    }
 
-        fetch(urlNodo + "?cuit=" + id)
-            .then(response => response.json())
-            .then(res => {
-                if(res.exito) {
-                    visor.innerText = "✓ " + res.nombre;
-                    visor.style.color = "var(--dorado-forense)";
-                } else {
-                    visor.innerText = "ERROR: IDENTIDAD NO LOCALIZADA";
-                    visor.style.color = "#ff4444";
-                }
-            })
-            .catch(err => {
-                console.error("Error:", err);
-                visor.innerText = "NODO FUERA DE LÍNEA";
-            });
+    async function ejecutarOnboarding() {
+        const cuit = document.getElementById('cuitInput').value;
+        const nombre = document.getElementById('reg_nombre_agente').value;
+        const selfie = document.getElementById('selfieInput').files[0];
+
+        if(!cuit || !selfie) { alert("DNI/CUIT y Selfie son obligatorios para el alta."); return; }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = {
+                accion: "ONBOARDING",
+                cuit: cuit,
+                nombre: nombre,
+                selfieBase64: e.target.result,
+                hardwareID: navigator.userAgent + "_" + screen.width + "x" + screen.height
+            };
+            enviarPost(data, "SOLICITUD DE ALTA ENVIADA. ESPERE VALIDACIÓN.");
+        };
+        reader.readAsDataURL(selfie);
     }
 
     function subirYRegistrar() {
@@ -181,367 +200,46 @@
         const t = document.getElementById('tokenInput').value;
         const c = document.getElementById('cuitInput').value;
         
-        if (!f || !c || !t) { alert("Falta archivo, CUIT o Token."); return; }
+        if (!f || !c || !t) { alert("Evidencia, CUIT y Token son obligatorios."); return; }
 
         const reader = new FileReader();
         reader.onload = function(e) {
             const d = {
+                accion: "REGISTRO_ACTIVO",
                 identidad: c,
                 token: t, 
                 tipo: document.getElementById('tipoActivo').value,
-                descripcion: document.getElementById('descActivo').value,
+                id_activo: document.getElementById('idPrincipal').value,
+                id_secundario: document.getElementById('idSecundario').value,
                 archivoBase64: e.target.result.split(',')[1],
-                nombreArchivo: f.name
+                nombreArchivo: f.name,
+                hardwareID: navigator.userAgent + "_" + screen.width
             };
 
-            fetch(urlNodo, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(d)
-            })
-            .then(() => {
-                alert("PROTOCOLO INICIADO: Sello de Inmutabilidad en proceso...");
-                setTimeout(() => { location.reload(); }, 1500);
-            })
-            .catch(err => alert("Error en el Nodo: " + err));
+            navigator.geolocation.getCurrentPosition((pos) => {
+                d.gps = pos.coords.latitude + "," + pos.coords.longitude;
+                enviarPost(d, "SELLO DE INMUTABILIDAD TRANSFRONTERIZA EMITIDO.");
+            }, () => {
+                enviarPost(d, "SELLO EMITIDO (Sin GPS - Alerta de Integridad).");
+            });
         };
         reader.readAsDataURL(f);
     }
 
-    function ejecutar(accion) {
-        const t = document.getElementById('tokenInput').value;
-        const c = document.getElementById('cuitInput').value;
-        if (!c || !t) { alert("Identidad y Token requeridos."); return; }
-        alert("BARRIDO INICIADO: Conectando con Vertex Axioma...");
-    }
-        <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vertex Axioma - Centro de Mando</title>
-    <style>
-        :root {
-            --azul-axioma: #00a3ff;
-            --dorado-forense: #C5A059;
-            --fondo-oscuro: #050a14;
-            --tarjeta-oscura: #0a1120;
-        }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--fondo-oscuro);
-            color: #ffffff;
-            display: flex;
-            flex-direction: column; 
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 40px 20px;
-        }
-        .container {
-            background: var(--tarjeta-oscura);
-            padding: 30px;
-            border-radius: 15px;
-            border: 1px solid #1e2a44;
-            box-shadow: 0 0 25px rgba(0, 163, 255, 0.15);
-            text-align: center;
-            max-width: 450px;
-            width: 100%;
-            margin-bottom: 30px;
-        }
-        h1 { font-size: 1.6rem; letter-spacing: 3px; margin-bottom: 5px; color: #ffffff; }
-        h2 { margin-top: 0; margin-bottom: 20px; font-size: 0.8rem; color: var(--azul-axioma); text-transform: uppercase; letter-spacing: 1px; }
-        
-        input[type="text"], input[type="number"], select {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 10px;
-            background: #000000;
-            color: var(--azul-axioma);
-            border: 1px solid #1e2a44;
-            border-radius: 8px;
-            box-sizing: border-box;
-            text-align: center;
-            font-size: 1rem;
-            outline: none;
-        }
-
-        #nombre_fiscal {
-            font-size: 0.7rem;
-            color: var(--dorado-forense);
-            margin-bottom: 15px;
-            min-height: 1.2rem;
-            text-transform: uppercase;
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: 0.3s;
-            letter-spacing: 1px;
-            margin-top: 5px;
-        }
-
-        .btn-carga { background-color: #002060; color: white; border: 1px solid var(--azul-axioma); }
-        .btn-consulta { background-color: var(--dorado-forense); color: #050a14; margin-top: 10px; }
-        .btn-vinculo { background-color: #00a3ff; color: white; margin-top: 15px; font-size: 0.7rem; }
-
-        .file-zone {
-            margin-top: 15px; 
-            border: 1px dashed var(--azul-axioma); 
-            padding: 15px; 
-            border-radius: 8px;
-            font-size: 0.8rem;
-        }
-
-        .footer { margin-top: 20px; font-size: 0.55rem; color: #444; letter-spacing: 2px; }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <h1>VERTEX AXIOMA®</h1>
-        <h2>Centro de Mando</h2>
-        <input type="number" id="cuitInput" placeholder="DNI O CUIT (SIN GUIONES)" onblur="validarConARCA()">
-        <div id="nombre_fiscal">ESPERANDO IDENTIFICACIÓN...</div>
-        <input type="text" id="tokenInput" placeholder="INGRESE TOKEN VERTEX">
-        <button class="btn-carga" onclick="ejecutar('carga')">INICIAR BARRIDO DE NODOS</button>
-        <button class="btn-consulta" onclick="ejecutar('consulta')">CONSULTAR ACTIVOS (HASH)</button>
-        
-        <button class="btn-vinculo" onclick="activarAgenteAxioma()">VINCULAR DISPOSITIVO FORENSE</button>
-    </div>
-
-    <div class="container">
-        <h1>REGISTRO VERTEX®</h1>
-        <h2>Declaración de Activos</h2>
-        <select id="tipoActivo">
-            <option value="DRON">DRON / UNIDAD AÉREA</option>
-            <option value="BALANZA">BALANZA / PESAJE</option>
-            <option value="CAMION">TRANSPORTE / CAMIÓN</option>
-            <option value="ACTIVO_MIXTO">OTRO / GENERAL</option>
-        </select>
-        <input type="text" id="descActivo" placeholder="DESCRIPCIÓN (EJ: DRONE 01)">
-        <div class="file-zone">
-            EVIDENCIA (FOTO/PDF):<br><br>
-            <input type="file" id="fileInput" accept="image/*,application/pdf">
-        </div>
-        <button class="btn-carga" onclick="subirYRegistrar()" style="background-color: #004d40;">EMITIR SELLO DE INMUTABILIDAD</button>
-        <div class="footer">CONSTITUCIÓN AXIOMA® | PROTECCIÓN FORENSE</div>
-    </div>
-
-    <script>
-    const urlNodo = "https://script.google.com/macros/s/AKfycbwb8leHLASqG0mf9DXXiD5JgAbzaK-3X4g30zgkyOf0wUT3LU5VMKlTzZY1PEbcjQY/exec";
-
-    async function activarAgenteAxioma() {
-        const id = document.getElementById('cuitInput').value;
-        const visor = document.getElementById('nombre_fiscal');
-        
-        if(!id) { alert("Debe ingresar su CUIT antes de vincular."); return; }
-
-        const info = {
-            accion: "vincular_dispositivo",
-            agente: "Verónica Arapian",
-            cuit: id,
-            ua: navigator.userAgent,
-            pantalla: screen.width + "x" + screen.height,
-            idioma: navigator.language
-        };
-
-        visor.innerText = "GENERANDO HUELLA DIGITAL...";
-
+    function enviarPost(datos, mensaje) {
         fetch(urlNodo, {
             method: 'POST',
-            mode: 'cors',
-            body: JSON.stringify(info)
-        })
-        .then(() => {
-            alert("¡VÍNCULO EXITOSO! Celular registrado en el Nodo Vertex.");
-            visor.innerText = "✓ DISPOSITIVO VINCULADO";
-        })
-        .catch(err => alert("Error en el Vínculo: " + err));
+            mode: 'no-cors',
+            body: JSON.stringify(datos)
+        }).then(() => {
+            alert(mensaje);
+            location.reload();
+        }).catch(err => alert("Error de Conexión: " + err));
     }
 
-    function validarConARCA() {
-        let id = document.getElementById('cuitInput').value.toString();
-        id = id.replace(/-/g, "").replace(/\./g, ""); 
-        
-        const visor = document.getElementById('nombre_fiscal');
-        if(id.length < 7) return;
-
-        visor.innerText = "SINCRONIZANDO CON NODO VERTEX...";
-
-        fetch(urlNodo + "?cuit=" + id)
-            .then(response => response.json())
-            .then(res => {
-                if(res.exito) {
-                    visor.innerText = "✓ " + res.nombre;
-                    visor.style.color = "var(--dorado-forense)";
-                } else {
-                    visor.innerText = "ERROR: IDENTIDAD NO LOCALIZADA";
-                    visor.style.color = "#ff4444";
-                }
-            })
-            .catch(err => {
-                console.error("Error:", err);
-                visor.innerText = "NODO FUERA DE LÍNEA";
-            });
+    function ejecutarBarrido() {
+        alert("BARRIDO INICIADO: Escaneando integridad de nodos distribuidos...");
     }
-
-    function subirYRegistrar() {
-        const f = document.getElementById('fileInput').files[0];
-        const t = document.getElementById('tokenInput').value;
-        const c = document.getElementById('cuitInput').value;
-        
-        if (!f || !c || !t) { alert("Falta archivo, CUIT o Token."); return; }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const d = {
-                identidad: c,
-                token: t, 
-                tipo: document.getElementById('tipoActivo').value,
-                descripcion: document.getElementById('descActivo').value,
-                archivoBase64: e.target.result.split(',')[1],
-                nombreArchivo: f.name
-            };
-
-            fetch(urlNodo, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(d)
-            })
-            .then(() => {
-                alert("PROTOCOLO INICIADO: Sello de Inmutabilidad en proceso...");
-                setTimeout(() => { location.reload(); }, 1500);
-            })
-            .catch(err => alert("Error en el Nodo: " + err));
-        };
-        reader.readAsDataURL(f);
-    }
-
-    function ejecutar(accion) {
-        const t = document.getElementById('tokenInput').value;
-        const c = document.getElementById('cuitInput').value;
-        if (!c || !t) { alert("Identidad y Token requeridos."); return; }
-        alert("BARRIDO INICIADO: Conectando con Vertex Axioma...");
-    }
-        <div class="container" id="seccion_onboarding" style="display:none; border: 1px solid var(--dorado-forense);">
-    <h1>ALTA DE AGENTE</h1>
-    <h2>Onboarding de Seguridad Mundial</h2>
-    <input type="text" id="reg_nombre" placeholder="NOMBRE COMPLETO">
-    <div class="file-zone">
-        CAPTURA BIOMÉTRICA (SELFIE):<br>
-        <input type="file" id="selfieInput" accept="image/*" capture="user">
-    </div>
-    <button class="btn-vinculo" onclick="ejecutarOnboarding()">VINCULAR Y ENVIAR ALTA</button>
-</div>
-
-<div class="container">
-    <h1>REGISTRO VERTEX®</h1>
-    <h2>Declaración de Activos</h2>
-    <select id="tipoActivo" onchange="ajustarCamposActivo()">
-        <option value="DRON">DRON / UNIDAD AÉREA</option>
-        <option value="CAMION">TRANSPORTE / CAMIÓN</option>
-        <option value="PDF_LEGAL">CONTRATO / PDF (MODO ABOGADO)</option>
-    </select>
-    
-    <div id="camposDinamicos">
-        <input type="text" id="identificadorPrincipal" placeholder="N° DE SERIE / CHASIS">
-        <input type="text" id="identificadorSecundario" placeholder="MATRÍCULA / MOTOR">
-    </div>
-
-    <div class="file-zone" id="zonaEvidencia">
-        EVIDENCIA (CAPTURA EN VIVO):<br><br>
-        <input type="file" id="fileInput" accept="image/*" capture="camera">
-    </div>
-    
-    <button class="btn-carga" onclick="subirYRegistrar()" style="background-color: #004d40;">EMITIR SELLO DE INMUTABILIDAD</button>
-</div>
-
-<script>
-const urlNodo = "TU_URL_DE_APPS_SCRIPT";
-
-// 1. AJUSTE DE CAMPOS SEGÚN ACTIVO
-function ajustarCamposActivo() {
-    const tipo = document.getElementById('tipoActivo').value;
-    const zona = document.getElementById('zonaEvidencia');
-    const inputFiles = document.getElementById('fileInput');
-
-    if (tipo === 'PDF_LEGAL') {
-        inputFiles.removeAttribute('capture'); // Permite elegir archivos (Modo Abogado)
-        inputFiles.accept = "application/pdf";
-    } else {
-        inputFiles.setAttribute('capture', 'camera'); // Fuerza cámara (Modo Perito)
-        inputFiles.accept = "image/*";
-    }
-}
-
-// 2. LÓGICA DE ALTA (ONBOARDING)
-async function ejecutarOnboarding() {
-    const cuit = document.getElementById('cuitInput').value;
-    const nombre = document.getElementById('reg_nombre').value;
-    const selfie = document.getElementById('selfieInput').files[0];
-    
-    if(!selfie || !cuit) { alert("Evidencia biométrica requerida"); return; }
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const payload = {
-            accion: "ONBOARDING",
-            cuit: cuit,
-            nombre: nombre,
-            selfieBase64: e.target.result,
-            hardwareID: navigator.userAgent // Tu "Huella de Dispositivo"
-        };
-        enviarAlNodo(payload);
-    };
-    reader.readAsDataURL(selfie);
-}
-
-// 3. REGISTRO CON IDENTIDAD DE ACTIVO
-function subirYRegistrar() {
-    const f = document.getElementById('fileInput').files[0];
-    const c = document.getElementById('cuitInput').value;
-    const id1 = document.getElementById('identificadorPrincipal').value;
-    const id2 = document.getElementById('identificadorSecundario').value;
-
-    if (!f || !id1) { alert("Falta archivo o Identificación del Activo."); return; }
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const d = {
-            accion: "REGISTRO_ACTIVO",
-            identidad: c,
-            tipo: document.getElementById('tipoActivo').value,
-            id_activo: id1, // Chasis o N° Serie
-            secundario: id2, // Motor o Matrícula
-            archivoBase64: e.target.result.split(',')[1],
-            nombreArchivo: f.name,
-            // GEOLOCALIZACIÓN NATIVA
-            gps: "SOLICITANDO..." 
-        };
-        
-        // Pedimos GPS antes de enviar
-        navigator.geolocation.getCurrentPosition((pos) => {
-            d.gps = pos.coords.latitude + "," + pos.coords.longitude;
-            enviarAlNodo(d);
-        }, () => { enviarAlNodo(d); });
-    };
-    reader.readAsDataURL(f);
-}
-
-function enviarAlNodo(payload) {
-    fetch(urlNodo, {
-        method: 'POST',
-        mode: 'no-cors', // Importante para Google Apps Script
-        body: JSON.stringify(payload)
-    }).then(() => alert("VERTEX: Sello de Inmutabilidad Emitido."));
-}
-</script>
+    </script>
 </body>
 </html>
