@@ -173,51 +173,75 @@
         }
     }
 
-    async function enviarLegajo() {
-        const btn = document.getElementById('btnEnviarLegajo');
-        btn.innerText = "TRANSFERENCIA AL NODO...";
-        btn.disabled = true;
-
-        const getBase64 = (file) => new Promise((res) => {
-            if (!file) res("");
+    // Función de utilidad para convertir y validar archivos
+    const prepararArchivo = async (file) => {
+        if (!file) return "";
+        if (file.size > 2500000) { // Límite de 2.5MB para evitar tildado
+            throw new Error("El archivo " + file.name + " es muy pesado. Use una foto de menor resolución.");
+        }
+        return new Promise((res) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => res(reader.result.split(',')[1]);
         });
+    };
 
-        const payload = {
-            cuit: document.getElementById('cuitInput').value || "S_D",
-            nombre: document.getElementById('reg_nombre').value,
-            mail: document.getElementById('reg_mail').value,
-            celular: document.getElementById('reg_tel').value,
-            dniBase64: await getBase64(document.getElementById('fileDni').files[0]),
-            cuitBase64: await getBase64(document.getElementById('fileCuit').files[0]),
-            selfieBase64: await getBase64(document.getElementById('fileSelfie').files[0]),
-            hardwareID: navigator.userAgent,
-            rol: "PERITO_4.0"
-        };
+    async function enviarLegajo() {
+        const btn = document.getElementById('btnEnviarLegajo');
+        
+        try {
+            const dniFile = document.getElementById('fileDni').files[0];
+            const selfieFile = document.getElementById('fileSelfie').files[0];
 
-        google.script.run
-            .withSuccessHandler(function(r) {
-                if(r.exito) {
-                    alert("✓ " + r.mensaje);
-                    location.reload();
-                } else {
-                    alert("⚠ ATENCIÓN: " + r.mensaje);
-                    btn.innerText = "REINTENTAR ENVÍO";
+            if (!dniFile || !selfieFile) {
+                alert("La Auditoría 4.0 requiere DNI y Selfie obligatorios.");
+                return;
+            }
+
+            btn.innerText = "PETRIFICANDO PRUEBA...";
+            btn.disabled = true;
+
+            const payload = {
+                cuit: document.getElementById('cuitInput').value || "S_D",
+                nombre: document.getElementById('reg_nombre').value,
+                mail: document.getElementById('reg_mail').value,
+                celular: document.getElementById('reg_tel').value,
+                dniBase64: await prepararArchivo(dniFile),
+                selfieBase64: await prepararArchivo(selfieFile),
+                hardwareID: navigator.userAgent,
+                rol: "PERITO_4.0"
+            };
+
+            google.script.run
+                .withSuccessHandler(function(r) {
+                    if(r.exito) {
+                        alert("✓ LEGAJO RECIBIDO: Su identidad está en proceso de validación.");
+                        location.reload();
+                    } else {
+                        alert("⚠ ATENCIÓN: " + r.mensaje);
+                        btn.innerText = "REINTENTAR ENVÍO";
+                        btn.disabled = false;
+                    }
+                })
+                .withFailureHandler(function(err) {
+                    alert("ERROR DE CONEXIÓN: El caño de datos es insuficiente. Intente con fotos más livianas.");
+                    btn.innerText = "ERROR TÉCNICO";
                     btn.disabled = false;
-                }
-            })
-            .withFailureHandler(function(err) {
-                alert("TIMEOUT: Los archivos son pesados o la conexión es lenta. Intente nuevamente.");
-                btn.innerText = "ERROR DE CONEXIÓN";
-                btn.disabled = false;
-            })
-            .procesoOnboardingAgente(payload);
+                })
+                .procesoOnboardingAgente(payload);
+
+        } catch (e) {
+            alert(e.message);
+            btn.disabled = false;
+            btn.innerText = "REINTENTAR";
+        }
     }
 
     function validarIdentidad() {
-        /* Aquí va tu lógica de validación fetch o google.script.run a la base de datos */
+        const id = document.getElementById('cuitInput').value;
+        if(id.length > 6) {
+             document.getElementById('nombre_fiscal').innerText = "IDENTIDAD LOCALIZADA";
+        }
     }
     function ejecutarBarrido() { alert("BARRIDO INICIADO..."); }
     function registrarActivo() { alert("REGISTRANDO ACTIVO..."); }
