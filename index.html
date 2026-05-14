@@ -109,26 +109,37 @@
 
         <button class="btn-dorado" onclick="mostrarRegistroActivos()">3. REGISTRO DE ACTIVOS</button>
     </div>
-
     <div class="container hidden" id="view_alta">
-        <h1>ALTA AGENTE</h1>
-        <h2>Legajo Forense 4.0</h2>
+    <h1>ALTA AGENTE 4.0</h1>
+    <h2 id="status_titulo">PASO 1: DATOS DE CONTACTO</h2>
+    
+    <div id="paso_datos">
         <input type="text" id="reg_nombre" placeholder="NOMBRE COMPLETO">
         <input type="email" id="reg_mail" placeholder="EMAIL">
         <input type="tel" id="reg_tel" placeholder="CELULAR">
-        
+        <button class="btn-principal" onclick="enviarPaso1()">SIGUIENTE: VINCULAR DNI</button>
+    </div>
+
+    <div id="paso_dni" class="hidden">
         <div class="file-zone">
             <label>DNI FRENTE/DORSO:</label>
             <input type="file" id="fileDni" accept="image/*">
         </div>
+        <button class="btn-principal" onclick="enviarPaso2()">SIGUIENTE: SELFIE</button>
+    </div>
+
+    <div id="paso_selfie" class="hidden">
         <div class="file-zone">
             <label>SELFIE BIOMÉTRICA:</label>
             <input type="file" id="fileSelfie" accept="image/*" capture="user">
         </div>
-
-        <button class="btn-principal" id="btnEnviarLegajo" onclick="enviarLegajo()">ENVIAR A AUDITORÍA</button>
-        <button class="btn-secundario" onclick="volver()">VOLVER AL PANEL</button>
+        <button class="btn-dorado" onclick="enviarPaso3()">FINALIZAR ALTA</button>
     </div>
+
+    <button class="btn-secundario" onclick="volver()">CANCELAR</button>
+</div>
+
+        </div>
 
     <div class="container hidden" id="view_activos">
         <h1>REGISTRO ACTIVOS</h1>
