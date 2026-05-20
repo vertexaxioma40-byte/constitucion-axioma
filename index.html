@@ -188,6 +188,37 @@
         };
     }
 
+    // ===================================================
+    // FUNCIÓN DE SIMULACIÓN INMEDIATA (FORZADO SEGURO)
+    // ===================================================
+    function ejecutarSimulacionImpacto() {
+        mostrarResultado("Iniciando inyección controlada en el entorno...", true);
+        
+        // CUIT institucional de prueba impecable para el Módulo 11 (Termina en 3)
+        const cuitPerfectoPrueba = "20300000003"; 
+        const tramiteFicticio = "00987654321";
+
+        // Construimos el paquete JSON inyectando DIRECTAMENTE el CUIT válido
+        const paqueteJsonSimulado = {
+            "agente_id": "VAX-ARG-0005-FAA",
+            "dni_cuit": cuitPerfectoPrueba, // Forzamos el uso del CUIT correcto
+            "nacionalidad": "ARG",
+            "origen_captura": "SIMULACION_CONTROLADA_PANEL",
+            "validacion_fisica": {
+                "holograma_detectado": true,
+                "codigo_pdf417_leido": true,
+                "numero_tramite": tramiteFicticio
+            },
+            "certificado_rnr": {
+                "status": "CLEAN",
+                "vigente": true
+            }
+        };
+        
+        // Despachamos el disparo directo sin intermediarios
+        dispararHaciaLedger(paqueteJsonSimulado, "ASPIRANTE_PRUEBA_VALIDO");
+    }
+
     // Disparador de Red Criptográfico/Forense (POST)
     function dispararHaciaLedger(jsonPayload, identificadorPantalla) {
         fetch(API_VERTEX_URL, {
