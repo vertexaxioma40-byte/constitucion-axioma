@@ -152,6 +152,23 @@
         dispararHaciaLedger(paqueteJsonSimulado, `ASPIRANTE_SIMULADO_${numeroFicticioDni}`);
     }
 
+    // ==========================================
+    // FUNCIÓN DE SIMULACIÓN INMEDIATA (CON CUIT VÁLIDO)
+    // ==========================================
+    function ejecutarSimulacionImpacto() {
+        mostrarResultado("Iniciando inyección controlada en el entorno...", true);
+        
+        // Usamos un CUIT genérico que supera perfectamente la prueba del Módulo 11
+        const cuitSimuladoValido = "20300000003"; 
+        const tramiteFicticio = "00987654321";
+
+        // Armamos el paquete emulado
+        const paqueteJsonSimulado = armarEstructuraJson(cuitSimuladoValido, tramiteFicticio, "SIMULACION_CONTROLADA_PANEL");
+        
+        // Ejecutamos el disparo hacia tu API
+        dispararHaciaLedger(paqueteJsonSimulado, "ASPIRANTE_PRUEBA_VALIDO");
+    }
+
     // Constructor de Estructura de Datos (Soberanía de Datos)
     function armarEstructuraJson(cuit, tramite, origen) {
         return {
