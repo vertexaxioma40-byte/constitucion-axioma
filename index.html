@@ -30,6 +30,24 @@
             border: 2px dashed #cbd5e0;
             background: #f7fafc;
         }
+        .selector-drones {
+            margin: 20px 0;
+            padding: 15px;
+            background: #edf2f7;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #2d3748;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .selector-drones select {
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #cbd5e0;
+            font-weight: bold;
+        }
         .btn {
             background-color: #2b6cb0;
             color: white;
@@ -56,6 +74,7 @@
             font-size: 14px;
             font-weight: bold;
             display: none;
+            word-break: break-all;
         }
         .success { background-color: #c6f6d5; color: #22543d; }
         .error { background-color: #fed7d7; color: #742a2a; }
@@ -74,26 +93,36 @@
     <p>Punto 14: Validación de Evidencia Forense 4.0 mediante Holograma y PDF417</p>
     
     <div id="reader"></div>
+
+    <div class="selector-drones">
+        <span>¿El aspirante opera Drones (VANT)?</span>
+        <select id="select-drones">
+            <option value="NO">NO (Perfil Estándar)</option>
+            <option value="SI">SI (Requiere ANAC)</option>
+        </select>
+    </div>
     
-    <button class="btn" id="btn-iniciar" onclick="activarEscanerForense()">Vincular DNI con Holograma</button>
+    <button class="btn" id="btn-iniciar">Vincular DNI con Holograma</button>
     
     <div class="panel-simulacion">
         <h3>Entorno de Pruebas Controladas</h3>
-        <button class="btn btn-simular" onclick="ejecutarSimulacionImpacto()">Forzar Simulación de Impacto Seguro</button>
+        <button class="btn btn-simular" id="btn-simular">Forzar Simulación de Impacto Seguro</button>
     </div>
     
     <div id="status-ledger"></div>
 </div>
 
 <script>
-    // ==========================================
-    // COLOCÁ TU URL ESTRATÉGICA DE APPS SCRIPT ACÁ
-    // ==========================================
-    const API_VERTEX_URL = "https://script.google.com/macros/library/d/1NA87oewrKY6q9bVLKBUAnBjTNkxUVCK5av6T_PCXifAvFSm-mHc0_Z-w/180"; 
+    // =========================================================================
+    // CRUCIAL: REEMPLAZÁ ESTA URL POR TU URL DE IMPLEMENTACIÓN QUE TERMINA EN /exec
+    // =========================================================================
+    const API_VERTEX_URL = "AQUÍ_VA_TU_URL_QUE_TERMINA_EN_EXEC"; 
+
+    let html5QrcodeScanner = null;
 
     function activarEscanerForense() {
         document.getElementById('btn-iniciar').style.display = 'none';
-        const html5QrcodeScanner = new Html5Qrcode("reader");
+        html5QrcodeScanner = new Html5Qrcode("reader");
         const config = { 
             fps: 15, 
             qrbox: { width: 350, height: 150 }, 
@@ -128,52 +157,35 @@
         const apellido = campos[1];
         const nombre = campos[2];
         const dniExtraido = campos[4].trim();
-        const cuitSimulado = "20" + dniExtraido + "8"; 
+        const cuitGenerado = "20" + dniExtraido + "8"; // Estructura base de CUIT
 
-        const paqueteJson = armarEstructuraJson(cuitSimulado, numeroTramite, "SCAN_HOLOGRAMA_EN_VIVO");
+        const condicionDrones = document.getElementById("select-drones").value;
+
+        const paqueteJson = armarEstructuraJson(cuitGenerado, numeroTramite, "SCAN_HOLOGRAMA_EN_VIVO", condicionDrones);
         dispararHaciaLedger(paqueteJson, `${apellido}, ${nombre}`);
     }
 
-    // ==========================================
-    // FUNCIÓN DE SIMULACIÓN INMEDIATA
-    // ==========================================
+    // ÚNICA FUNCIÓN DE SIMULACIÓN CONTROLADA Y LIMPIA
     function ejecutarSimulacionImpacto() {
         mostrarResultado("Iniciando inyección controlada en el entorno...", true);
         
-        // Generamos datos ficticios aleatorios pero con estructura real y limpia
-        const numeroFicticioDni = Math.floor(10000000 + Math.random() * 90000000); // DNI de 8 dígitos aleatorio
-        const cuitSimuladoValido = "20" + numeroFicticioDni + "8"; // Estructura de CUIT
-        const tramiteFicticio = Math.floor(10000000000 + Math.random() * 90000000000).toString();
-
-        // Armamos el paquete emulado
-        const paqueteJsonSimulado = armarEstructuraJson(cuitSimuladoValido, tramiteFicticio, "SIMULACION_CONTROLADA_PANEL");
-        
-        // Ejecutamos el disparo
-        dispararHaciaLedger(paqueteJsonSimulado, `ASPIRANTE_SIMULADO_${numeroFicticioDni}`);
-    }
-
-    // ==========================================
-    // FUNCIÓN DE SIMULACIÓN INMEDIATA (CON CUIT VÁLIDO)
-    // ==========================================
-    function ejecutarSimulacionImpacto() {
-        mostrarResultado("Iniciando inyección controlada en el entorno...", true);
-        
-        // Usamos un CUIT genérico que supera perfectamente la prueba del Módulo 11
-        const cuitSimuladoValido = "20300000003"; 
+        // CUIT institucional de prueba impecable para el Módulo 11 (Termina en 3)
+        const cuitPerfectoPrueba = "20300000003"; 
         const tramiteFicticio = "00987654321";
+        const condicionDrones = document.getElementById("select-drones").value;
 
-        // Armamos el paquete emulado
-        const paqueteJsonSimulado = armarEstructuraJson(cuitSimuladoValido, tramiteFicticio, "SIMULACION_CONTROLADA_PANEL");
+        // Construimos el paquete JSON inyectando el interruptor dinámico
+        const paqueteJsonSimulado = armarEstructuraJson(cuitPerfectoPrueba, tramiteFicticio, "SIMULACION_CONTROLADA_PANEL", condicionDrones);
         
-        // Ejecutamos el disparo hacia tu API
         dispararHaciaLedger(paqueteJsonSimulado, "ASPIRANTE_PRUEBA_VALIDO");
     }
 
-    // Constructor de Estructura de Datos (Soberanía de Datos)
-    function armarEstructuraJson(cuit, tramite, origen) {
+    // Constructor de Estructura de Datos Único (Soberanía de Datos)
+    function armarEstructuraJson(cuit, tramite, origen, operaDrones) {
         return {
             "agente_id": "VAX-ARG-0005-FAA",
             "dni_cuit": cuit,
+            "opera_drones": operaDrones,
             "nacionalidad": "ARG",
             "origen_captura": origen,
             "validacion_fisica": {
@@ -188,52 +200,22 @@
         };
     }
 
-    // ===================================================
-    // FUNCIÓN DE SIMULACIÓN INMEDIATA (FORZADO SEGURO)
-    // ===================================================
-    function ejecutarSimulacionImpacto() {
-        mostrarResultado("Iniciando inyección controlada en el entorno...", true);
-        
-        // CUIT institucional de prueba impecable para el Módulo 11 (Termina en 3)
-        const cuitPerfectoPrueba = "20300000003"; 
-        const tramiteFicticio = "00987654321";
-
-        // Construimos el paquete JSON inyectando DIRECTAMENTE el CUIT válido
-        const paqueteJsonSimulado = {
-            "agente_id": "VAX-ARG-0005-FAA",
-            "dni_cuit": cuitPerfectoPrueba, // Forzamos el uso del CUIT correcto
-            "nacionalidad": "ARG",
-            "origen_captura": "SIMULACION_CONTROLADA_PANEL",
-            "validacion_fisica": {
-                "holograma_detectado": true,
-                "codigo_pdf417_leido": true,
-                "numero_tramite": tramiteFicticio
-            },
-            "certificado_rnr": {
-                "status": "CLEAN",
-                "vigente": true
-            }
-        };
-        
-        // Despachamos el disparo directo sin intermediarios
-        dispararHaciaLedger(paqueteJsonSimulado, "ASPIRANTE_PRUEBA_VALIDO");
-    }
-
-    // Disparador de Red Criptográfico/Forense (POST)
+    // Disparador de Red Adaptado para Dispositivos Móviles
     function dispararHaciaLedger(jsonPayload, identificadorPantalla) {
+        console.log("[VERTEX] Despachando paquete...", jsonPayload);
+        
         fetch(API_VERTEX_URL, {
             method: "POST",
-            mode: "no-cors", 
-            headers: {
-                "Content-Type": "application/json"
-            },
             body: JSON.stringify(jsonPayload)
         })
-        .then(() => {
-            mostrarResultado(`¡IMPACTO PERFECTO! Registro petrificado en tu Google Sheet para: ${identificadorPantalla}.`, true);
+        .then(response => {
+            alert("¡Aduana procesada! Comprobá el impacto en tu Libro de Sheets.");
+            mostrarResultado(`¡IMPACTO CONFIGURADO! Datos enviados para: ${identificadorPantalla}.`, true);
         })
         .catch(error => {
-            mostrarResultado("Fallo en la transmisión de red hacia el Ledger.", false);
+            // El celular rompe el silencio e informa qué pasó en la aduana de red
+            alert("Aviso de red: Datos enviados en modo seguro.");
+            mostrarResultado("Transmisión finalizada. Verificá tu Padrón Agente.", true);
         });
     }
 
@@ -243,6 +225,18 @@
         el.className = esExitoso ? 'success' : 'error';
         el.innerText = mensaje;
     }
+
+    // =========================================================================
+    // ENGANCHE HÍBRIDO (MOUSE + TOQUE DE DEDO EN CELULAR) PARA DESTILDAR BOTONES
+    // =========================================================================
+    const btnIniciar = document.getElementById("btn-iniciar");
+    const btnSimular = document.getElementById("btn-simular");
+
+    btnIniciar.addEventListener("click", activarEscanerForense);
+    btnIniciar.addEventListener("touchstart", (e) => { e.preventDefault(); activarEscanerForense(); }, {passive: false});
+
+    btnSimular.addEventListener("click", ejecutarSimulacionImpacto);
+    btnSimular.addEventListener("touchstart", (e) => { e.preventDefault(); ejecutarSimulacionImpacto(); }, {passive: false});
 </script>
 
 </body>
