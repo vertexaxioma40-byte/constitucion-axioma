@@ -41,8 +41,14 @@
             font-weight: bold;
             transition: background 0.2s;
             margin-top: 15px;
+            width: 100%;
         }
         .btn:hover { background-color: #2c5282; }
+        .btn-simular {
+            background-color: #4a5568;
+            margin-top: 10px;
+        }
+        .btn-simular:hover { background-color: #2d3748; }
         #status-ledger {
             margin-top: 20px;
             padding: 12px;
@@ -53,6 +59,12 @@
         }
         .success { background-color: #c6f6d5; color: #22543d; }
         .error { background-color: #fed7d7; color: #742a2a; }
+        .panel-simulacion {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px dashed #e2e8f0;
+        }
+        .panel-simulacion h3 { color: #4a5568; font-size: 16px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -65,37 +77,38 @@
     
     <button class="btn" id="btn-iniciar" onclick="activarEscanerForense()">Vincular DNI con Holograma</button>
     
+    <div class="panel-simulacion">
+        <h3>Entorno de Pruebas Controladas</h3>
+        <button class="btn btn-simular" onclick="ejecutarSimulacionImpacto()">Forzar Simulación de Impacto Seguro</button>
+    </div>
+    
     <div id="status-ledger"></div>
 </div>
 
 <script>
-    // PEGÁ ACÁ TU URL ESTRATÉGICA DE GOOGLE APPS SCRIPT
+    // ==========================================
+    // COLOCÁ TU URL ESTRATÉGICA DE APPS SCRIPT ACÁ
+    // ==========================================
     const API_VERTEX_URL = "https://script.google.com/macros/library/d/1NA87oewrKY6q9bVLKBUAnBjTNkxUVCK5av6T_PCXifAvFSm-mHc0_Z-w/180"; 
 
     function activarEscanerForense() {
         document.getElementById('btn-iniciar').style.display = 'none';
-        
         const html5QrcodeScanner = new Html5Qrcode("reader");
-        
-        // Configuramos el escáner para buscar específicamente formatos de documentos (PDF417)
         const config = { 
             fps: 15, 
-            qrbox: { width: 350, height: 150 }, // Formato rectangular ideal para DNI
+            qrbox: { width: 350, height: 150 }, 
             formatsToSupport: [ Html5QrcodeSupportedFormats.PDF_417 ]
         };
 
         html5QrcodeScanner.start(
-            { facingMode: "environment" }, // Fuerza el uso de la cámara trasera en celulares
+            { facingMode: "environment" }, 
             config,
             (decodedText, decodedResult) => {
-                // Al escanear con éxito el código base del DNI, detenemos la cámara
                 html5QrcodeScanner.stop().then(() => {
                     procesarDatosDocumento(decodedText);
                 });
             },
-            (errorMessage) => {
-                // Modo silencioso de escaneo analítico en vivo
-            }
+            (errorMessage) => {}
         ).catch((err) => {
             mostrarResultado("Error al encender la cámara de validación.", false);
             document.getElementById('btn-iniciar').style.display = 'inline-block';
@@ -104,9 +117,6 @@
 
     function procesarDatosDocumento(textoDecodificado) {
         mostrarResultado("Procesando lectura óptica y verificando holograma...", true);
-        
-        // El formato nativo del PDF417 del DNI argentino separa los datos con arrobas (@)
-        // Ejemplo simplificado: 00123456789@APELLIDO@NOMBRE@M@DNI@...
         const campos = textoDecodificado.split('@');
         
         if (campos.length < 5) {
@@ -114,45 +124,65 @@
             return;
         }
 
-        // Extraemos los datos magros del DNI físico
         const numeroTramite = campos[0];
         const apellido = campos[1];
         const nombre = campos[2];
         const dniExtraido = campos[4].trim();
-        
-        // Simulamos un CUIT genérico (puedes adaptarlo para que el usuario complete el prefijo)
         const cuitSimulado = "20" + dniExtraido + "8"; 
 
-        // Armamos el JSON Receptáculo idéntico al que espera tu API
-        const paqueteJson = {
+        const paqueteJson = armarEstructuraJson(cuitSimulado, numeroTramite, "SCAN_HOLOGRAMA_EN_VIVO");
+        dispararHaciaLedger(paqueteJson, `${apellido}, ${nombre}`);
+    }
+
+    // ==========================================
+    // FUNCIÓN DE SIMULACIÓN INMEDIATA
+    // ==========================================
+    function ejecutarSimulacionImpacto() {
+        mostrarResultado("Iniciando inyección controlada en el entorno...", true);
+        
+        // Generamos datos ficticios aleatorios pero con estructura real y limpia
+        const numeroFicticioDni = Math.floor(10000000 + Math.random() * 90000000); // DNI de 8 dígitos aleatorio
+        const cuitSimuladoValido = "20" + numeroFicticioDni + "8"; // Estructura de CUIT
+        const tramiteFicticio = Math.floor(10000000000 + Math.random() * 90000000000).toString();
+
+        // Armamos el paquete emulado
+        const paqueteJsonSimulado = armarEstructuraJson(cuitSimuladoValido, tramiteFicticio, "SIMULACION_CONTROLADA_PANEL");
+        
+        // Ejecutamos el disparo
+        dispararHaciaLedger(paqueteJsonSimulado, `ASPIRANTE_SIMULADO_${numeroFicticioDni}`);
+    }
+
+    // Constructor de Estructura de Datos (Soberanía de Datos)
+    function armarEstructuraJson(cuit, tramite, origen) {
+        return {
             "agente_id": "VAX-ARG-0005-FAA",
-            "dni_cuit": cuitSimulado,
+            "dni_cuit": cuit,
             "nacionalidad": "ARG",
-            "origen_captura": "SCAN_HOLOGRAMA_EN_VIVO",
+            "origen_captura": origen,
             "validacion_fisica": {
                 "holograma_detectado": true,
                 "codigo_pdf417_leido": true,
-                "numero_tramite": numeroTramite
+                "numero_tramite": tramite
             },
             "certificado_rnr": {
                 "status": "CLEAN",
                 "vigente": true
             }
         };
+    }
 
-        // Disparo blindado (POST) hacia tu API Web
+    // Disparador de Red Criptográfico/Forense (POST)
+    function dispararHaciaLedger(jsonPayload, identificadorPantalla) {
         fetch(API_VERTEX_URL, {
             method: "POST",
-            mode: "no-cors", // Evita bloqueos de seguridad del navegador al hablar con Google
+            mode: "no-cors", 
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(paqueteJson)
+            body: JSON.stringify(jsonPayload)
         })
         .then(() => {
-            // Nota: Con "no-cors" el navegador no lee la respuesta de texto por privacidad,
-            // pero el impacto en tu Google Sheet ocurre de inmediato en milisegundos.
-            mostrarResultado(`¡IMPACTO PERFECTO! Registro petrificado en el Ledger para ${apellido}, ${nombre}.`, true);
+            mostrarResultado(`¡IMPACTO PERFECTO! Registro petrificado en tu Google Sheet para: ${identificadorPantalla}.`, true);
         })
         .catch(error => {
             mostrarResultado("Fallo en la transmisión de red hacia el Ledger.", false);
