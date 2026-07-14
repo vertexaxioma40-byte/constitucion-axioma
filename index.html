@@ -114,41 +114,56 @@
     </main>
 
     <script>
-        const securityOverlay = document.getElementById('securityOverlay');
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        const consoleOutput = document.getElementById('consoleOutput');
-        let selectedFile = null;
+    const securityOverlay = document.getElementById('securityOverlay');
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const consoleOutput = document.getElementById('consoleOutput');
+    let selectedFile = null;
 
-        // Lógica de Desbloqueo
-        document.getElementById('btnUnlock').addEventListener('click', () => {
-            securityOverlay.style.display = 'none';
-        });
+    // 1. Lógica de Desbloqueo
+    document.getElementById('btnUnlock').addEventListener('click', () => {
+        securityOverlay.style.display = 'none';
+    });
 
-        // Manejo de Archivos
-        dropZone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+    // 2. Lógica de Submit (Prueba Petrificada)
+    document.getElementById('btnSubmit').addEventListener('click', () => {
+        if(!selectedFile) return alert('Error: No se ha detectado activo.');
         
-        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('drag-over');
-            if(e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
-        });
+        // Generar un hash simulado para el DNA Digital
+        const mockHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('');
+        
+        consoleOutput.style.display = 'block';
+        consoleOutput.innerHTML = `
+            <div style="color: var(--accent-green); border-left: 2px solid var(--accent-green); padding-left: 10px;">
+                > Iniciando Sello de Inmutabilidad Transfronteriza...<br>
+                > DNA Digital generado con éxito.<br>
+                <br>
+                <strong>PRUEBA PETRIFICADA (HASH):</strong><br>
+                <span style="font-size: 0.75rem; word-break: break-all;">${mockHash}</span><br>
+                <br>
+                > Estado: <strong>ENVIADO A LEDGER PÚBLICO</strong><br>
+                > Auditor: Arapian 4.0
+            </div>
+        `;
+    });
 
-        function handleFile(file) {
-            selectedFile = file;
-            dropZone.innerHTML = `<strong>Archivo listo:</strong> ${file.name}`;
-            dropZone.style.borderColor = 'var(--accent-green)';
-        }
+    // 3. Manejo de Archivos
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+    
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        if(e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+    });
 
-        // Simulación de Ingesta
-        document.getElementById('btnSubmit').addEventListener('click', () => {
-            if(!selectedFile) return alert('Cargue un archivo.');
-            consoleOutput.style.display = 'block';
-            consoleOutput.innerHTML = '> Iniciando Sello de Inmutabilidad Transfronteriza...<br>> DNA Digital generado.';
-        });
-    </script>
+    function handleFile(file) {
+        selectedFile = file;
+        dropZone.innerHTML = `<strong>Archivo listo:</strong> ${file.name}`;
+        dropZone.style.borderColor = 'var(--accent-green)';
+    }
+</script>
 </body>
 </html>
