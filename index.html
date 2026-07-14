@@ -3,112 +3,493 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vertex Axioma S.A.S. | Plataforma de Auditoría Forense 4.0</title>
+    <title>Vertex Axioma - Mesa de Entrada 4.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --accent-color: #00d4ff;
-            --bg-dark: #0f172a;
-            --text-light: #f8fafc;
+            --bg-primary: #0a0c10;
+            --bg-secondary: #0d1117;
+            --bg-card: #161b22;
+            --accent-green: #00ff88;
+            --accent-blue: #00e5ff;
+            --accent-red: #ff4a4a;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --border-color: #30363d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .axioma-container {
-            padding: 50px 20px;
+        /* --- PANTALLA DE BLOQUEO DE SEGURIDAD --- */
+        .security-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(10, 12, 16, 0.98);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: all 0.5s ease;
+        }
+
+        .security-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
             text-align: center;
-            max-width: 1200px;
-            margin: 0 auto;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
         }
 
-        .axioma-header h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
+        .security-card h2 {
+            font-size: 1.3rem;
             letter-spacing: 2px;
-            text-transform: uppercase;
-            color: #ffffff;
+            margin-bottom: 10px;
+            color: var(--text-main);
         }
 
-        .axioma-header p {
-            color: var(--accent-color);
-            font-size: 1.2rem;
-            margin-bottom: 50px;
+        .security-card p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 25px;
         }
 
-        .grid-services {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .service-card {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid #334155;
-            padding: 25px;
-            border-radius: 10px;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-
-        .service-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent-color);
-            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.1);
-        }
-
-        .service-card h3 {
-            color: var(--accent-color);
-            margin-top: 0;
-        }
-
-        .footer-seal {
-            margin-top: 60px;
-            padding: 30px;
-            border-top: 1px solid #334155;
+        .input-key {
+            width: 100%;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 1.1rem;
+            text-align: center;
+            letter-spacing: 3px;
+            outline: none;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+        }
+
+        .input-key:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+        }
+
+        .btn-unlock {
+            width: 100%;
+            background-color: transparent;
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+            padding: 12px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-weight: 500;
+            cursor: pointer;
+            text-transform: uppercase;
             letter-spacing: 1px;
-            color: #94a3b8;
+            transition: all 0.3s ease;
+        }
+
+        .btn-unlock:hover {
+            background-color: var(--accent-blue);
+            color: var(--bg-primary);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+        }
+
+        /* --- INTERFAZ PRINCIPAL --- */
+        header {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-area h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--text-main);
+        }
+
+        .logo-area span {
+            color: var(--accent-green);
+        }
+
+        .system-badge {
+            background-color: rgba(0, 229, 255, 0.1);
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .container {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 650px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        select {
+            width: 100%;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 12px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        select:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 6px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            background-color: rgba(22, 27, 34, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone.drag-over {
+            border-color: var(--accent-green);
+            background-color: rgba(0, 255, 136, 0.05);
+        }
+
+        .drop-zone-icon {
+            font-size: 2.5rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .drop-zone-text {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .drop-zone-subtext {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background-color: transparent;
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 15px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--accent-green);
+            color: var(--bg-primary);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .console-output {
+            margin-top: 25px;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: none;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .console-line {
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+
+        .console-success { color: var(--accent-green); }
+        .console-info { color: var(--accent-blue); }
+
+        footer {
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 15px 40px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
 
-<div class="axioma-container">
-    <div class="axioma-header">
-        <h1>Vertex Axioma S.A.S.</h1>
-        <p>Plataforma de Auditoría Forense 4.0 | Blockchain Governance Protocol | Protocolo AXIOMA®</p>
+    <!-- === PANTALLA DE BLOQUEO (OVERLAY) === -->
+    <div class="security-overlay" id="securityOverlay">
+        <div class="security-card">
+            <div style="font-size: 3rem; margin-bottom: 15px;">🛡️</div>
+            <h2>SISTEMA ENCRIPTADO</h2>
+            <p>Por favor, introduzca su Clave del Ecosistema Vertex Axioma® para desbloquear el nodo pericial.</p>
+            <input type="password" class="input-key" id="inputKey" placeholder="••••••••">
+            <button class="btn-unlock" id="btnUnlock">Desbloquear Nodo</button>
+        </div>
     </div>
 
-    <div class="grid-services">
-        <div class="service-card"><h3>Justicia 4.0</h3><p>Implementación de Prueba Petrificada.</p></div>
-        <div class="service-card"><h3>Consorcio 4.0</h3><p>Transparencia en activos inmobiliarios.</p></div>
-        <div class="service-card"><h3>Activos Reales 4.0</h3><p>Certificación técnica de activos.</p></div>
-        <div class="service-card"><h3>Agro 4.0</h3><p>Integridad en cadenas productivas.</p></div>
-        <div class="service-card"><h3>Minería 4.0</h3><p>Auditoría de activos críticos.</p></div>
-        <div class="service-card"><h3>Salud 4.0</h3><p>Gestión de infraestructura médica.</p></div>
-		<div class="service-card"><h3>Farmacia 4.0 </h3><p>Trazabilidad e integridad en cadena de fármacos.</p></div>
-		<div class="service-card"><h3>Sumistros 4.0</h3><p>Control forense de stock y activos en tiempo real.</p></div>
-        <div class="service-card"><h3>Gobernanza 4.0</h3><p>Transparencia presupuestaria.</p></div>
-        <div class="service-card"><h3>Ciudades 4.0</h3><p>Modernización urbana inmutable.</p></div>
-		<div class="service-card"><h3>Seguridad 4.0</h3><p>Validación criptográfica de alertas y perímetros.</p></div>
-		<div class="service-card"><h3>Emergencias 4.0</h3><p>Trazabilidad y blindaje de llamadas y alertas críticas</p></div>
-		<div class="service-card"><h3>Obra Pública 4.0</h3><p>Auditoría de ejecución presupuestaria.</p></div>
-		<div class="service-card"><h3>Logística Aérea 4.0</h3><p>Auditoría forense de infraestructura y rutas aéreas</p></div>
-		<div class="service-card"><h3>Evidencia 4.0</h3><p>Sustento forense de la verdad digital.</p></div>
-        <div class="service-card"><h3>Integridad Forense</h3><p>Cadena de custodia geoespacial.</p></div>
-		<div class="service-card"><h3>Tribunal IA 4.0</h3><p>Auditoría espacial automatizada y Gemelos Digitales (3DGS).</p></div>
-		<div class="service-card"><h3>Riesgo Predictivo 4.0</h3><p>Detección temprana de anomalías y prevención algorítmica.</p></div>
-        <div class="service-card"><h3>Smart-Settle</h3><p>Liquidación inteligente de activos.</p></div>
-    </div>
+    <header>
+        <div class="logo-area">
+            <h1>VERTEX <span>AXIOMA®</span></h1>
+        </div>
+        <div class="system-badge">
+            Mesa de Entrada 4.0
+        </div>
+    </header>
 
-    <div class="footer-seal">
-        Sello de Inmutabilidad Transfronteriza
-    </div>
-</div>
+    <main>
+        <div class="container">
+            <div class="form-group">
+                <label for="asset-type">Seleccione Tipo de Activo</label>
+                <select id="asset-type">
+                    <option value="catastro">Catastro Municipal & Planos de Edificación</option>
+                    <option value="obra-publica">Obra Pública & Licitaciones</option>
+                    <option value="energia">Energía & Activos Reales</option>
+                    <option value="consorcios">Consorcios 4.0 & Liquidaciones</option>
+                    <option value="forense">Paquete de Evidencia Forense Legal</option>
+                </select>
+            </div>
 
+            <div class="form-group">
+                <label>Ingesta de Archivos</label>
+                <div class="drop-zone" id="dropZone">
+                    <div class="drop-zone-icon">📁</div>
+                    <div class="drop-zone-text" id="dropZoneText">Arrastre aquí el archivo o haga clic para explorar</div>
+                    <div class="drop-zone-subtext">Formatos admitidos: PDF, DWG, BIM, JSON, DICOM</div>
+                    <input type="file" id="fileInput" style="display: none;">
+                </div>
+            </div>
+
+            <button class="btn-submit" id="btnSubmit">Iniciar Ingesta y Petrificación Universal</button>
+
+            <div class="console-output" id="consoleOutput"></div>
+        </div>
+    </main>
+
+    <footer>
+        Ecosistema Blindado - Protocolo de Convergencia Forense Axioma - Confidencialidad Absoluta
+    </footer>
+
+    <script>
+        // === ELEMENTOS HTML ===
+        const securityOverlay = document.getElementById('securityOverlay');
+        const inputKey = document.getElementById('inputKey');
+        const btnUnlock = document.getElementById('btnUnlock');
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const dropZoneText = document.getElementById('dropZoneText');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const consoleOutput = document.getElementById('consoleOutput');
+        
+        let selectedFile = null;
+        let masterAccessKey = localStorage.getItem('vertex_access_key') || '';
+
+        // === CONTROL DE ACCESO ===
+        if (masterAccessKey) {
+            // Si el navegador ya tiene la clave recordada, escondemos la pantalla de bloqueo
+            securityOverlay.style.display = 'none';
+        }
+
+        btnUnlock.addEventListener('click', () => {
+            const ingresada = inputKey.value.trim();
+            if (!ingresada) {
+                alert("Debe ingresar una clave soberana.");
+                return;
+            }
+            // Guardamos la clave localmente para que persista en el navegador de Verónica
+            masterAccessKey = ingresada;
+            localStorage.setItem('vertex_access_key', ingresada);
+            securityOverlay.style.opacity = '0';
+            setTimeout(() => securityOverlay.style.display = 'none', 500);
+        });
+
+        // Permitir desbloquear apretando la tecla Enter
+        inputKey.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') btnUnlock.click();
+        });
+
+        // === DRAG & DROP Y SELECCIÓN DE ARCHIVOS ===
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            if(e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            if(e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            selectedFile = file;
+            dropZoneText.innerHTML = `<strong>Archivo cargado:</strong> ${file.name} (${(file.size/1024).toFixed(2)} KB)`;
+            dropZone.style.borderColor = 'var(--accent-blue)';
+        }
+
+        // === INGESTA Y CONEXIÓN REAL CON EL NODO ===
+        btnSubmit.addEventListener('click', async () => {
+            if(!selectedFile) {
+                alert('Por favor, cargue un archivo primero para iniciar el protocolo.');
+                return;
+            }
+
+            consoleOutput.style.display = 'block';
+            consoleOutput.innerHTML = '';
+            
+            logLine('Iniciando pipeline de ingesta segura en Vertex Axioma...', 'info');
+            
+            const paqueteParaEnviar = {
+                software_ia: {
+                    nombre: "Axioma_Vision_Pro_V1",
+                    hash_modelo: "f82b7c932e6d5e18b417c823bfb6b142646d61d0f866468a48ef2e2cb6dbcc4a"
+                },
+                id_biometrico: {
+                    id_usuario: "USR-9921-VARAPIAN" 
+                },
+                geolocalizacion: {
+                    latitud: -34.782135, 
+                    longitud: -58.835122
+                },
+                timestamp_judicial: new Date().toISOString(), 
+                archivo_nombre: selectedFile.name,
+                tipo_activo: document.getElementById('asset-type').value 
+            };
+
+            try {
+                logLine('Estableciendo enlace seguro con la Mesa de Entrada 4.0...', 'info');
+                
+                // Realizamos el fetch enviando la clave en las cabeceras (headers) de la conexión
+                const respuesta = await fetch('http://localhost:3000/api/v2/ingestar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-axioma-key': masterAccessKey // <=== AQUÍ VIAJA TU CLAVE CRIPTOGRÁFICA
+                    },
+                    body: JSON.stringify(paqueteParaEnviar)
+                });
+
+                const resultado = await respuesta.json();
+
+                if (!respuesta.ok) {
+                    throw new Error(resultado.motivo || resultado.error || 'Acceso Denegado por el Nodo local.');
+                }
+
+                logLine(`[OK] Conexión establecida con el servidor local.`, 'success');
+                logLine(`DNA Digital de Evidencia: ${resultado.datos_periciales.dna_digital_hash}`, 'success');
+                logLine(`Hash de Transacción Blockchain: ${resultado.datos_periciales.transaccion_blockchain}`, 'info');
+                logLine(`🔒 PRUEBA PETRIFICADA - Sello de Inmutabilidad Transfronteriza Activado con éxito.`, 'success');
+
+            } catch (error) {
+                logLine(`🚨 INTENTO RECHAZADO: ${error.message}`, 'error');
+                console.error('Detalle del fallo:', error);
+                
+                // Si la clave falló, damos la opción de resetearla para volver a intentar
+                if(error.message.includes("Clave de acceso inválida")) {
+                    localStorage.removeItem('vertex_access_key');
+                    setTimeout(() => {
+                        alert("La clave ingresada es incorrecta. El sistema se volverá a bloquear.");
+                        location.reload();
+                    }, 2000);
+                }
+            }
+        });
+
+        function logLine(text, type) {
+            const line = document.createElement('div');
+            line.className = 'console-line';
+            if(type === 'success') line.className = 'console-line console-success';
+            if(type === 'info') line.className = 'console-line console-info';
+            if(type === 'error') line.style.color = '#ff4a4a'; 
+            line.innerText = `> ${text}`;
+            consoleOutput.appendChild(line);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+    </script>
 </body>
 </html>
