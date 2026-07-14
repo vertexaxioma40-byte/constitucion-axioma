@@ -72,6 +72,22 @@
         .btn-submit {
             width: 100%; background: transparent; border: 1px solid var(--accent-green);
             color: var(--accent-green); padding: 15px; margin-top: 20px; cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .btn-certify {
+            width: 100%; background: transparent; border: 1px solid var(--accent-blue);
+            color: var(--accent-blue); padding: 15px; margin-top: 15px; cursor: pointer;
+            display: none; /* Se revela solo tras petrificar el activo */
+            transition: all 0.2s ease;
+        }
+
+        .btn-certify:hover {
+            background: rgba(0, 229, 255, 0.1);
         }
 
         .console-output {
@@ -98,7 +114,7 @@
     <main>
         <div class="container">
             <label>Tipo de Activo</label>
-            <select id="asset-type" style="width: 100%; padding: 10px; margin-bottom: 20px; background: var(--bg-secondary); color: white;">
+            <select id="asset-type" style="width: 100%; padding: 10px; margin-bottom: 20px; background: var(--bg-secondary); color: white; border: 1px solid var(--border-color);">
                 <option value="catastro">Catastro Municipal</option>
                 <option value="forense">Evidencia Forense Legal</option>
             </select>
@@ -109,6 +125,10 @@
             </div>
 
             <button class="btn-submit" id="btnSubmit">Iniciar Ingesta y Petrificación</button>
+            
+            <!-- NUEVO: Botón para generar el Certificado de Existencia (Punto #8) -->
+            <button class="btn-certify" id="btnCertify">Generar Certificado de Existencia (Punto #8)</button>
+            
             <div class="console-output" id="consoleOutput"></div>
         </div>
     </main>
@@ -118,6 +138,7 @@
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
     const consoleOutput = document.getElementById('consoleOutput');
+    const btnCertify = document.getElementById('btnCertify');
     let selectedFile = null;
 
     // 1. Lógica de Desbloqueo
@@ -125,29 +146,151 @@
         securityOverlay.style.display = 'none';
     });
 
-    // 2. Lógica de Submit (Prueba Petrificada)
+    // 2. Lógica de Submit (Prueba Petrificada + Sello de Inmutabilidad Transfronteriza)
     document.getElementById('btnSubmit').addEventListener('click', () => {
         if(!selectedFile) return alert('Error: No se ha detectado activo.');
         
-        // Generar un hash simulado para el DNA Digital
+        // Generar un hash simulado para el DNA Digital (Prueba Petrificada)
         const mockHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('');
         
+        // Mostrar consola con el Sello de Inmutabilidad Transfronteriza
         consoleOutput.style.display = 'block';
         consoleOutput.innerHTML = `
-            <div style="color: var(--accent-green); border-left: 2px solid var(--accent-green); padding-left: 10px;">
-                > Iniciando Sello de Inmutabilidad Transfronteriza...<br>
-                > DNA Digital generado con éxito.<br>
-                <br>
-                <strong>PRUEBA PETRIFICADA (HASH):</strong><br>
-                <span style="font-size: 0.75rem; word-break: break-all;">${mockHash}</span><br>
-                <br>
-                > Estado: <strong>ENVIADO A LEDGER PÚBLICO</strong><br>
-                > Auditor: Arapian 4.0
+            <div style="color: var(--accent-green); border-left: 2px solid var(--accent-green); padding-left: 15px;">
+                <div style="font-weight: bold; font-size: 1.1rem; margin-bottom: 5px;">SELLO DE INMUTABILIDAD TRANSFRONTERIZA</div>
+                <div style="font-size: 0.8rem; margin-bottom: 10px; color: var(--accent-blue);">VALIDADO POR VERTEX AXIOMA®</div>
+                
+                <p style="font-size: 0.85rem; margin-bottom: 10px;">> DNA Digital generado con éxito.</p>
+                
+                <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px; margin-bottom: 10px;">
+                    <strong style="font-size: 0.7rem; color: var(--text-muted);">PRUEBA PETRIFICADA (HASH):</strong><br>
+                    <span id="generatedHash" style="font-family: monospace; font-size: 0.75rem; word-break: break-all;">${mockHash}</span>
+                </div>
+                
+                <p style="font-size: 0.8rem;">> Estado: <strong>ENVIADO A LEDGER PÚBLICO</strong></p>
+                <p style="font-size: 0.8rem;">> Auditor: Arapian 4.0</p>
             </div>
         `;
+
+        // Revelar el botón para emitir el Certificado de Existencia (Punto #8)
+        btnCertify.style.display = 'block';
     });
 
-    // 3. Manejo de Archivos
+    // 3. Lógica de Generación del Certificado de Existencia de Activos (Punto #8)
+    btnCertify.addEventListener('click', () => {
+        if(!selectedFile) return;
+
+        const hashSpan = document.getElementById('generatedHash');
+        const hashValue = hashSpan ? hashSpan.innerText : "No disponible";
+        const assetTypeSelect = document.getElementById('asset-type');
+        const assetTypeName = assetTypeSelect.options[assetTypeSelect.selectedIndex].text;
+
+        const certWindow = window.open('', '_blank');
+        certWindow.document.write(`
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8">
+                <title>Certificado de Existencia de Activos - Vertex Axioma</title>
+                <style>
+                    body { 
+                        font-family: 'JetBrains Mono', monospace; 
+                        padding: 50px; 
+                        color: #0a0c10; 
+                        line-height: 1.6;
+                        background-color: #ffffff;
+                    }
+                    .cert-container {
+                        border: 3px double #0a0c10;
+                        padding: 40px;
+                        max-width: 800px;
+                        margin: 0 auto;
+                    }
+                    .header { 
+                        border-bottom: 2px solid #0a0c10; 
+                        padding-bottom: 20px; 
+                        margin-bottom: 30px; 
+                        text-align: center;
+                    }
+                    .header h1 { font-size: 1.8rem; letter-spacing: 1px; margin-bottom: 5px; }
+                    .header p { font-size: 0.9rem; color: #555; margin: 0; }
+                    .meta-section {
+                        margin-bottom: 30px;
+                    }
+                    .meta-row {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 10px;
+                        border-bottom: 1px dotted #ccc;
+                        padding-bottom: 5px;
+                    }
+                    .hash-box { 
+                        background: #f4f6f8; 
+                        padding: 20px; 
+                        word-break: break-all; 
+                        border: 1px dashed #0a0c10; 
+                        font-size: 0.85rem;
+                        margin-bottom: 30px;
+                    }
+                    .footer { 
+                        margin-top: 60px; 
+                        font-size: 0.8rem; 
+                        text-align: center; 
+                        border-top: 1px solid #ccc;
+                        padding-top: 20px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="cert-container">
+                    <div class="header">
+                        <h1>CERTIFICADO DE EXISTENCIA DE ACTIVOS</h1>
+                        <p><strong>VERTEX AXIOMA®</strong> | Protocolo de Auditoría 4.0</p>
+                    </div>
+                    
+                    <p style="margin-bottom: 25px;">Por medio del presente documento, la firma de Auditoría Arapian 4.0 certifica la existencia, integridad e inmutabilidad digital en origen del siguiente activo:</p>
+                    
+                    <div class="meta-section">
+                        <div class="meta-row">
+                            <strong>Clasificación de Activo:</strong>
+                            <span>${assetTypeName}</span>
+                        </div>
+                        <div class="meta-row">
+                            <strong>Nombre del Archivo:</strong>
+                            <span>${selectedFile.name}</span>
+                        </div>
+                        <div class="meta-row">
+                            <strong>Tamaño:</strong>
+                            <span>${(selectedFile.size / 1024).toFixed(2)} KB</span>
+                        </div>
+                        <div class="meta-row">
+                            <strong>Fecha de Registro:</strong>
+                            <span>${new Date().toLocaleString()}</span>
+                        </div>
+                    </div>
+
+                    <div class="hash-box">
+                        <strong style="display: block; margin-bottom: 5px;">PRUEBA PETRIFICADA (DNA DIGITAL - HASH H256):</strong>
+                        <span>${hashValue}</span>
+                    </div>
+                    
+                    <p style="font-size: 0.85rem; font-style: italic; text-align: center; margin-top: 20px;">
+                        Este activo ha sido sellado herméticamente de forma transfronteriza y su huella criptográfica se encuentra asentada de manera permanente en el registro público descentralizado.
+                    </p>
+
+                    <div class="footer">
+                        <p><strong>Sello de Inmutabilidad Transfronteriza Activo</strong></p>
+                        <p>Firma Responsable: Arapian Auditorías 4.0</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `);
+        certWindow.document.close();
+        certWindow.print(); // Dispara la ventana de guardado/impresión
+    });
+
+    // 4. Manejo de Drag & Drop de Archivos
     dropZone.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
     
