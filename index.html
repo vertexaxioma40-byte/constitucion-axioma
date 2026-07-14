@@ -133,7 +133,8 @@
         </div>
     </main>
 
-    <script>
+<!-- ... (Mantén todo tu <head> y estilos iguales hasta la parte del <script>) ... -->
+<script>
     const securityOverlay = document.getElementById('securityOverlay');
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
@@ -141,172 +142,67 @@
     const btnCertify = document.getElementById('btnCertify');
     let selectedFile = null;
 
-    // 1. Lógica de Desbloqueo
     document.getElementById('btnUnlock').addEventListener('click', () => {
         securityOverlay.style.display = 'none';
     });
 
-    // 2. Lógica de Submit (Prueba Petrificada + Sello de Inmutabilidad Transfronteriza)
     document.getElementById('btnSubmit').addEventListener('click', () => {
         if(!selectedFile) return alert('Error: No se ha detectado activo.');
         
-        // Generar un hash simulado para el DNA Digital (Prueba Petrificada)
         const mockHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('');
         
-        // Mostrar consola con el Sello de Inmutabilidad Transfronteriza
         consoleOutput.style.display = 'block';
         consoleOutput.innerHTML = `
             <div style="color: var(--accent-green); border-left: 2px solid var(--accent-green); padding-left: 15px;">
                 <div style="font-weight: bold; font-size: 1.1rem; margin-bottom: 5px;">SELLO DE INMUTABILIDAD TRANSFRONTERIZA</div>
                 <div style="font-size: 0.8rem; margin-bottom: 10px; color: var(--accent-blue);">VALIDADO POR VERTEX AXIOMA®</div>
-                
                 <p style="font-size: 0.85rem; margin-bottom: 10px;">> DNA Digital generado con éxito.</p>
-                
                 <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px; margin-bottom: 10px;">
                     <strong style="font-size: 0.7rem; color: var(--text-muted);">PRUEBA PETRIFICADA (HASH):</strong><br>
                     <span id="generatedHash" style="font-family: monospace; font-size: 0.75rem; word-break: break-all;">${mockHash}</span>
                 </div>
-                
                 <p style="font-size: 0.8rem;">> Estado: <strong>ENVIADO A LEDGER PÚBLICO</strong></p>
-                <p style="font-size: 0.8rem;">> Auditor: Arapian 4.0</p>
             </div>
         `;
-
-        // Revelar el botón para emitir el Certificado de Existencia (Punto #8)
         btnCertify.style.display = 'block';
     });
 
-    // 3. Lógica de Generación del Certificado de Existencia de Activos (Punto #8)
-    btnCertify.addEventListener('click', () => {
+    // --- FUNCIÓN UNIFICADA: Imprimir y Registrar en Blockchain ---
+    btnCertify.addEventListener('click', async () => {
         if(!selectedFile) return;
 
-        const hashSpan = document.getElementById('generatedHash');
-        const hashValue = hashSpan ? hashSpan.innerText : "No disponible";
-        const assetTypeSelect = document.getElementById('asset-type');
-        const assetTypeName = assetTypeSelect.options[assetTypeSelect.selectedIndex].text;
+        // 1. Preparar datos
+        const hashValue = document.getElementById('generatedHash').innerText;
+        const assetTypeName = document.getElementById('asset-type').options[document.getElementById('asset-type').selectedIndex].text;
 
+        // 2. Ejecutar la llamada al Puente (CMD)
+        try {
+            const respuesta = await fetch('http://localhost:3000/petrificar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ hash: hashValue })
+            });
+            const resultado = await respuesta.json();
+            console.log("Respuesta del Puente:", resultado);
+        } catch (error) {
+            console.error("Error al conectar con el servidor local:", error);
+            alert("Error: Asegúrate de tener el servidor 'bridge.js' ejecutándose en tu CMD.");
+            return;
+        }
+
+        // 3. Abrir ventana de impresión
         const certWindow = window.open('', '_blank');
         certWindow.document.write(`
-            <!DOCTYPE html>
-            <html lang="es">
-            <head>
-                <meta charset="UTF-8">
-                <title>Certificado de Existencia de Activos - Vertex Axioma</title>
-                <style>
-                    body { 
-                        font-family: 'JetBrains Mono', monospace; 
-                        padding: 50px; 
-                        color: #0a0c10; 
-                        line-height: 1.6;
-                        background-color: #ffffff;
-                    }
-                    .cert-container {
-                        border: 3px double #0a0c10;
-                        padding: 40px;
-                        max-width: 800px;
-                        margin: 0 auto;
-                    }
-                    .header { 
-                        border-bottom: 2px solid #0a0c10; 
-                        padding-bottom: 20px; 
-                        margin-bottom: 30px; 
-                        text-align: center;
-                    }
-                    .header h1 { font-size: 1.8rem; letter-spacing: 1px; margin-bottom: 5px; }
-                    .header p { font-size: 0.9rem; color: #555; margin: 0; }
-                    .meta-section {
-                        margin-bottom: 30px;
-                    }
-                    .meta-row {
-                        display: flex;
-                        justify-content: space-between;
-                        margin-bottom: 10px;
-                        border-bottom: 1px dotted #ccc;
-                        padding-bottom: 5px;
-                    }
-                    .hash-box { 
-                        background: #f4f6f8; 
-                        padding: 20px; 
-                        word-break: break-all; 
-                        border: 1px dashed #0a0c10; 
-                        font-size: 0.85rem;
-                        margin-bottom: 30px;
-                    }
-                    .footer { 
-                        margin-top: 60px; 
-                        font-size: 0.8rem; 
-                        text-align: center; 
-                        border-top: 1px solid #ccc;
-                        padding-top: 20px;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="cert-container">
-                    <div class="header">
-                        <h1>CERTIFICADO DE EXISTENCIA DE ACTIVOS</h1>
-                        <p><strong>VERTEX AXIOMA®</strong> | Protocolo de Auditoría 4.0</p>
-                    </div>
-                    
-                    <p style="margin-bottom: 25px;">Por medio del presente documento, la firma de Auditoría Arapian 4.0 certifica la existencia, integridad e inmutabilidad digital en origen del siguiente activo:</p>
-                    
-                    <div class="meta-section">
-                        <div class="meta-row">
-                            <strong>Clasificación de Activo:</strong>
-                            <span>${assetTypeName}</span>
-                        </div>
-                        <div class="meta-row">
-                            <strong>Nombre del Archivo:</strong>
-                            <span>${selectedFile.name}</span>
-                        </div>
-                        <div class="meta-row">
-                            <strong>Tamaño:</strong>
-                            <span>${(selectedFile.size / 1024).toFixed(2)} KB</span>
-                        </div>
-                        <div class="meta-row">
-                            <strong>Fecha de Registro:</strong>
-                            <span>${new Date().toLocaleString()}</span>
-                        </div>
-                    </div>
-
-                    <div class="hash-box">
-                        <strong style="display: block; margin-bottom: 5px;">PRUEBA PETRIFICADA (DNA DIGITAL - HASH H256):</strong>
-                        <span>${hashValue}</span>
-                    </div>
-                    
-                    <p style="font-size: 0.85rem; font-style: italic; text-align: center; margin-top: 20px;">
-                        Este activo ha sido sellado herméticamente de forma transfronteriza y su huella criptográfica se encuentra asentada de manera permanente en el registro público descentralizado.
-                    </p>
-
-                    <div class="footer">
-                        <p><strong>Sello de Inmutabilidad Transfronteriza Activo</strong></p>
-                        <p>Firma Responsable: Arapian Auditorías 4.0</p>
-                    </div>
-                </div>
-            </body>
-            </html>
+            <html><body><h1>CERTIFICADO DE EXISTENCIA DE ACTIVOS</h1><p>HASH: ${hashValue}</p><p>Activo: ${assetTypeName}</p></body></html>
         `);
         certWindow.document.close();
-        certWindow.print(); // Dispara la ventana de guardado/impresión
+        certWindow.print();
     });
 
-    // 4. Manejo de Drag & Drop de Archivos
+    // (Mantén aquí el resto de tu lógica de Drag & Drop)
     dropZone.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
-    
-    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('drag-over');
-        if(e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
-    });
-
-    function handleFile(file) {
-        selectedFile = file;
-        dropZone.innerHTML = `<strong>Archivo listo:</strong> ${file.name}`;
-        dropZone.style.borderColor = 'var(--accent-green)';
-    }
+    // ... (resto de funciones)
 </script>
 </body>
 </html>
