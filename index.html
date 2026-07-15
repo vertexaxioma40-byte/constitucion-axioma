@@ -3,206 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vertex Axioma - Mesa de Entrada 4.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Vertex Axioma S.A.S. | Plataforma de Auditoría Forense 4.0</title>
     <style>
         :root {
-            --bg-primary: #0a0c10;
-            --bg-secondary: #0d1117;
-            --bg-card: #161b22;
-            --accent-green: #00ff88;
-            --accent-blue: #00e5ff;
-            --accent-red: #ff4a4a;
-            --text-main: #f0f6fc;
-            --text-muted: #8b949e;
-            --border-color: #30363d;
+            --accent-color: #00d4ff;
+            --bg-dark: #0f172a;
+            --text-light: #f8fafc;
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background-color: var(--bg-primary);
-            color: var(--text-main);
-            font-family: 'JetBrains Mono', monospace;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
         }
 
-        /* --- OVERLAY DE SEGURIDAD --- */
-        .security-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(10, 12, 16, 0.98); backdrop-filter: blur(12px);
-            display: flex; justify-content: center; align-items: center; z-index: 9999;
+        .axioma-container {
+            padding: 50px 20px;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .security-card {
-            background-color: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 8px; padding: 40px; width: 100%; max-width: 420px;
-            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+        .axioma-header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #ffffff;
         }
 
-        .input-key {
-            width: 100%; background-color: var(--bg-primary); border: 1px solid var(--border-color);
-            color: var(--text-main); padding: 15px; border-radius: 6px;
-            text-align: center; letter-spacing: 3px; margin-bottom: 20px;
+        .axioma-header p {
+            color: var(--accent-color);
+            font-size: 1.2rem;
+            margin-bottom: 50px;
         }
 
-        .btn-unlock {
-            width: 100%; background: transparent; border: 1px solid var(--accent-blue);
-            color: var(--accent-blue); padding: 12px; cursor: pointer; border-radius: 6px;
+        .grid-services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
         }
 
-        /* --- INTERFAZ --- */
-        header { padding: 20px 40px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; }
-        
-        .container {
-            background-color: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 8px; width: 100%; max-width: 650px; margin: 40px auto; padding: 40px;
+        .service-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid #334155;
+            padding: 25px;
+            border-radius: 10px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
         }
 
-        .drop-zone {
-            border: 2px dashed var(--border-color); border-radius: 6px;
-            padding: 40px 20px; text-align: center; cursor: pointer;
-            transition: all 0.3s ease;
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.1);
         }
 
-        .drop-zone.drag-over { border-color: var(--accent-green); background-color: rgba(0, 255, 136, 0.05); }
-
-        .btn-submit {
-            width: 100%; background: transparent; border: 1px solid var(--accent-green);
-            color: var(--accent-green); padding: 15px; margin-top: 20px; cursor: pointer;
-            transition: all 0.2s ease;
+        .service-card h3 {
+            color: var(--accent-color);
+            margin-top: 0;
         }
 
-        .btn-submit:hover {
-            background: rgba(0, 255, 136, 0.1);
-        }
-
-        .btn-certify {
-            width: 100%; background: transparent; border: 1px solid var(--accent-blue);
-            color: var(--accent-blue); padding: 15px; margin-top: 15px; cursor: pointer;
-            display: none; /* Se revela solo tras petrificar el activo */
-            transition: all 0.2s ease;
-        }
-
-        .btn-certify:hover {
-            background: rgba(0, 229, 255, 0.1);
-        }
-
-        .console-output {
-            margin-top: 25px; background-color: var(--bg-primary); border: 1px solid var(--border-color);
-            padding: 15px; border-radius: 6px; font-size: 0.8rem; display: none;
+        .footer-seal {
+            margin-top: 60px;
+            padding: 30px;
+            border-top: 1px solid #334155;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            color: #94a3b8;
         }
     </style>
 </head>
 <body>
 
-    <div class="security-overlay" id="securityOverlay">
-        <div class="security-card">
-            <h2>SISTEMA ENCRIPTADO</h2>
-            <input type="password" class="input-key" id="inputKey" placeholder="••••••••">
-            <button class="btn-unlock" id="btnUnlock">Desbloquear Nodo</button>
-        </div>
+<div class="axioma-container">
+    <div class="axioma-header">
+        <h1>Vertex Axioma S.A.S.</h1>
+        <p>Plataforma de Auditoría Forense 4.0 | Blockchain Governance Protocol | Protocolo AXIOMA®</p>
     </div>
 
-    <header>
-        <h1>VERTEX <span>AXIOMA®</span></h1>
-        <div class="system-badge">Mesa de Entrada 4.0</div>
-    </header>
+    <div class="grid-services">
+        <div class="service-card"><h3>Justicia 4.0</h3><p>Implementación de Prueba Petrificada.</p></div>
+        <div class="service-card"><h3>Consorcio 4.0</h3><p>Transparencia en activos inmobiliarios.</p></div>
+        <div class="service-card"><h3>Activos Reales 4.0</h3><p>Certificación técnica de activos.</p></div>
+        <div class="service-card"><h3>Agro 4.0</h3><p>Integridad en cadenas productivas.</p></div>
+        <div class="service-card"><h3>Minería 4.0</h3><p>Auditoría de activos críticos.</p></div>
+        <div class="service-card"><h3>Salud 4.0</h3><p>Gestión de infraestructura médica.</p></div>
+		<div class="service-card"><h3>Farmacia 4.0 </h3><p>Trazabilidad e integridad en cadena de fármacos.</p></div>
+		<div class="service-card"><h3>Sumistros 4.0</h3><p>Control forense de stock y activos en tiempo real.</p></div>
+        <div class="service-card"><h3>Gobernanza 4.0</h3><p>Transparencia presupuestaria.</p></div>
+        <div class="service-card"><h3>Ciudades 4.0</h3><p>Modernización urbana inmutable.</p></div>
+		<div class="service-card"><h3>Seguridad 4.0</h3><p>Validación criptográfica de alertas y perímetros.</p></div>
+		<div class="service-card"><h3>Emergencias 4.0</h3><p>Trazabilidad y blindaje de llamadas y alertas críticas</p></div>
+		<div class="service-card"><h3>Obra Pública 4.0</h3><p>Auditoría de ejecución presupuestaria.</p></div>
+		<div class="service-card"><h3>Logística Aérea 4.0</h3><p>Auditoría forense de infraestructura y rutas aéreas</p></div>
+		<div class="service-card"><h3>Evidencia 4.0</h3><p>Sustento forense de la verdad digital.</p></div>
+        <div class="service-card"><h3>Integridad Forense</h3><p>Cadena de custodia geoespacial.</p></div>
+		<div class="service-card"><h3>Tribunal IA 4.0</h3><p>Auditoría espacial automatizada y Gemelos Digitales (3DGS).</p></div>
+		<div class="service-card"><h3>Riesgo Predictivo 4.0</h3><p>Detección temprana de anomalías y prevención algorítmica.</p></div>
+        <div class="service-card"><h3>Smart-Settle</h3><p>Liquidación inteligente de activos.</p></div>
+    </div>
 
-    <main>
-        <div class="container">
-            <label>Tipo de Activo</label>
-            <select id="asset-type" style="width: 100%; padding: 10px; margin-bottom: 20px; background: var(--bg-secondary); color: white; border: 1px solid var(--border-color);">
-                <option value="catastro">Catastro Municipal</option>
-                <option value="forense">Evidencia Forense Legal</option>
-            </select>
+    <div class="footer-seal">
+        Sello de Inmutabilidad Transfronteriza
+    </div>
+</div>
 
-            <div class="drop-zone" id="dropZone">
-                <div id="dropZoneText">Arrastre aquí el archivo o haga clic</div>
-                <input type="file" id="fileInput" style="display: none;">
-            </div>
-
-            <button class="btn-submit" id="btnSubmit">Iniciar Ingesta y Petrificación</button>
-            
-            <!-- NUEVO: Botón para generar el Certificado de Existencia (Punto #8) -->
-            <button class="btn-certify" id="btnCertify">Generar Certificado de Existencia (Punto #8)</button>
-            
-            <div class="console-output" id="consoleOutput"></div>
-        </div>
-    </main>
-
-<!-- ... (Mantén todo tu <head> y estilos iguales hasta la parte del <script>) ... -->
-<script>
-    const securityOverlay = document.getElementById('securityOverlay');
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    const consoleOutput = document.getElementById('consoleOutput');
-    const btnCertify = document.getElementById('btnCertify');
-    let selectedFile = null;
-
-    document.getElementById('btnUnlock').addEventListener('click', () => {
-        securityOverlay.style.display = 'none';
-    });
-
-    document.getElementById('btnSubmit').addEventListener('click', () => {
-        if(!selectedFile) return alert('Error: No se ha detectado activo.');
-        
-        const mockHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('');
-        
-        consoleOutput.style.display = 'block';
-        consoleOutput.innerHTML = `
-            <div style="color: var(--accent-green); border-left: 2px solid var(--accent-green); padding-left: 15px;">
-                <div style="font-weight: bold; font-size: 1.1rem; margin-bottom: 5px;">SELLO DE INMUTABILIDAD TRANSFRONTERIZA</div>
-                <div style="font-size: 0.8rem; margin-bottom: 10px; color: var(--accent-blue);">VALIDADO POR VERTEX AXIOMA®</div>
-                <p style="font-size: 0.85rem; margin-bottom: 10px;">> DNA Digital generado con éxito.</p>
-                <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px; margin-bottom: 10px;">
-                    <strong style="font-size: 0.7rem; color: var(--text-muted);">PRUEBA PETRIFICADA (HASH):</strong><br>
-                    <span id="generatedHash" style="font-family: monospace; font-size: 0.75rem; word-break: break-all;">${mockHash}</span>
-                </div>
-                <p style="font-size: 0.8rem;">> Estado: <strong>ENVIADO A LEDGER PÚBLICO</strong></p>
-            </div>
-        `;
-        btnCertify.style.display = 'block';
-    });
-
-    // --- FUNCIÓN UNIFICADA: Imprimir y Registrar en Blockchain ---
-    btnCertify.addEventListener('click', async () => {
-        if(!selectedFile) return;
-
-        // 1. Preparar datos
-        const hashValue = document.getElementById('generatedHash').innerText;
-        const assetTypeName = document.getElementById('asset-type').options[document.getElementById('asset-type').selectedIndex].text;
-
-        // 2. Ejecutar la llamada al Puente (CMD)
-        try {
-            const respuesta = await fetch('http://localhost:3000/petrificar', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ hash: hashValue })
-            });
-            const resultado = await respuesta.json();
-            console.log("Respuesta del Puente:", resultado);
-        } catch (error) {
-            console.error("Error al conectar con el servidor local:", error);
-            alert("Error: Asegúrate de tener el servidor 'bridge.js' ejecutándose en tu CMD.");
-            return;
-        }
-
-        // 3. Abrir ventana de impresión
-        const certWindow = window.open('', '_blank');
-        certWindow.document.write(`
-            <html><body><h1>CERTIFICADO DE EXISTENCIA DE ACTIVOS</h1><p>HASH: ${hashValue}</p><p>Activo: ${assetTypeName}</p></body></html>
-        `);
-        certWindow.document.close();
-        certWindow.print();
-    });
-
-    // (Mantén aquí el resto de tu lógica de Drag & Drop)
-    dropZone.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
-    // ... (resto de funciones)
-</script>
 </body>
 </html>
