@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>VERTEX AXIOMA® | Portal de Ingesta Inmutable</title>
+    <!-- Carga de CryptoJS para el Hasheo SHA-256 en local -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #0d1b2a; color: #ffffff; padding: 40px; }
+        .container { max-width: 700px; margin: auto; background: #1b263b; padding: 30px; border-radius: 8px; border: 1px solid #415a77; }
+        h2 { color: #e0e1dd; border-bottom: 2px solid #778da9; padding-bottom: 10px; margin-top: 0; }
+        .drop-zone { border: 2px dashed #778da9; padding: 30px; text-align: center; margin: 20px 0; background: #0d1b2a; border-radius: 6px; cursor: pointer; transition: border-color 0.3s ease; }
+        .drop-zone.highlight { border-color: #62b6cb; background: #132a4a; }
+        .hash-output { font-family: monospace; font-size: 12px; color: #a3cef1; word-break: break-all; margin-top: 5px; background: #00000040; padding: 8px; border-radius: 4px; }
+        .btn-submit { background-color: #1b4965; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; }
+        .btn-submit:hover { background-color: #62b6cb; }
+        input[type="text"] { box-sizing: border-box; background: #0d1b2a; border: 1px solid #778da9; color: #ffffff; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>VERTEX AXIOMA®</h2>
+    <p><strong>Buzón de Recepción e Integridad de Datos 4.0</strong></p>
+    <p style="font-size: 13px; color: #e0e1dd;">Ingrese la información para iniciar la Cadena de Custodia Forense para el Cierre 12/2026.</p>
+    
+    <form action="https://formsubmit.co/arapianauditorias4.0@gmail.com" method="POST" enctype="multipart/form-data">
+        
+        <!-- Configuraciones extras de FormSubmit -->
+        <input type="hidden" name="_subject" value="[NUEVA INGESTA 4.0] Carga de Documentación e Integridad de Datos">
+        <input type="hidden" name="_captcha" value="false">
+
+        <label>Razón Social / Firma:</label><br>
+        <input type="text" name="Razon_Social" required style="width: 100%; padding: 8px; margin: 8px 0 15px 0;"><br>
+
+        <label>CUIT:</label><br>
+        <input type="text" name="CUIT" required style="width: 100%; padding: 8px; margin: 8px 0 15px 0;"><br>
+
+        <div class="drop-zone" id="dropZone">
+            📁 Arrastre aquí el archivo (Sumas y Saldos, Inventario, Libros IVA) o haga clic para seleccionar.
+            <input type="file" name="Archivo_Adjunto" id="fileInput" required style="display: none;">
+        </div>
+
+        <!-- Campo oculto que enviará el Hash calculado al mail -->
+        <input type="hidden" name="DNA_Digital_SHA256" id="hashHiddenInput">
+
+        <div id="fileInfo" style="margin-bottom: 20px;"></div>
+
+        <button type="submit" class="btn-submit">🛡️ GENERAR CADENA DE CUSTODIA & ENVIAR</button>
+    </form>
+</div>
+
+<script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const fileInfo = document.getElementById('fileInfo');
+    const hashHiddenInput = document.getElementById('hashHiddenInput');
+
+    // Selección por clic
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', handleFile);
+
+    // Prevención de comportamientos por defecto para Drag & Drop
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    // Efecto visual al arrastrar
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.add('highlight'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.remove('highlight'), false);
+    });
+
+    // Captura del archivo arrastrado
+    dropZone.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            handleFile();
+        }
+    }
+
+    function handleFile() {
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const arrayBuffer = e.target.result;
+            const wordArray = CryptoJS.lib.WordArray.create(arrayBuffer);
+            
+            // Generación del SHA-256 (DNA Digital)
+            const currentHash = CryptoJS.SHA256(wordArray).toString();
+
+            // Guardar el hash en el campo oculto para el envío del formulario
+            hashHiddenInput.value = currentHash;
+
+            fileInfo.innerHTML = `
+                <p><strong>Archivo:</strong> ${file.name}</p>
+                <p><strong>Tamaño:</strong> ${(file.size / 1024).toFixed(2)} KB</p>
+                <p><strong>DNA Digital (SHA-256):</strong></p>
+                <div class="hash-output">${currentHash}</div>
+            `;
+        };
+        reader.readAsArrayBuffer(file);
+    }
+</script>
+
+</body>
+</html>
