@@ -1,116 +1,603 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vertex Axioma S.A.S. | Plataforma de Auditoría Forense 4.0</title>
+    <title>VERTEX AXIOMA S.A.S. | Gobernanza Digital 4.0</title>
     <style>
         :root {
-            --accent-color: #00d4ff;
-            --bg-dark: #0f172a;
-            --text-light: #f8fafc;
+            --bg-color: #0b0f19;
+            --card-bg: #111827;
+            --card-border: #1f2937;
+            --card-hover: #1e293b;
+            --accent-color: #38bdf8;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --purple-color: #a855f7;
+            --danger-color: #ef4444;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            line-height: 1.6;
+            padding: 2rem 1rem;
         }
 
-        .axioma-container {
-            padding: 50px 20px;
-            text-align: center;
-            max-width: 1200px;
+        .container {
+            max-width: 1400px;
             margin: 0 auto;
         }
 
-        .axioma-header h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+        /* Ticker Superior Dinámico */
+        .ticker-bar {
+            background: rgba(56, 189, 248, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: var(--accent-color);
+            padding: 0.6rem 1rem;
+            font-size: 0.85rem;
+            text-align: center;
+            border-radius: 4px;
+            margin-bottom: 2rem;
+            letter-spacing: 0.05em;
+            font-family: monospace;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .ticker-item span {
             color: #ffffff;
+            font-weight: bold;
         }
 
-        .axioma-header p {
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 3.5rem;
+            padding: 0 1rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #ffffff, var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
             color: var(--accent-color);
-            font-size: 1.2rem;
-            margin-bottom: 50px;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.02em;
         }
 
-        .grid-services {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .service-card {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid #334155;
-            padding: 25px;
-            border-radius: 10px;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-
-        .service-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent-color);
-            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.1);
-        }
-
-        .service-card h3 {
-            color: var(--accent-color);
-            margin-top: 0;
-        }
-
-        .footer-seal {
-            margin-top: 60px;
-            padding: 30px;
-            border-top: 1px solid #334155;
+        .hero p {
+            max-width: 900px;
+            margin: 0 auto;
             font-size: 1.1rem;
-            letter-spacing: 1px;
-            color: #94a3b8;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* Secciones de Capas */
+        .layer-section {
+            margin-bottom: 3rem;
+        }
+
+        .layer-title {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Grid de Módulos */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            background-color: var(--card-hover);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.1);
+        }
+
+        .card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-main);
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Capa I */
+        .card-forensic {
+            border-left: 3px solid var(--accent-color);
+        }
+        .forensic-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px dashed var(--card-border);
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .badge-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            color: var(--success-color);
+        }
+        .badge-live::before {
+            content: ""; width: 6px; height: 6px; background-color: var(--success-color); border-radius: 50%; box-shadow: 0 0 8px var(--success-color);
+        }
+
+        /* Capa II */
+        .card-governance {
+            border-left: 3px solid var(--warning-color);
+        }
+        .governance-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px dashed var(--card-border);
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .badge-gov {
+            display: inline-flex; align-items: center; gap: 0.35rem; color: var(--warning-color);
+        }
+        .badge-gov::before {
+            content: ""; width: 6px; height: 6px; background-color: var(--warning-color); border-radius: 50%; box-shadow: 0 0 8px var(--warning-color);
+        }
+
+        /* Capa III */
+        .card-assets {
+            border-left: 3px solid var(--purple-color);
+        }
+        .assets-status {
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem; 
+            padding-top: 0.75rem; 
+            border-top: 1px dashed var(--card-border); 
+            font-family: monospace; 
+            font-size: 0.75rem; 
+            color: var(--text-muted);
+        }
+        .badge-asset {
+            display: inline-flex; align-items: center; gap: 0.35rem; color: var(--purple-color);
+        }
+        .badge-asset::before {
+            content: ""; width: 6px; height: 6px; background-color: var(--purple-color); border-radius: 50%; box-shadow: 0 0 8px var(--purple-color);
+        }
+
+        /* Capa IV */
+        .card-execution {
+            border-left: 3px solid var(--danger-color);
+        }
+        .execution-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px dashed var(--card-border);
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .badge-alert {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            color: var(--danger-color);
+        }
+        .badge-alert::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            background-color: var(--danger-color);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--danger-color);
+        }
+
+        /* Footer / Barra de Estado Inferior */
+        .footer-status {
+            margin-top: 4rem;
+            border-top: 1px solid var(--card-border);
+            padding-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            text-align: center;
+        }
+
+        .footer-status p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            max-width: 800px;
+        }
+
+        .status-table {
+            width: 100%;
+            max-width: 700px;
+            border-collapse: collapse;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .status-table th, .status-table td {
+            border: 1px solid var(--card-border);
+            padding: 0.5rem 1rem;
+            text-align: left;
+        }
+
+        .status-table th {
+            background-color: var(--card-bg);
+            color: var(--accent-color);
+        }
+
+        .status-table td {
+            color: var(--text-muted);
+        }
+
+        @media (min-width: 768px) {
+            .footer-status {
+                flex-direction: row;
+                justify-content: space-between;
+                text-align: left;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="axioma-container">
-    <div class="axioma-header">
-        <h1>Vertex Axioma S.A.S.</h1>
-        <p> Plataforma de auditoría forense 4.0 | Blockchain Governance Protocol | Protocolo AXIOMA® | Sello de Inmutabilidad Transfronteriza | Sello de Conformidad Fiscal 4.0</p>
+    <div class="container">
+        
+        <!-- Ticker Superior Dinámico -->
+        <div class="ticker-bar" id="live-ticker">
+            <div class="ticker-item">ESTADO DEL NODO: <span>100% INMUTABLE</span></div>
+            <div class="ticker-item">TRIPLE VERIFICACIÓN: <span>OPERATIVA</span></div>
+            <div class="ticker-item">HASH ACTIVO: <span id="hash-display">0x8f4c...32a1</span></div>
+        </div>
+
+        <!-- Hero Section -->
+        <header class="hero">
+            <h1>VERTEX AXIOMA S.A.S.</h1>
+            <h2>Arquitectura de Control y Estándar de Gobernanza Digital 4.0</h2>
+            <p>
+                Superamos las limitaciones de la burocracia tradicional mediante la petrificación de prueba, la contabilidad forense digital de activos reales y protocolos soberanos como el <strong>Sello de Inmutabilidad Transfronteriza</strong>. Un marco tecnológico que sustituye la discrecionalidad administrativa por validación criptográfica y transparencia algorítmica inquebrantable.
+            </p>
+        </header>
+
+        <!-- CAPA I: Núcleo Criptográfico y Evidencia -->
+        <section class="layer-section">
+            <h2 class="layer-title">Capa I: Núcleo Criptográfico y Evidencia</h2>
+            <div class="grid">
+                <div class="card card-forensic">
+                    <div>
+                        <h3>Evidencia 4.0</h3>
+                        <p>Sustento forense de la verdad digital.</p>
+                    </div>
+                    <div class="forensic-status">
+                        <span class="badge-live">Custodia Activa</span>
+                        <span>HASH: 0x3b9...e2</span>
+                    </div>
+                </div>
+                <div class="card card-forensic">
+                    <div>
+                        <h3>Integridad Forense</h3>
+                        <p>Cadena de custodia geoespacial.</p>
+                    </div>
+                    <div class="forensic-status">
+                        <span class="badge-live">GPS: Sincronizado</span>
+                        <span>GEO: -34.65,-58.62</span>
+                    </div>
+                </div>
+                <div class="card card-forensic">
+                    <div>
+                        <h3>Soberanía de Datos</h3>
+                        <p>Certificación e inmutabilidad de la información crítica.</p>
+                    </div>
+                    <div class="forensic-status">
+                        <span class="badge-live">Nodo Soberano</span>
+                        <span>SHA-256: Ok</span>
+                    </div>
+                </div>
+                <div class="card card-forensic">
+                    <div>
+                        <h3>Tribunal IA 4.0</h3>
+                        <p>Auditoría 4.0 y arbitraje tecnológico de Gemelos Digitales (3DGS).</p>
+                    </div>
+                    <div class="forensic-status">
+                        <span class="badge-live">3DGS: En Línea</span>
+                        <span>VALID: Cripto</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CAPA II: Gobernanza y Sector Público -->
+        <section class="layer-section">
+            <h2 class="layer-title">Capa II: Gobernanza y Sector Público</h2>
+            <div class="grid">
+                <div class="card card-governance">
+                    <div>
+                        <h3>Gobernanza 4.0</h3>
+                        <p>Transparencia presupuestaria.</p>
+                    </div>
+                    <div class="governance-status">
+                        <span class="badge-gov">Fiscalización Abierta</span>
+                        <span>BUDGET: Verificado</span>
+                    </div>
+                </div>
+                <div class="card card-governance">
+                    <div>
+                        <h3>Obra Pública 4.0</h3>
+                        <p>Auditoría de ejecución presupuestaria.</p>
+                    </div>
+                    <div class="governance-status">
+                        <span class="badge-gov">Ejecución Inalterable</span>
+                        <span>AUDIT: 100% On-Chain</span>
+                    </div>
+                </div>
+                <div class="card card-governance">
+                    <div>
+                        <h3>Ciudades 4.0</h3>
+                        <p>Modernización urbana inmutable.</p>
+                    </div>
+                    <div class="governance-status">
+                        <span class="badge-gov">Normativa Vigente</span>
+                        <span>SMART: Activo</span>
+                    </div>
+                </div>
+                <div class="card card-governance">
+                    <div>
+                        <h3>Justicia 4.0</h3>
+                        <p>Implementación de Prueba Petrificada.</p>
+                    </div>
+                    <div class="governance-status">
+                        <span class="badge-gov">Prueba Inmune</span>
+                        <span>SEAL: Transfronterizo</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CAPA III: Activos Reales e Industrias Críticas -->
+        <section class="layer-section">
+            <h2 class="layer-title">Capa III: Activos Reales e Industrias Críticas</h2>
+            <div class="grid">
+                <div class="card card-assets">
+                    <div>
+                        <h3>Activos Reales 4.0</h3>
+                        <p>Certificación técnica de activos.</p>
+                    </div>
+                    <div class="assets-status">
+                        <span class="badge-asset">3DGS Sincronizado</span>
+                        <span>VAL: 100% On-Chain</span>
+                    </div>
+                </div>
+                <div class="card card-assets">
+                    <div>
+                        <h3>Consorcio 4.0</h3>
+                        <p>Transparencia en activos inmobiliarios.</p>
+                    </div>
+                    <div class="assets-status">
+                        <span class="badge-asset">Auditoría Inmobiliaria</span>
+                        <span>SYNC: Activo</span>
+                    </div>
+                </div>
+                <div class="card card-assets">
+                    <div>
+                        <h3>Agro 4.0</h3>
+                        <p>Integridad en cadenas productivas.</p>
+                    </div>
+                    <div class="assets-status">
+                        <span class="badge-asset">Trazabilidad Total</span>
+                        <span>ORIGIN: Verificado</span>
+                    </div>
+                </div>
+                <div class="card card-assets">
+                    <div>
+                        <h3>Minería 4.0</h3>
+                        <p>Auditoría de activos críticos.</p>
+                    </div>
+                    <div class="assets-status">
+                        <span class="badge-asset">Control Predictivo</span>
+                        <span>3DGS: Monitoreo</span>
+                    </div>
+                </div>
+                <div class="card card-assets">
+                    <div>
+                        <h3>Salud 4.0</h3>
+                        <p>Gestión de infraestructura médica.</p>
+                    </div>
+                    <div class="assets-status">
+                        <span class="badge-asset">Infraestructura 3D</span>
+                        <span>STATUS: Óptimo</span>
+                    </div>
+                </div>
+                <div class="card card-assets">
+                    <div>
+                        <h3>Farmacia 4.0</h3>
+                        <p>Trazabilidad e integridad en cadena de fármacos.</p>
+                    </div>
+                    <div class="assets-status">
+                        <span class="badge-asset">Cadena Validadora</span>
+                        <span>TRACE: Lote OK</span>
+                    </div>
+                </div>
+                <div class="card card-assets">
+                    <div>
+                        <h3>Suministros 4.0</h3>
+                        <p>Control forense de stock y activos en tiempo real.</p>
+                    </div>
+                    <div class="assets-status">
+                        <span class="badge-asset">Stock Inmutable</span>
+                        <span>REAL-TIME: On</span>
+                    </div>
+                </div>
+                <div class="card card-assets">
+                    <div>
+                        <h3>Logística Aérea 4.0</h3>
+                        <p>Auditoría forense de infraestructura, drones y rutas aéreas.</p>
+                    </div>
+                    <div class="assets-status">
+                        <span class="badge-asset">Ruta Geoespacial</span>
+                        <span>DRONE: Enlazado</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CAPA IV: Ejecución y Seguridad Avanzada -->
+        <section class="layer-section">
+            <h2 class="layer-title">Capa IV: Ejecución y Seguridad Avanzada</h2>
+            <div class="grid">
+                <div class="card card-execution">
+                    <div>
+                        <h3>Seguridad 4.0</h3>
+                        <p>Validación criptográfica de alertas y perímetros.</p>
+                    </div>
+                    <div class="execution-status">
+                        <span class="badge-alert">Perímetro Blindado</span>
+                        <span>STATE: Monitoreo</span>
+                    </div>
+                </div>
+                <div class="card card-execution">
+                    <div>
+                        <h3>Emergencias 4.0</h3>
+                        <p>Trazabilidad y blindaje de llamadas y alertas críticas.</p>
+                    </div>
+                    <div class="execution-status">
+                        <span class="badge-alert">Alerta Temprana</span>
+                        <span>SECURE: Enlace 24/7</span>
+                    </div>
+                </div>
+                <div class="card card-execution">
+                    <div>
+                        <h3>Riesgo Predictivo 4.0</h3>
+                        <p>Detección temprana de anomalías y prevención algorítmica.</p>
+                    </div>
+                    <div class="execution-status">
+                        <span class="badge-alert">Monitoreo Predictivo</span>
+                        <span>ANOMALY: 0%</span>
+                    </div>
+                </div>
+                <div class="card card-execution">
+                    <div>
+                        <h3>Smart-Settle</h3>
+                        <p>Liquidación inteligente de activos.</p>
+                    </div>
+                    <div class="execution-status">
+                        <span class="badge-alert">Liquidación Instantánea</span>
+                        <span>SETTLE: On-Chain</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer / Barra de Estado -->
+        <footer class="footer-status">
+            <p>
+                Garantizamos la inmutabilidad y la inatacabilidad jurídica de su Gemelo Digital, actuando como un tribunal tecnológico y aduana digital para la ejecución y liquidación de operaciones en tiempo real. Sello de Inmutabilidad Transfronteriza.
+            </p>
+            <table class="status-table">
+                <tr>
+                    <th>Parámetro del Sistema</th>
+                    <th>Estado / Protocolo</th>
+                </tr>
+                <tr>
+                    <td>Integridad de Red</td>
+                    <td>Sello de Inmutabilidad Transfronteriza</td>
+                </tr>
+                <tr>
+                    <td>Tribunal Tecnológico</td>
+                    <td>Validación Criptográfica (3DGS)</td>
+                </tr>
+            </table>
+        </footer>
+
     </div>
 
-    <div class="grid-services">
-        <div class="service-card"><h3>Justicia 4.0</h3><p>Implementación de Prueba Petrificada.</p></div>
-        <div class="service-card"><h3>Consorcio 4.0</h3><p>Transparencia en activos inmobiliarios.</p></div>
-        <div class="service-card"><h3>Activos Reales 4.0</h3><p>Certificación técnica de activos.</p></div>
-        <div class="service-card"><h3>Agro 4.0</h3><p>Integridad en cadenas productivas.</p></div>
-        <div class="service-card"><h3>Minería 4.0</h3><p>Auditoría de activos críticos.</p></div>
-        <div class="service-card"><h3>Salud 4.0</h3><p>Gestión de infraestructura médica.</p></div>
-		<div class="service-card"><h3>Farmacia 4.0 </h3><p>Trazabilidad e integridad en cadena de fármacos.</p></div>
-		<div class="service-card"><h3>Sumistros 4.0</h3><p>Control forense de stock y activos en tiempo real.</p></div>
-        <div class="service-card"><h3>Gobernanza 4.0</h3><p>Transparencia presupuestaria.</p></div>
-        <div class="service-card"><h3>Ciudades 4.0</h3><p>Modernización urbana inmutable.</p></div>
-		<div class="service-card"><h3>Seguridad 4.0</h3><p>Validación criptográfica de alertas y perímetros.</p></div>
-		<div class="service-card"><h3>Emergencias 4.0</h3><p>Trazabilidad y blindaje de llamadas y alertas críticas</p></div>
-		<div class="service-card"><h3>Obra Pública 4.0</h3><p>Auditoría de ejecución presupuestaria.</p></div>
-		<div class="service-card"><h3>Logística Aérea 4.0</h3><p>Auditoría forense de infraestructura, drones y rutas aéreas.</p></div>
-		<div class="service-card"><h3>Evidencia 4.0</h3><p>Sustento forense de la verdad digital.</p></div>
-        <div class="service-card"><h3>Integridad Forense</h3><p>Cadena de custodia geoespacial.</p></div>
-		<div class="service-card"><h3>Tribunal IA 4.0</h3><p>Auditoría 4.0 y arbitraje tecnológico de Gemelos Digitales (3DGS).</p></div>
-		<div class="service-card"><h3>Riesgo Predictivo 4.0</h3><p>Detección temprana de anomalías y prevención algorítmica.</p></div>
-        <div class="service-card"><h3>Smart-Settle</h3><p>Liquidación inteligente de activos.</p></div>
-		<div class="service-card"><h3>Soberanía de Datos</h3><p>Certificación e inmutabilidad de la información crítica.</p></div>
-    </div>
+    <!-- Script para simular el flujo dinámico del Ticker en Vivo -->
+    <script>
+        function generarHashAleatorio() {
+            const chars = "0123456789abcdef";
+            let hash = "0x";
+            for (let i = 0; i < 8; i++) {
+                hash += chars[Math.floor(Math.random() * chars.length)];
+            }
+            hash += "...";
+            for (let i = 0; i < 4; i++) {
+                hash += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return hash;
+        }
 
-    <div class="footer-seal">
-        Garantizamos la inmutabilidad y la inatacabilidad jurídica de su Gemelo Digital, actuando como un tribunal tecnológico y aduana digital para la ejecución y liquidación de operaciones en tiempo real.
-    </div>
-</div>
-
+        setInterval(() => {
+            const hashSpan = document.getElementById("hash-display");
+            if (hashSpan) {
+                hashSpan.textContent = generarHashAleatorio();
+            }
+        }, 3000);
+    </script>
 </body>
 </html>
